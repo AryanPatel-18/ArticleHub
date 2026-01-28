@@ -1,0 +1,8 @@
+venv/
+Lib/
+Scripts/
+bin/
+include/
+pyvenv.cfg
+__pycache__/
+*.pyc

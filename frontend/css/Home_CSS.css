@@ -19,6 +19,32 @@ body {
     font-weight: 500;
 }
 
+.article-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.article-card {
+    background-color: #f6efd6;
+    border-radius: 20px;
+    transition: transform 0.2s ease;
+}
+
+.article-link:hover .article-card {
+    transform: translateY(-3px);
+}
+
+.article-title {
+    color: #551414;
+    font-weight: 600;
+}
+
+.article-meta {
+    font-size: 0.8rem;
+    color: #666;
+}
+
 .navbar-profile-img {
     width: 38px;
     height: 38px;

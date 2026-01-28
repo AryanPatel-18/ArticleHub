@@ -1,3 +1,7 @@
+const registerForm = document.getElementById("auth-register-form");
+const loginForm = document.getElementById("auth-login-form")
+
+
 function showRegister() {
     document.getElementById("auth-login-form").classList.add("d-none");
     document.getElementById("auth-register-form").classList.remove("d-none");
@@ -42,11 +46,6 @@ function loadSpinner(){
     registerSpinner.style.opacity = "1";
 }
 
-// Select the registration form
-const registerForm = document.getElementById("auth-register-form");
-const loginForm = document.getElementById("auth-login-form")
-
-// Attach submit event
 registerForm.addEventListener("submit", async function (event) {
     event.preventDefault(); // prevent form reload
     reloadRegisterPage()
@@ -114,7 +113,7 @@ registerForm.addEventListener("submit", async function (event) {
         
         // Switching to the home page
         setTimeout(() => {    
-            window.location.href = "Home.html";
+            window.location.href = "Authentication.html";
         }, 1000);
 
     } catch (error) {
@@ -122,7 +121,6 @@ registerForm.addEventListener("submit", async function (event) {
         alert("Unable to connect to the server. Try again later.");
     }
 });
-
 
 loginForm.addEventListener("submit", async function(event){
     event.preventDefault();
@@ -198,4 +196,4 @@ loginForm.addEventListener("submit", async function(event){
         loginButton.innerHTML = "Login";
     }
 
-})
+});
