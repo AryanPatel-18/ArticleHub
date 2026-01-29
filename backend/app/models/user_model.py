@@ -14,6 +14,17 @@ from sqlalchemy.sql import func
 from database.db import Base
 
 
+class UserRecommendationCache(Base):
+    __tablename__ = "user_recommendation_cache"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.article_id", ondelete="CASCADE"), nullable=False)
+    rank_position = Column(Integer, nullable=False)
+    session_id = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+
+
 class User(Base):
     __tablename__ = "users"
 

@@ -1,7 +1,15 @@
 from sqlalchemy.orm import Session
 from models.interaction_model import UserInteraction
 from models.article_model import ArticleStat
-from schemas.interaction_schema import UserInteractionCreateRequest, UserInteractionResponse, InteractionStatusResponse, InteractionToggleRequest, InteractionToggleResponse
+from schemas.interaction_schema import (
+    UserInteractionCreateRequest,
+    UserInteractionResponse,
+    InteractionStatusResponse,
+    InteractionToggleRequest,
+    InteractionToggleResponse
+)
+from services.user_vector_service import mark_user_vector_dirty
+
 
 def create_interaction(
     db: Session,
@@ -42,6 +50,10 @@ def create_interaction(
     elif data.interaction_type == "save":
         stats.save_count += 1
 
+    # ✅ Mark user vector dirty for like/save
+    if data.interaction_type in ("like", "save"):
+        mark_user_vector_dirty(db, user_id)
+
     # 4. Commit once
     db.commit()
     db.refresh(interaction)
@@ -64,7 +76,7 @@ def get_interaction_status(db: Session, user_id: int, article_id: int):
             UserInteraction.interaction_type == "like"
         )
         .first()
-        is not None # Checking if the query returned anything or not
+        is not None
     )
 
     save_exists = (
@@ -82,7 +94,8 @@ def get_interaction_status(db: Session, user_id: int, article_id: int):
         liked=like_exists,
         saved=save_exists
     )
-    
+
+
 def toggle_interaction(
     db: Session,
     user_id: int,
@@ -106,7 +119,12 @@ def toggle_interaction(
     )
 
     if stats is None:
-        stats = ArticleStat(article_id=data.article_id, view_count=0, like_count=0)
+        stats = ArticleStat(
+            article_id=data.article_id,
+            view_count=0,
+            like_count=0,
+            save_count=0
+        )
         db.add(stats)
         db.commit()
         db.refresh(stats)
@@ -118,10 +136,14 @@ def toggle_interaction(
         if data.interaction_type == "like":
             if stats.like_count > 0:
                 stats.like_count -= 1
-        
-        if data.interaction_type == 'save':
+
+        if data.interaction_type == "save":
             if stats.save_count > 0:
                 stats.save_count -= 1
+
+        # ✅ Mark user vector dirty for like/save
+        if data.interaction_type in ("like", "save"):
+            mark_user_vector_dirty(db, user_id)
 
         db.commit()
 
@@ -145,7 +167,11 @@ def toggle_interaction(
 
     if data.interaction_type == "save":
         stats.save_count += 1
-    
+
+    # ✅ Mark user vector dirty for like/save
+    if data.interaction_type in ("like", "save"):
+        mark_user_vector_dirty(db, user_id)
+
     db.commit()
 
     return InteractionToggleResponse(

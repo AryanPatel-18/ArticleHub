@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from fastapi import HTTPException, status
-
 from models.user_model import User
 from schemas.auth_schema import (
     RegistrationRequest,
@@ -14,6 +13,7 @@ from core.security import (
     verify_password,
     create_access_token
 )
+from services.user_vector_service import create_default_user_vector
 
 
 def register_user(db: Session, user: RegistrationRequest):
@@ -70,7 +70,7 @@ def register_user(db: Session, user: RegistrationRequest):
         )
 
     db.refresh(new_user)
-
+    create_default_user_vector(db,new_user.user_id)
     return RegistrationResponse(
         user_id=new_user.user_id,
         message="User registered successfully"

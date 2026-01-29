@@ -55,3 +55,14 @@ class ArticleRecommendationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PaginatedArticleRecommendationResponse(BaseModel):
+    page: int
+    page_size: int
+    total_results: int
+    total_pages: int
+    articles: List[ArticleRecommendationResponse]
+
+    class Config:
+        from_attributes = True
