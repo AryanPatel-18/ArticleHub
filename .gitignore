@@ -1,11 +1,33 @@
+# ---- Environment files ----
+.env
+backend/.env
+
+# ---- Python cache ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---- Virtual environment ----
 venv/
+ENV/
+env/
 Lib/
 Scripts/
 bin/
 include/
 pyvenv.cfg
 
-backend/.env
+# ---- VS Code ----
+.vscode/
 
-__pycache__/
-*.pyc
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+
+# ---- Test cache ----
+.pytest_cache/
+.mypy_cache/
+
+# ---- Logs ----
+*.log
