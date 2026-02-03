@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">`
+<head>
+    <meta charset="UTF-8">
+    <title>write.it. | Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Profile_CSS.css">
+</head>
+<body id="profile-body">
+
+<!-- BACK BUTTON -->
+<a href="home.html" class="back-btn" id="back-to-home-btn">
+    ← Back to Home
+</a>
+
+<div class="profile-container" id="profile-container">
+
+    <!-- PROFILE IMAGE -->
+    <div class="profile-image-section" id="profile-image-section">
+        <div class="profile-image-wrapper" id="profile-image-wrapper">
+            <img 
+                src="DSC_4215.JPG" 
+                alt="Profile Picture" 
+                class="profile-image"
+                id="profile-image">
+            <div class="edit-image-overlay" id="edit-image-btn"></div>
+        </div>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div class="card profile-card shadow-lg" id="profile-card">
+        <div class="card-body p-4" id="profile-card-body">
+
+            <h3 class="text-center profile-title mb-1 bbh-hegarty-regular" id="profile-title">
+                write.it.
+            </h3>
+
+            <pre class="text-center profile-subtitle mb-4" id="profile-subtitle">Your Profile</pre>
+
+            <!-- USERNAME DISPLAY -->
+            <h4 class="username-display bbh-hegarty-regular" id="profile-username-display">John Doe</h4>
+            <p class="user-handle" id="profile-user-handle">@johndoe</p>
+
+            <!-- PERSONAL INFORMATION SECTION -->
+            <div class="profile-section" id="personal-info-section">
+                <div class="section-header" id="personal-info-header">
+                    <div class="section-title" id="personal-info-title">Personal Information</div>
+                    <button class="edit-section-btn" id="edit-personal-info-btn" onclick="editSection('personal-info')">Edit</button>
+                </div>
+
+                <!-- VIEW MODE -->
+                <div class="view-mode" id="personal-info-view-mode">
+                    <div class="info-row" id="username-info-row">
+                        <div class="info-label" id="username-label">Username</div>
+                        <div class="info-value" id="username-display-value">johndoe</div>
+                    </div>
+                    <div class="info-row" id="email-info-row">
+                        <div class="info-label" id="email-label">Email</div>
+                        <div class="info-value" id="email-display-value">john.doe@example.com</div>
+                    </div>
+                    <div class="info-row" id="birthdate-info-row">
+                        <div class="info-label" id="birthdate-label">Birth Date</div>
+                        <div class="info-value" id="birthdate-display-value">January 15, 1995</div>
+                    </div>
+                </div>
+
+                <!-- EDIT MODE -->
+                <div class="edit-mode" id="personal-info-edit-mode">
+                    <div class="mb-3" id="username-input-group">
+                        <label id="username-input-label">Username</label>
+                        <input 
+                            type="text"
+                            id="username-input"
+                            class="form-control"
+                            placeholder="Choose a username"
+                            value="johndoe">
+                    </div>
+
+                    <div class="mb-3" id="email-input-group">
+                        <label id="email-input-label">Email</label>
+                        <input 
+                            type="email"
+                            id="email-input"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            value="john.doe@example.com">
+                    </div>
+
+                    <div class="mb-3" id="birthdate-input-group">
+                        <label id="birthdate-input-label">Birth Date</label>
+                        <input 
+                            type="date"
+                            id="birthdate-input"
+                            class="form-control"
+                            value="1995-01-15">
+                    </div>
+
+                    <button class="btn-save" id="save-personal-info-btn" onclick="saveSection('personal-info')">Save Changes</button>
+                    <button class="btn-cancel" id="cancel-personal-info-btn" onclick="cancelEdit('personal-info')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- ABOUT SECTION -->
+            <div class="profile-section" id="about-section">
+                <div class="section-header" id="about-section-header">
+                    <div class="section-title" id="about-section-title">About the Author</div>
+                    <button class="edit-section-btn" id="edit-about-btn" onclick="editSection('about')">Edit</button>
+                </div>
+
+                <!-- VIEW MODE -->
+                <div class="view-mode" id="about-view-mode">
+                    <div class="info-row" id="about-info-row">
+                        <div class="info-value" id="about-display-value">A passionate writer exploring the depths of human emotion and storytelling. I believe in the power of words to transform lives and connect souls across boundaries.</div>
+                    </div>
+                </div>
+
+                <!-- EDIT MODE -->
+                <div class="edit-mode" id="about-edit-mode">
+                    <div class="mb-3" id="about-input-group">
+                        <label id="about-input-label">About the Author</label>
+                        <textarea
+                            id="about-input"
+                            class="form-control"
+                            rows="4"
+                            placeholder="Tell readers about yourself">A passionate writer exploring the depths of human emotion and storytelling. I believe in the power of words to transform lives and connect souls across boundaries.</textarea>
+                    </div>
+
+                    <button class="btn-save" id="save-about-btn" onclick="saveSection('about')">Save Changes</button>
+                    <button class="btn-cancel" id="cancel-about-btn" onclick="cancelEdit('about')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- SOCIAL MEDIA SECTION -->
+            <div class="profile-section" id="social-section">
+                <div class="section-header" id="social-section-header">
+                    <div class="section-title" id="social-section-title">Social Media</div>
+                    <button class="edit-section-btn" id="edit-social-btn" onclick="editSection('social')">Edit</button>
+                </div>
+
+                <!-- VIEW MODE -->
+                <div class="view-mode" id="social-view-mode">
+                    <a href="https://instagram.com/johndoe" class="social-link-display" id="social-link-display" target="_blank">
+                        <span id="social-icon">📱</span>
+                        <span id="social-url-display">instagram.com/johndoe</span>
+                    </a>
+                </div>
+
+                <!-- EDIT MODE -->
+                <div class="edit-mode" id="social-edit-mode">
+                    <div class="mb-3" id="social-input-group">
+                        <label id="social-input-label">Instagram / Social Media Link</label>
+                        <input 
+                            type="url"
+                            id="social-input"
+                            class="form-control"
+                            placeholder="https://instagram.com/username"
+                            value="https://instagram.com/johndoe">
+                    </div>
+
+                    <button class="btn-save" id="save-social-btn" onclick="saveSection('social')">Save Changes</button>
+                    <button class="btn-cancel" id="cancel-social-btn" onclick="cancelEdit('social')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- CHANGE PASSWORD SECTION -->
+            <div class="profile-section" id="password-section">
+                <div class="section-header" id="password-section-header">
+                    <div class="section-title" id="password-section-title">Change Password</div>
+                    <button class="edit-section-btn" id="edit-password-btn" onclick="editSection('password')">Change</button>
+                </div>
+
+                <!-- EDIT MODE ONLY -->
+                <div class="edit-mode" id="password-edit-mode">
+                    <div class="mb-3" id="current-password-input-group">
+                        <label id="current-password-input-label">Current Password</label>
+                        <input 
+                            type="password"
+                            id="current-password-input"
+                            class="form-control"
+                            placeholder="Enter current password">
+                    </div>
+
+                    <div class="mb-3" id="new-password-input-group">
+                        <label id="new-password-input-label">New Password</label>
+                        <input 
+                            type="password"
+                            id="new-password-input"
+                            class="form-control"
+                            placeholder="Enter new password">
+                    </div>
+
+                    <div class="mb-3" id="confirm-password-input-group">
+                        <label id="confirm-password-input-label">Confirm New Password</label>
+                        <input 
+                            type="password"
+                            id="confirm-password-input"
+                            class="form-control"
+                            placeholder="Confirm new password">
+                    </div>
+
+                    <button class="btn-save" id="save-password-btn" onclick="saveSection('password')">Update Password</button>
+                    <button class="btn-cancel" id="cancel-password-btn" onclick="cancelEdit('password')">Cancel</button>
+                </div>
+            </div>
+
+            <!-- LOGOUT BUTTON -->
+            <button class="btn-logout" id="logout-btn" onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Edit section functionality
+    function editSection(section) {
+        const viewMode = document.getElementById(`${section}-view-mode`);
+        const editMode = document.getElementById(`${section}-edit-mode`);
+        
+        if (viewMode) viewMode.classList.add('hidden');
+        if (editMode) editMode.classList.add('active');
+    }
+
+    function cancelEdit(section) {
+        const viewMode = document.getElementById(`${section}-view-mode`);
+        const editMode = document.getElementById(`${section}-edit-mode`);
+        
+        if (viewMode) viewMode.classList.remove('hidden');
+        if (editMode) editMode.classList.remove('active');
+    }
+
+    function saveSection(section) {
+        if (section === 'personal-info') {
+            const username = document.getElementById('username-input').value;
+            const email = document.getElementById('email-input').value;
+            const birthdate = document.getElementById('birthdate-input').value;
+            
+            document.getElementById('username-display-value').textContent = username;
+            document.getElementById('email-display-value').textContent = email;
+            document.getElementById('profile-username-display').textContent = username.charAt(0).toUpperCase() + username.slice(1);
+            document.getElementById('profile-user-handle').textContent = `@${username}`;
+            
+            const date = new Date(birthdate);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('birthdate-display-value').textContent = date.toLocaleDateString('en-US', options);
+            
+        } else if (section === 'about') {
+            const about = document.getElementById('about-input').value;
+            document.getElementById('about-display-value').textContent = about;
+            
+        } else if (section === 'social') {
+            const socialLink = document.getElementById('social-input').value;
+            document.getElementById('social-link-display').href = socialLink;
+            document.getElementById('social-url-display').textContent = socialLink.replace('https://', '').replace('http://', '');
+            
+        } else if (section === 'password') {
+            const currentPassword = document.getElementById('current-password-input').value;
+            const newPassword = document.getElementById('new-password-input').value;
+            const confirmPassword = document.getElementById('confirm-password-input').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Please fill in all password fields');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+            
+            alert('Password updated successfully!');
+            document.getElementById('current-password-input').value = '';
+            document.getElementById('new-password-input').value = '';
+            document.getElementById('confirm-password-input').value = '';
+        }
+        
+        cancelEdit(section);
+    }
+
+    // Profile image change
+    document.getElementById('edit-image-btn').addEventListener('click', () => {
+        alert('Profile picture upload functionality would be implemented here!');
+    });
+
+    // Logout functionality
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = 'auth.html';
+        }
+    }
+</script>
+
+</body>
+</html> 

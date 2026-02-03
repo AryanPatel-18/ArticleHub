@@ -1,0 +1,348 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background:#e7e4d2;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.bbh-hegarty-regular {
+    font-family: 'BBH Hegarty', serif;
+}
+
+.profile-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+/* PROFILE IMAGE SECTION */
+.profile-image-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.profile-image-wrapper {
+    position: relative;
+    width: 180px;
+    height: 180px;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.edit-image-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 45px;
+    height: 45px;
+    background: #d1b15f;
+    border-radius: 50%;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.edit-image-overlay:hover {
+    background: #f9efd6;
+    transform: scale(1.3);
+}
+
+.edit-image-overlay::before {
+    content: "📷";
+    font-size: 20px;
+}
+
+/* PROFILE CARD */
+.profile-card {
+    background: #f6efd6;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.profile-subtitle {
+    color: #999;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    white-space: pre-wrap;
+}
+
+.profile-title{
+    color: #4e0f0f;
+    transition: all 0.3s ease;
+}
+
+.profile-title:hover{
+    color: #4e0f0f;
+    transform: translateY(-2px); 
+    font-size: 44px; 
+}
+
+/* USERNAME DISPLAY */
+.username-display {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.user-handle {
+    text-align: center;
+    color: #999;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* FORM SECTIONS */
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000000;
+}
+
+.edit-section-btn {
+    background: transparent;
+    border: 2px solid #4e0f0f;
+    color: #4e0f0f;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.edit-section-btn:hover {
+    background: #751a1a;
+    color: white;
+}
+
+/* INFO DISPLAY */
+.info-row {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+/* FORM INPUTS */
+.form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-control:focus {
+    border-color: #751a1a;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    background: white;
+    outline: none;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* BUTTONS */
+.btn-save {
+    background: #4e0f0f;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    /* box-shadow: 0 10px 100px #4e0f0f; */
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #626262;
+    border: 2px solid #afafaf;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-cancel:hover {
+    border-color: #626262;
+    color: #171717;
+}
+
+.btn-logout {
+    background: #4e0f0f;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-logout:hover {
+    /* background: #6a1717; */
+    transform: translateY(-2px);
+    /* box-shadow: 0 10px 30px rgba(200, 62, 62, 0.4); */
+}
+
+/* SOCIAL LINK */
+.social-link-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    color: #4e0f0f;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.social-link-display:hover {
+    text-decoration: underline;
+}
+
+/* EDIT/VIEW MODE */
+.view-mode {
+    display: block;
+}
+
+.view-mode.hidden {
+    display: none;
+}
+
+.edit-mode {
+    display: none;
+}
+
+.edit-mode.active {
+    display: block;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #f6efd6;
+    backdrop-filter: blur(10px);
+    color: #4e0f0f;
+    border: 2px solid #4e0f0f;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:hover {
+    color: white;
+    background: #4e0f0f ;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .profile-image-wrapper {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-title {
+        font-size: 1.5rem;
+    }
+
+    .username-display {
+        font-size: 1.5rem;
+    }
+}
