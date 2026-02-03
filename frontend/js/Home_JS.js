@@ -110,6 +110,8 @@ nextButton.addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     protectRoute();
+    loadTrendingTags();
+    loadTrendingAuthors();
     loadArticles();
 });
 
@@ -134,3 +136,68 @@ document.getElementById("nav-search-form-desktop").addEventListener("submit", fu
     // Redirect to search page with query as URL param
     window.location.href = `../pages/Search_article.html?q=${encodeURIComponent(query)}`;
 });
+
+
+async function loadTrendingTags() {
+    const container = document.getElementById("trending-tags-container");
+    container.innerHTML = ""; // clear old content
+
+    try {
+        const response = await fetch("http://localhost:8000/trending/tags");
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch trending tags");
+        }
+
+        const tags = await response.json();
+
+        tags.forEach(tag => {
+            const a = document.createElement("a");
+            a.className = "tag-btn text-decoration-none";
+            a.textContent = tag.tag_name;
+
+            // build URL to trendingTag.html with tag_id
+            a.href = `trendingTag.html?tag_id=${tag.tag_id}`;
+
+            container.appendChild(a);
+        });
+
+    } catch (error) {
+        console.error("Error loading trending tags:", error);
+    }
+}
+
+async function loadTrendingAuthors() {
+    const panel = document.getElementById("featured-writers-panel");
+
+    try {
+        const response = await fetch("http://localhost:8000/trending/authors");
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch trending authors");
+        }
+
+        const authors = await response.json();
+
+        // Create a container like the tags container
+        const container = document.createElement("div");
+        container.className = "d-flex flex-wrap gap-2 mt-2";
+
+        authors.forEach(author => {
+            const a = document.createElement("a");
+            a.className = "tag-btn text-decoration-none";
+            a.textContent = author.user_name;
+
+            // Link to author page
+            a.href = `trendingAuthor.html?author_id=${author.user_id}`;
+
+            container.appendChild(a);
+        });
+
+        panel.appendChild(container);
+
+    } catch (error) {
+        console.error("Error loading trending authors:", error);
+    }
+}
+

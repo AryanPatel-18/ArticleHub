@@ -119,6 +119,7 @@ body {
     background-color: #f6efd6;
     border-radius: 20px;
     padding: 1.5rem;
+    margin-bottom: 16px; 
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     position: relative;

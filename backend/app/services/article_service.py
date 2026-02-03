@@ -125,18 +125,18 @@ def get_saved_articles_for_user(
             articles=[]
         )
 
-    # 2. Get paginated saved article IDs
-    saved_rows = (
-        db.query(UserInteraction.article_id)
-        .filter(UserInteraction.user_id == user_id)
-        .filter(UserInteraction.interaction_type == "save")
-        .order_by(UserInteraction.created_at.desc())
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-        .all()
-    )
-
-    article_ids = [row.article_id for row in saved_rows]
+    # 2. Get paginated saved article IDs (IMPORTANT: use scalars)
+    article_ids = [
+        row[0] for row in (
+            db.query(UserInteraction.article_id)
+            .filter(UserInteraction.user_id == user_id)
+            .filter(UserInteraction.interaction_type == "save")
+            .order_by(UserInteraction.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+            .all()
+        )
+    ]
 
     if not article_ids:
         return PaginatedSavedArticlesResponse(
@@ -147,29 +147,38 @@ def get_saved_articles_for_user(
             articles=[]
         )
 
-    # 3. Load articles with authors
-    articles = (
-        db.query(Article, User.user_name)
+    # 3. Load articles with author name + like count
+    rows = (
+        db.query(
+            Article,
+            User.user_name,
+            ArticleStat.like_count
+        )
         .join(User, Article.author_id == User.user_id)
+        .join(ArticleStat, Article.article_id == ArticleStat.article_id)
         .filter(Article.article_id.in_(article_ids))
+        .filter(Article.is_published)
         .all()
     )
 
+    # Map article_id -> (Article, username, likes)
     article_map = {
-        article.article_id: (article, username)
-        for article, username in articles
+        article.article_id: (article, username, likes)
+        for article, username, likes in rows
     }
 
-    # 4. Build response in original order (skip missing articles safely)
+    # 4. Build response preserving save order
     result = []
     for aid in article_ids:
         if aid not in article_map:
-            continue  # article deleted but interaction still exists
+            continue  # article deleted but save still exists
 
-        article, username = article_map[aid]
+        article, username, likes = article_map[aid]
+
         result.append(
             SavedArticleResponse(
                 article_id=article.article_id,
+                likes=likes,
                 title=article.title,
                 content=article.content,
                 author_username=username,
@@ -313,3 +322,65 @@ def delete_article(db: Session, article_id: int, user_id: int):
     db.commit()
 
     return {"message": "Article deleted successfully"}
+
+def get_articles_by_tag(
+    db: Session,
+    tag_id: int,
+    page: int = 1,
+    page_size: int = 5
+):
+    if page < 1:
+        page = 1
+
+    offset = (page - 1) * page_size
+
+    base_query = (
+        db.query(Article)
+        .join(ArticleTag, Article.article_id == ArticleTag.article_id)
+        .filter(ArticleTag.tag_id == tag_id)
+        .filter(Article.is_published)
+        .order_by(Article.created_at.desc())
+    )
+
+    total_articles = base_query.count()
+    total_pages = (total_articles + page_size - 1) // page_size
+
+    articles = (
+        base_query
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+
+    return articles, total_articles, total_pages
+
+def get_articles_by_author(
+    db: Session,
+    author_id: int,
+    page: int = 1,
+    page_size: int = 5
+):
+    if page < 1:
+        page = 1
+
+    offset = (page - 1) * page_size
+
+    base_query = (
+        db.query(Article)
+        .filter(Article.author_id == author_id)
+        .filter(Article.is_published)
+        .order_by(Article.created_at.desc())
+    )
+
+    total_articles = base_query.count()
+    total_pages = (total_articles + page_size - 1) // page_size
+
+    articles = (
+        base_query
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+
+    return articles, total_articles, total_pages
+
