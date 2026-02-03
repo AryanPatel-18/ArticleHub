@@ -4,9 +4,10 @@ from datetime import datetime
 
 
 class ArticleCreateRequest(BaseModel):
+    token : str
     title: str = Field(..., min_length=5)
     content: str = Field(..., min_length=50)
-    tag_ids: List[int]
+    tag_names: List[str]
 
 
 class ArticleResponse(BaseModel):
@@ -66,3 +67,41 @@ class PaginatedArticleRecommendationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class SavedArticleResponse(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    author_username: str
+    created_at: datetime
+
+
+class PaginatedSavedArticlesResponse(BaseModel):
+    page: int
+    page_size: int
+    total_results: int
+    total_pages: int
+    articles: List[SavedArticleResponse]
+    
+class UserArticleResponse(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    author_username: str
+    created_at: datetime
+
+
+class PaginatedUserArticlesResponse(BaseModel):
+    page: int
+    page_size: int
+    total_results: int
+    total_pages: int
+    articles: list[UserArticleResponse]
+
+class UserArticleStatsResponse(BaseModel):
+    total_articles: int
+    published_articles: int
+    total_views: int
+    total_likes: int
+    total_saves: int

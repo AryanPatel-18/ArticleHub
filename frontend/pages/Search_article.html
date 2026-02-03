@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>write.it. | Articles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/Search_result_CSS.css">
+    <script src="../js/Search_result_JS.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar custom-navbar">
+    <div class="container-fluid">
+        <a href="home.html" class="navbar-brand mx-4">write.it.</a>
+    </div>
+</nav>
+
+<div>
+    <a href="Home.html" class="back-btn" id="back-btn">
+        ← Back to Home
+    </a>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-wrapper">
+    <!-- PAGE HEADER
+    <div class="page-header">
+        <h1 class="page-title" id="page-title">Articles</h1>
+        <p class="results-count" id="results-count"></p>
+    </div> -->
+
+    <!-- CONTROLS -->
+    <div class="controls-section">
+        <div class="sort-container">
+            <button class="sort-btn active" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
+            <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
+            <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
+        </div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div class="loading-state" id="loading-state">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading articles...</p>
+    </div>
+
+    <!-- ARTICLES CONTAINER -->
+    <div class="articles-container" id="articles-container" style="display: none;">
+        <!-- Articles will be dynamically loaded here -->
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-controls" id="pagination-controls" style="display: none;">
+        <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
+        <span id="page-indicator">Page 1 of 1</span>
+        <button id="next-page-btn" onclick="nextPage()" disabled>Next</button>
+    </div>
+</div>
+
+</body>
+</html>

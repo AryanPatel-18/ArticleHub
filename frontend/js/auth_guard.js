@@ -3,7 +3,7 @@ export async function protectRoute() {
 
     // If no token → redirect
     if (!token) {
-        window.location.href = "../pages/Authentication.html";
+        window.location.href = "../pages/Session_timeout.html";
         return;
     }
 
@@ -21,8 +21,7 @@ export async function protectRoute() {
             // Token invalid or expired
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user_id");
-            window.location.href = "../pages/Authentication.html";
-            alert("Please Login")
+            window.location.href = "../pages/Session_timeout.html";
             return;
         }
 
@@ -31,6 +30,10 @@ export async function protectRoute() {
 
     } catch (err) {
         console.error("Token validation error:", err);
-        window.location.href = "../pages/Auth.html";
+        window.location.href = "../pages/Authentication.html";
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    protectRoute();
+});

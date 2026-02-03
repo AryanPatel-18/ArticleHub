@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>write.it. | Your Articles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/Your_article_CSS.css">
+    <script src="../js/Your_article_JS.js"></script>
+    <style>
+      
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar custom-navbar">
+    <div class="container-fluid">
+        <a href="home.html" class="navbar-brand mx-4">write.it.</a>
+    </div>
+</nav>
+
+<div>
+    <a href="home.html" class="back-btn">
+        ← Back to Home
+    </a>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-wrapper">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">Your Articles</h1>
+        <p class="page-subtitle">Manage and track all your published and draft articles</p>
+        
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number" id="total-articles">0</span>
+                <span class="stat-label">Total Articles</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="published-count">0</span>
+                <span class="stat-label">Published</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-views">0</span>
+                <span class="stat-label">Total Views</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-likes">0</span>
+                <span class="stat-label">Total Likes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-saves">0</span>
+                <span class="stat-label">Total Saves</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-section">
+        <div class="sort-container">
+            <button class="sort-btn active" id="sort-newest" onclick="fetchUserArticles('newest')">Newest</button>
+            <button class="sort-btn" id="sort-oldest" onclick="fetchUserArticles('oldest')">Oldest</button>
+            <button class="sort-btn" id="sort-popular" onclick="fetchUserArticles('most_liked')">Most Liked</button>
+        </div>
+    </div>
+
+    <!-- ARTICLES CONTAINER -->
+    <div class="articles-container" id="articles-container">
+        <!-- Articles will be dynamically loaded here -->
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-controls" id="pagination-controls" style="display: none;">
+        <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
+        <span id="page-indicator">Page 1 of 1</span>
+        <button id="next-page-btn" onclick="nextPage()" disabled>Next</button>
+    </div>
+</div>
+<div id="confirm-overlay" class="confirm-overlay hidden">
+    <div class="confirm-box">
+        <h4>Delete Article</h4>
+        <p>Are you sure you want to delete this article?</p>
+        <div class="confirm-actions">
+            <button id="confirm-no" class="btn btn-secondary">Cancel</button>
+            <button id="confirm-yes" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+</div>
+<div id="toast-container"></div>
+</body>
+</html>

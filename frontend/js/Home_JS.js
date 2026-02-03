@@ -113,3 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
     loadArticles();
 });
 
+const logoutButton = document.getElementById("dropdown-logout-desktop")
+
+logoutButton.addEventListener('click', () => {
+    localStorage.clear()
+    sessionStorage.clear()
+    window.location.href = "../pages/Authentication.html";
+})
+
+// const logoutLink = document.getElementById("dropdown-logout-desktop")
+// logoutLink.addEventListener('click',logout())
