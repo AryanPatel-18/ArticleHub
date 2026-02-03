@@ -1,7 +1,8 @@
 import json
 from sqlalchemy.orm import Session
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+import re
+from collections import Counter
 from models.article_model import Article, ArticleTag, Tag
 from models.vector_model import ArticleVector
 
@@ -70,3 +71,57 @@ def create_article_vector(db: Session, article_id: int):
 
     db.add(vector)
     db.commit()
+
+TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")
+
+
+def tokenize(text: str) -> list[str]:
+    return TOKEN_PATTERN.findall(text.lower())
+
+
+def build_query_vector(db: Session, query: str) -> dict:
+    """
+    Builds a TF-IDF sparse vector for a search query
+    using the SAME vocabulary and IDF values as article vectors.
+    """
+
+    # 1. Load latest vocabulary + idf (single source of truth)
+    sample_vector = (
+        db.query(ArticleVector)
+        .order_by(ArticleVector.vector_version.desc())
+        .first()
+    )
+
+    if not sample_vector:
+        raise RuntimeError("No article vectors exist. Cannot build query vector.")
+
+    vocab = sample_vector.text_vector["vocabulary"]
+    idf = sample_vector.text_vector["idf"]
+
+    # 2. Tokenize query
+    tokens = tokenize(query)
+    if not tokens:
+        return {"indices": [], "values": []}
+
+    term_counts = Counter(tokens)
+    total_terms = sum(term_counts.values())
+
+    indices = []
+    values = []
+
+    # 3. Build TF-IDF vector
+    for term, count in term_counts.items():
+        if term not in vocab:
+            continue
+
+        idx = vocab[term]
+        tf = count / total_terms
+        tf_idf = tf * idf[idx]
+
+        indices.append(idx)
+        values.append(tf_idf)
+
+    return {
+        "indices": indices,
+        "values": values
+    }

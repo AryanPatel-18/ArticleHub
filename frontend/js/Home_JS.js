@@ -123,3 +123,14 @@ logoutButton.addEventListener('click', () => {
 
 // const logoutLink = document.getElementById("dropdown-logout-desktop")
 // logoutLink.addEventListener('click',logout())
+
+document.getElementById("nav-search-form-desktop").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const query = document.getElementById("navbar-search-input-desktop").value.trim();
+
+    if (!query) return;
+
+    // Redirect to search page with query as URL param
+    window.location.href = `../pages/Search_article.html?q=${encodeURIComponent(query)}`;
+});

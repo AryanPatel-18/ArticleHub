@@ -1,277 +1,164 @@
-// API Configuration
-const API_BASE_URL = 'http://localhost:3000/api'; // Replace with your actual API URL
-const AUTH_TOKEN = localStorage.getItem('authToken'); // Assuming you store auth token in localStorage
-
-// Get URL parameters
-const urlParams = new URLSearchParams(window.location.search);
-const pageType = urlParams.get('type') || 'all'; // 'all', 'search', 'bookmarks', 'tag'
-const searchQuery = urlParams.get('query') || '';
-const tagQuery = urlParams.get('tag') || '';
+const API_BASE_URL = "http://127.0.0.1:8000";
+const AUTH_TOKEN = localStorage.getItem("auth_token");
 
 let allArticles = [];
-let filteredArticles = [];
-let currentSort = 'newest';
-let currentPage = 1;
-const articlesPerPage = 10;
+let currentSort = "newest";
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    configurePageByType();
-    fetchArticles();
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("q");
+
+    if (!query) {
+        showError("No search query provided.");
+        return;
+    }
+
+    fetchSearchResults(query);
 });
 
-// Configure page based on type
-function configurePageByType() {
-    const titleEl = document.getElementById('page-title');
-    const subtitleEl = document.getElementById('page-subtitle');
-    const backBtn = document.getElementById('back-btn');
-    
-    switch(pageType) {
-        case 'search':
-            titleEl.textContent = `Search Results`;
-            subtitleEl.textContent = `Results for "${searchQuery}"`;
-            break;
-        case 'bookmarks':
-            titleEl.textContent = 'Bookmarked Articles';
-            subtitleEl.textContent = 'Your saved articles for later reading';
-            break;
-        case 'tag':
-            titleEl.textContent = `Tag: ${tagQuery}`;
-            subtitleEl.textContent = `Articles tagged with "${tagQuery}"`;
-            break;
-        case 'author':
-            const authorName = urlParams.get('author') || 'Author';
-            titleEl.textContent = `Articles by ${authorName}`;
-            subtitleEl.textContent = `All articles written by ${authorName}`;
-            break;
-        default:
-            titleEl.textContent = 'All Articles';
-            subtitleEl.textContent = 'Browse all articles';
+async function fetchSearchResults(query) {
+    if (!AUTH_TOKEN) {
+        console.error("Auth token missing");
+        return;
     }
-}
 
-// Fetch articles from API
-async function fetchArticles() {
+    showLoading();
+
     try {
-        showLoading();
-        
-        let apiEndpoint = '';
-        let requestParams = {};
-        
-        // Determine API endpoint based on page type
-        switch(pageType) {
-            case 'search':
-                apiEndpoint = `${API_BASE_URL}/articles/search`;
-                requestParams = { query: searchQuery };
-                break;
-            case 'bookmarks':
-                apiEndpoint = `${API_BASE_URL}/user/bookmarks`;
-                break;
-            case 'tag':
-                apiEndpoint = `${API_BASE_URL}/articles/tag/${encodeURIComponent(tagQuery)}`;
-                break;
-            case 'author':
-                const authorId = urlParams.get('authorId');
-                apiEndpoint = `${API_BASE_URL}/articles/author/${authorId}`;
-                break;
-            default:
-                apiEndpoint = `${API_BASE_URL}/articles`;
-        }
-        
-        // Build query string for GET requests
-        const queryString = Object.keys(requestParams).length > 0 
-            ? '?' + new URLSearchParams(requestParams).toString() 
-            : '';
-        
-        const response = await fetch(`${apiEndpoint}${queryString}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${AUTH_TOKEN}`
+        const response = await fetch(
+            `${API_BASE_URL}/search?q=${encodeURIComponent(query)}`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AUTH_TOKEN}`,
+                    "Content-Type": "application/json"
+                }
             }
-        });
+        );
 
         if (!response.ok) {
-            if (response.status === 401) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            throw new Error('Failed to fetch articles');
+            throw new Error("Search request failed");
         }
 
         const data = await response.json();
-        allArticles = data.articles || [];
-        filteredArticles = [...allArticles];
-        
+        allArticles = data.results || [];
+
         hideLoading();
-        updateResultsCount();
-        sortArticles('newest');
+        sortArticles("newest");
+
     } catch (error) {
-        console.error('Error fetching articles:', error);
-        hideLoading();
-        showError('Failed to load articles. Please try again later.');
+        console.error("Search failed:", error);
+        showError("Failed to load search results.");
     }
 }
 
-// Show loading state
+/* ================= UI STATE ================= */
+
 function showLoading() {
-    document.getElementById('loading-state').style.display = 'block';
-    document.getElementById('articles-container').style.display = 'none';
+    document.getElementById("loading-state").style.display = "block";
+    document.getElementById("articles-container").style.display = "none";
 }
 
-// Hide loading state
 function hideLoading() {
-    document.getElementById('loading-state').style.display = 'none';
-    document.getElementById('articles-container').style.display = 'flex';
+    document.getElementById("loading-state").style.display = "none";
+    document.getElementById("articles-container").style.display = "flex";
 }
 
-// Update results count
-function updateResultsCount() {
-    const count = filteredArticles.length;
-    const countEl = document.getElementById('results-count');
-    countEl.textContent = `${count} article${count !== 1 ? 's' : ''} found`;
-}
-
-// Show error message
 function showError(message) {
     hideLoading();
-    const container = document.getElementById('articles-container');
-    container.style.display = 'block';
+    const container = document.getElementById("articles-container");
     container.innerHTML = `
         <div class="empty-state">
             <div class="empty-state-icon">⚠️</div>
             <h2 class="empty-state-title">Error</h2>
             <p class="empty-state-text">${message}</p>
-            <button class="sort-btn" onclick="fetchArticles()">Retry</button>
         </div>
     `;
 }
 
-// Sort articles
+/* ================= SORTING ================= */
+
 function sortArticles(sortType) {
     currentSort = sortType;
-    currentPage = 1;
-    
-    // Update active button
-    document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`sort-${sortType}`).classList.add('active');
-    
-    // Sort
-    if (sortType === 'newest') {
-        filteredArticles.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
-    } else if (sortType === 'oldest') {
-        filteredArticles.sort((a, b) => new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt));
-    } else if (sortType === 'popular') {
-        filteredArticles.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+
+    document.querySelectorAll(".sort-btn").forEach(btn =>
+        btn.classList.remove("active")
+    );
+    document.getElementById(`sort-${sortType}`).classList.add("active");
+
+    if (sortType === "newest") {
+        allArticles.sort((a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
+        );
+    } else if (sortType === "oldest") {
+        allArticles.sort((a, b) =>
+            new Date(a.created_at) - new Date(b.created_at)
+        );
+    } else if (sortType === "popular") {
+        allArticles.sort((a, b) =>
+            (b.likes || 0) - (a.likes || 0)
+        );
     }
-    
+
     renderArticles();
 }
 
-// Render articles
+/* ================= RENDER ================= */
+
 function renderArticles() {
-    const container = document.getElementById('articles-container');
-    
-    if (filteredArticles.length === 0) {
-        container.style.display = 'block';
+    const container = document.getElementById("articles-container");
+
+    if (!allArticles.length) {
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
-                <h2 class="empty-state-title">No articles found</h2>
-                <p class="empty-state-text">Try adjusting your search or browse all articles.</p>
+                <h2 class="empty-state-title">No results</h2>
+                <p class="empty-state-text">No articles matched your search.</p>
             </div>
         `;
-        document.getElementById('pagination-controls').style.display = 'none';
         return;
     }
-    
-    container.style.display = 'flex';
-    
-    // Pagination
-    const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
-    const startIndex = (currentPage - 1) * articlesPerPage;
-    const endIndex = startIndex + articlesPerPage;
-    const articlesToShow = filteredArticles.slice(startIndex, endIndex);
-    
-    container.innerHTML = articlesToShow.map(article => `
-        <a href="view_article.html?id=${article.id}" class="article-link">
-            <div class="article-card">
-                <div class="article-header">
-                    <div style="flex: 1;">
-                        <h3 class="article-title">${escapeHtml(article.title)}</h3>
-                        <p class="article-author">By ${escapeHtml(article.author || article.authorName || 'Unknown')}</p>
+
+    container.innerHTML = allArticles.map(article => {
+        // Create a short preview instead of dumping full content
+        const preview = article.content
+            ? escapeHtml(article.content.substring(0, 200)) + "..."
+            : "";
+
+        return `
+            <a href="view_article.html?id=${article.article_id}" class="article-link">
+                <div class="article-card p-3 mb-3">
+                    <h3 class="article-title">${escapeHtml(article.title)}</h3>
+
+                    <p class="article-excerpt">
+                        ${preview}
+                    </p>
+
+                    <div class="article-meta">
+                        <span>📅 ${formatDate(article.created_at)}</span>
+                        <span> ❤️ ${article.likes || 0}</span>
+                        <span> 🔍 ${article.score.toFixed(2)}</span>
                     </div>
                 </div>
-                
-                <p class="article-excerpt">${escapeHtml(article.excerpt || '')}</p>
-                
-                <div class="article-meta">
-                    <span class="meta-item">📅 ${formatDate(article.date || article.createdAt)}</span>
-                    <span class="meta-item">👁️ ${article.views || 0} views</span>
-                    <span class="meta-item">❤️ ${article.likes || 0} likes</span>
-                </div>
-                
-                <div class="article-tags">
-                    ${article.tags && article.tags.length > 0 ? 
-                        article.tags.map(tag => `
-                            <span class="tag-badge" onclick="event.preventDefault(); filterByTag('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>
-                        `).join('') 
-                        : ''}
-                </div>
-            </div>
-        </a>
-    `).join('');
-    
-    // Update pagination
-    if (totalPages > 1) {
-        document.getElementById('pagination-controls').style.display = 'flex';
-        document.getElementById('page-indicator').textContent = `Page ${currentPage} of ${totalPages}`;
-        document.getElementById('prev-page-btn').disabled = currentPage === 1;
-        document.getElementById('next-page-btn').disabled = currentPage === totalPages;
-    } else {
-        document.getElementById('pagination-controls').style.display = 'none';
-    }
+            </a>
+        `;
+    }).join("");
 }
 
-// Format date
+
+/* ================= HELPERS ================= */
+
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString();
 }
 
-// Escape HTML to prevent XSS
 function escapeHtml(text) {
-    if (!text) return '';
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.toString().replace(/[&<>"']/g, m => map[m]);
-}
-
-// Filter by tag
-function filterByTag(tag) {
-    window.location.href = `articles.html?type=tag&tag=${encodeURIComponent(tag)}`;
-}
-
-// Pagination
-function prevPage() {
-    if (currentPage > 1) {
-        currentPage--;
-        renderArticles();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-function nextPage() {
-    const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        renderArticles();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (!text) return "";
+    return text.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[m]);
 }

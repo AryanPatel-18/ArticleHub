@@ -118,33 +118,6 @@ body {
     text-decoration: underline;
 }
 
-/* Articles */
-.article-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-}
-
-.article-card {
-    background-color: #f6efd6;
-    border-radius: 20px;
-    transition: transform 0.2s ease;
-}
-
-.article-link:hover .article-card {
-    transform: translateY(-3px);
-}
-
-.article-title {
-    color: #551414;
-    font-weight: 600;
-}
-
-.article-meta {
-    font-size: 0.8rem;
-    color: #666;
-}
-
 /* Tag buttons */
 .tag-btn {
     background-color: #e7e4d2;
@@ -179,33 +152,27 @@ body {
     background-color: #b19a5f;
 }
 
-/* Center search bar */
+/* ================= SEARCH BAR FIX (TRUE CENTER) ================= */
+
 .search-form {
-    width: 75%;
-    position: relative;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+}
+
+.search-form .input-group {
+    width: 100%;
 }
 
 .search-input {
-    border-radius: 20px;
-    padding: 8px 40px 8px 16px;
+    border-radius: 20px 0 0 20px;
+    padding: 8px 16px;
 }
 
-.search-clear-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    font-size: 1.3rem;
-    color: #000000;
-    cursor: pointer;
-    display: none;
-}
+/* ================================================================ */
 
-.search-clear-btn:hover {
-    color: #551414;
-}
 
 /* Scrollable articles */
 .article-scroll {
@@ -271,40 +238,32 @@ body {
 /* 📱 RESPONSIVE ENHANCEMENTS    */
 /* ============================= */
 
-/* Mobile navbar changes */
 @media(max-width: 992px) {
-    /* Show mobile search bar */
     .mobile-search-container {
         display: block !important;
     }
 
-    /* Hide desktop navbar */
     #desktop-navbar {
         display: none !important;
     }
 
-    /* Show mobile offcanvas toggle */
     .navbar-toggler {
         display: block !important;
     }
 
     .search-form {
         width: 100%;
-        margin: 0;
     }
 
-    /* Show mobile toggle buttons */
     .mobile-toggles {
         display: flex;
     }
 
-    /* Hide desktop sidebars */
     #home-left-column,
     #home-right-column {
         display: none !important;
     }
 
-    /* Hide vertical dividers */
     #left-divider-column,
     #right-divider-column {
         display: none !important;
@@ -314,20 +273,17 @@ body {
         max-height: unset;
     }
 
-    /* Center column takes full width */
     #home-center-column {
         width: 100%;
     }
 }
 
-/* buttons full width on smaller devices */
 @media(max-width: 768px) {
     .writer-btn {
         width: 100%;
     }
 }
 
-/* tags wrap better */
 @media(max-width: 576px) {
     .tag-btn {
         width: auto;
