@@ -48,7 +48,6 @@ def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
         tags=tags
     )
 
-
 def create_article(
     db: Session,
     author_id: int,
@@ -102,8 +101,6 @@ def create_article(
     except Exception as e:
         db.rollback()
         raise e
-
-
 
 def get_saved_articles_for_user(
     db: Session,
@@ -267,7 +264,6 @@ def get_articles_by_user(
         articles=articles
     )
 
-
 def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsResponse:
     # total articles
     total_articles = (
@@ -363,7 +359,6 @@ def get_articles_by_tag(
     )
 
     return tag.tag_name, articles, total_articles, total_pages
-
 
 def get_articles_by_author(
     db: Session,
@@ -469,5 +464,3 @@ def update_article(
     except Exception as e:
         db.rollback()
         raise e
-
-
