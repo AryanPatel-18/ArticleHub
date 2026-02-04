@@ -10,15 +10,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/Search_result_CSS.css">
-    <script src="../js/Search_result_JS.js"></script>
+    <link rel="stylesheet" href="../css/TrendingTag.css">
+    <!-- <script src="Bookmarked_JS.js"></script> -->
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar custom-navbar">
     <div class="container-fluid">
-        <a href="home.html" class="navbar-brand mx-4">write.it.</a>
+        <h1 class="navbar-brand mx-4">write.it.</h1>
     </div>
 </nav>
 
@@ -30,16 +30,14 @@
 
 <!-- PAGE CONTENT -->
 <div class="page-wrapper">
-    <!-- PAGE HEADER
     <div class="page-header">
-        <h1 class="page-title" id="page-title">Articles</h1>
+        <h1 class="page-title" id="page-title">Tag</h1>
         <p class="results-count" id="results-count"></p>
-    </div> -->
+    </div>
 
     <!-- CONTROLS -->
     <div class="controls-section">
         <div class="sort-container">
-            <button class="sort-btn active" id="sort-relevance" onclick="sortArticles('relevance')">Most Relevant</button>
             <button class="sort-btn active" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
             <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
             <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
@@ -57,7 +55,13 @@
         <!-- Articles will be dynamically loaded here -->
     </div>
 
+    <!-- PAGINATION -->
+    <div class="pagination-controls" id="pagination-controls" style="display: none;">
+        <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
+        <span id="page-indicator">Page 1 of 1</span>
+        <button id="next-page-btn" onclick="nextPage()" disabled>Next</button>
+    </div>
 </div>
-<script src="../js/Search_result_JS.js"></script>
+<script src="../js/TrendingTag.js"></script>
 </body>
 </html>

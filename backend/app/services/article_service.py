@@ -4,10 +4,11 @@ from models.vector_model import ArticleVector
 from models.user_model import User
 from models.interaction_model import UserInteraction
 import math
-from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse
+from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
 from services.article_vector_service import create_article_vector
 from sqlalchemy import func, desc, asc
 from fastapi import HTTPException
+from datetime import datetime
 
 def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
     article = (
@@ -53,51 +54,55 @@ def create_article(
     author_id: int,
     data: ArticleCreateRequest
 ):
-    # 1. Create article
-    article = Article(
-        title=data.title,
-        content=data.content,
-        author_id=author_id
-    )
-    db.add(article)
-    db.flush()  # get article.article_id
-
-    tag_objects = []
-
-    # 2. Handle tags (create if missing)
-    for tag_name in data.tag_names:
-        tag_name = tag_name.strip().lower()
-
-        tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
-
-        if not tag:
-            tag = Tag(tag_name=tag_name)
-            db.add(tag)
-            db.flush()  # get tag.tag_id
-
-        tag_objects.append(tag)
-
-    # 3. Create article-tag links
-    for tag in tag_objects:
-        link = ArticleTag(
-            article_id=article.article_id,
-            tag_id=tag.tag_id
+    try:
+        # 1. Create article
+        article = Article(
+            title=data.title,
+            content=data.content,
+            author_id=author_id
         )
-        db.add(link)
+        db.add(article)
+        db.flush()  # get article.article_id
 
-    # 4. Create stats row
-    stats = ArticleStat(article_id=article.article_id)
-    db.add(stats)
+        tag_objects = []
 
-    # 5. Commit article + tags + links + stats FIRST
-    db.commit()
-    db.refresh(article)
+        # 2. Handle tags (create if missing)
+        for tag_name in data.tag_names:
+            tag_name = tag_name.strip().lower()
 
-    # 6. Create vector AFTER commit (new transaction)
-    create_article_vector(db, article.article_id)
-    db.commit()
+            tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+            if not tag:
+                tag = Tag(tag_name=tag_name)
+                db.add(tag)
+                db.flush()  # get tag.tag_id
 
-    return article
+            tag_objects.append(tag)
+
+        # 3. Create article-tag links
+        for tag in tag_objects:
+            link = ArticleTag(
+                article_id=article.article_id,
+                tag_id=tag.tag_id
+            )
+            db.add(link)
+
+        # 4. Create stats row
+        stats = ArticleStat(article_id=article.article_id)
+        db.add(stats)
+
+        # 5. Create vectors (same transaction)
+        create_article_vector(db, article.article_id)
+
+        # ✅ SINGLE COMMIT
+        db.commit()
+        db.refresh(article)
+
+        return article
+
+    except Exception as e:
+        db.rollback()
+        raise e
+
 
 
 def get_saved_articles_for_user(
@@ -334,6 +339,11 @@ def get_articles_by_tag(
 
     offset = (page - 1) * page_size
 
+    # Fetch tag name
+    tag = db.query(Tag).filter(Tag.tag_id == tag_id).first()
+    if not tag:
+        return None, None, 0, 0  # handled in router
+
     base_query = (
         db.query(Article)
         .join(ArticleTag, Article.article_id == ArticleTag.article_id)
@@ -352,7 +362,8 @@ def get_articles_by_tag(
         .all()
     )
 
-    return articles, total_articles, total_pages
+    return tag.tag_name, articles, total_articles, total_pages
+
 
 def get_articles_by_author(
     db: Session,
@@ -364,6 +375,11 @@ def get_articles_by_author(
         page = 1
 
     offset = (page - 1) * page_size
+
+    # 🔹 Fetch author name from users table
+    author = db.query(User).filter(User.user_id == author_id).first()
+    if not author:
+        return None, None, 0, 0
 
     base_query = (
         db.query(Article)
@@ -382,5 +398,76 @@ def get_articles_by_author(
         .all()
     )
 
-    return articles, total_articles, total_pages
+    return author.user_name, articles, total_articles, total_pages
+
+def update_article(
+    db: Session,
+    article_id: int,
+    user_id: int,
+    data: ArticleUpdateRequest
+):
+    try:
+        # 1. Fetch article
+        article = db.query(Article).filter(Article.article_id == article_id).first()
+        if not article:
+            return None
+
+        # 2. AUTHORIZATION CHECK
+        if article.author_id != user_id:
+            raise PermissionError("Not your article")
+
+        # 3. Update fields
+        article.title = data.title
+        article.content = data.content
+        article.updated_at = datetime.utcnow()
+
+        # 4. Remove old tags
+        db.query(ArticleTag).filter(
+            ArticleTag.article_id == article_id
+        ).delete()
+
+        tag_objects = []
+
+        # 5. Recreate tags
+        for tag_name in data.tag_names:
+            tag_name = tag_name.strip().lower()
+
+            tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+            if not tag:
+                tag = Tag(tag_name=tag_name)
+                db.add(tag)
+                db.flush()
+
+            tag_objects.append(tag)
+
+        # 6. Recreate article-tag links
+        for tag in tag_objects:
+            link = ArticleTag(
+                article_id=article.article_id,
+                tag_id=tag.tag_id
+            )
+            db.add(link)
+
+        # 7. Delete old vectors
+        db.query(ArticleVector).filter(
+            ArticleVector.article_id == article.article_id
+        ).delete()
+
+        # 8. Recompute vectors
+        create_article_vector(db, article.article_id)
+
+        # ✅ SINGLE COMMIT at the end
+        db.commit()
+        db.refresh(article)
+
+        return article, [t.tag_name for t in tag_objects]
+
+    except PermissionError:
+        db.rollback()
+        raise
+
+    except Exception as e:
+        db.rollback()
+        raise e
+
 

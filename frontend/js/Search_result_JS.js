@@ -86,15 +86,23 @@ function sortArticles(sortType) {
     );
     document.getElementById(`sort-${sortType}`).classList.add("active");
 
-    if (sortType === "newest") {
+    if (sortType === "relevance") {
+        // 🔥 Sort by backend-provided relevance score
+        allArticles.sort((a, b) =>
+            (b.score || 0) - (a.score || 0)
+        );
+    }
+    else if (sortType === "newest") {
         allArticles.sort((a, b) =>
             new Date(b.created_at) - new Date(a.created_at)
         );
-    } else if (sortType === "oldest") {
+    }
+    else if (sortType === "oldest") {
         allArticles.sort((a, b) =>
             new Date(a.created_at) - new Date(b.created_at)
         );
-    } else if (sortType === "popular") {
+    }
+    else if (sortType === "popular") {
         allArticles.sort((a, b) =>
             (b.likes || 0) - (a.likes || 0)
         );
@@ -102,6 +110,7 @@ function sortArticles(sortType) {
 
     renderArticles();
 }
+
 
 /* ================= RENDER ================= */
 

@@ -157,7 +157,7 @@ async function loadTrendingTags() {
             a.textContent = tag.tag_name;
 
             // build URL to trendingTag.html with tag_id
-            a.href = `trendingTag.html?tag_id=${tag.tag_id}`;
+            a.href = `TrendingTag.html?tag_id=${tag.tag_id}`;
 
             container.appendChild(a);
         });

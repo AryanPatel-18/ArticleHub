@@ -116,6 +116,7 @@ class ArticleByTagSchema(BaseModel):
 
 class PaginatedArticlesByTagSchema(BaseModel):
     tag_id: int
+    tag_name : str
     page: int
     page_size: int
     total_articles: int
@@ -131,6 +132,7 @@ class ArticleByAuthorSchema(BaseModel):
 
 class PaginatedArticlesByAuthorSchema(BaseModel):
     author_id: int
+    author_name: str
     page: int
     page_size: int
     total_articles: int
@@ -147,3 +149,17 @@ class SavedArticleSchema(BaseModel):
 class SavedArticlesResponseSchema(BaseModel):
     user_id: int
     articles: List[SavedArticleSchema]
+
+class ArticleUpdateRequest(BaseModel):
+    title: str = Field(..., min_length=3, max_length=150)
+    content: str = Field(..., min_length=50)
+    tag_names: List[str] = []
+
+class ArticleUpdateResponse(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    author_id: int
+    updated_at: datetime
+    tag_names: List[str]
+

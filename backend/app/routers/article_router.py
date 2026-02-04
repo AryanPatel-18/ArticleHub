@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from core.dependencies import get_db, get_current_user_id
 from schemas.article_schema import ArticleReadResponse
-from services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author
-from schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema
+from services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author, update_article
+from schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
 from core.security import decode_access_token
 
 router = APIRouter(prefix="/articles", tags=["Articles"])
@@ -71,15 +71,19 @@ def fetch_articles_by_tag(
 ):
     page_size = 5
 
-    articles, total_articles, total_pages = get_articles_by_tag(
+    tag_name, articles, total_articles, total_pages = get_articles_by_tag(
         db=db,
         tag_id=tag_id,
         page=page,
         page_size=page_size
     )
 
+    if tag_name is None:
+        raise HTTPException(status_code=404, detail="Tag not found")
+
     return PaginatedArticlesByTagSchema(
         tag_id=tag_id,
+        tag_name=tag_name,   # ✅ now included
         page=page,
         page_size=page_size,
         total_articles=total_articles,
@@ -96,7 +100,6 @@ def fetch_articles_by_tag(
         ]
     )
 
-
 @router.get("/get/by-author", response_model=PaginatedArticlesByAuthorSchema)
 def fetch_articles_by_author(
     author_id: int = Query(..., description="User ID (author)"),
@@ -105,15 +108,19 @@ def fetch_articles_by_author(
 ):
     page_size = 5
 
-    articles, total_articles, total_pages = get_articles_by_author(
+    author_name, articles, total_articles, total_pages = get_articles_by_author(
         db=db,
         author_id=author_id,
         page=page,
         page_size=page_size
     )
 
+    if author_name is None:
+        raise HTTPException(status_code=404, detail="Author not found")
+
     return PaginatedArticlesByAuthorSchema(
         author_id=author_id,
+        author_name=author_name,  # ✅ now included
         page=page,
         page_size=page_size,
         total_articles=total_articles,
@@ -138,3 +145,34 @@ def fetch_saved_articles(
     db: Session = Depends(get_db)
 ):
     return get_saved_articles_for_user(db, user_id,page, page_size)
+
+@router.put("/{article_id}", response_model=ArticleUpdateResponse)
+def edit_article(
+    article_id: int,
+    data: ArticleUpdateRequest,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)  # your JWT dependency
+):
+    try:
+        result = update_article(
+            db=db,
+            article_id=article_id,
+            user_id=user_id,
+            data=data
+        )
+    except PermissionError:
+        raise HTTPException(status_code=401, detail="Not authorized to edit this article")
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Article not found")
+
+    article, tag_names = result
+
+    return ArticleUpdateResponse(
+        article_id=article.article_id,
+        title=article.title,
+        content=article.content,
+        author_id=article.author_id,
+        updated_at=article.updated_at,
+        tag_names=tag_names
+    )
