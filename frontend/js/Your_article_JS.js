@@ -80,7 +80,7 @@ function renderArticles() {
                     View
                 </a>
 
-                <a href="Create.html?id=${article.article_id}" 
+                <a href="Edit.html?id=${article.article_id}" 
                 class="btn btn-sm btn-warning">
                     Edit
                 </a>

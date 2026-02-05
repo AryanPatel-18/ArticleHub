@@ -4,10 +4,11 @@ from models.vector_model import ArticleVector
 from models.user_model import User
 from models.interaction_model import UserInteraction
 import math
-from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse
+from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
 from services.article_vector_service import create_article_vector
 from sqlalchemy import func, desc, asc
 from fastapi import HTTPException
+from datetime import datetime
 
 def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
     article = (
@@ -47,58 +48,59 @@ def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
         tags=tags
     )
 
-
 def create_article(
     db: Session,
     author_id: int,
     data: ArticleCreateRequest
 ):
-    # 1. Create article
-    article = Article(
-        title=data.title,
-        content=data.content,
-        author_id=author_id
-    )
-    db.add(article)
-    db.flush()  # get article.article_id
-
-    tag_objects = []
-
-    # 2. Handle tags (create if missing)
-    for tag_name in data.tag_names:
-        tag_name = tag_name.strip().lower()
-
-        tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
-
-        if not tag:
-            tag = Tag(tag_name=tag_name)
-            db.add(tag)
-            db.flush()  # get tag.tag_id
-
-        tag_objects.append(tag)
-
-    # 3. Create article-tag links
-    for tag in tag_objects:
-        link = ArticleTag(
-            article_id=article.article_id,
-            tag_id=tag.tag_id
+    try:
+        # 1. Create article
+        article = Article(
+            title=data.title,
+            content=data.content,
+            author_id=author_id
         )
-        db.add(link)
+        db.add(article)
+        db.flush()  # get article.article_id
 
-    # 4. Create stats row
-    stats = ArticleStat(article_id=article.article_id)
-    db.add(stats)
+        tag_objects = []
 
-    # 5. Commit article + tags + links + stats FIRST
-    db.commit()
-    db.refresh(article)
+        # 2. Handle tags (create if missing)
+        for tag_name in data.tag_names:
+            tag_name = tag_name.strip().lower()
 
-    # 6. Create vector AFTER commit (new transaction)
-    create_article_vector(db, article.article_id)
-    db.commit()
+            tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+            if not tag:
+                tag = Tag(tag_name=tag_name)
+                db.add(tag)
+                db.flush()  # get tag.tag_id
 
-    return article
+            tag_objects.append(tag)
 
+        # 3. Create article-tag links
+        for tag in tag_objects:
+            link = ArticleTag(
+                article_id=article.article_id,
+                tag_id=tag.tag_id
+            )
+            db.add(link)
+
+        # 4. Create stats row
+        stats = ArticleStat(article_id=article.article_id)
+        db.add(stats)
+
+        # 5. Create vectors (same transaction)
+        create_article_vector(db, article.article_id)
+
+        # ✅ SINGLE COMMIT
+        db.commit()
+        db.refresh(article)
+
+        return article
+
+    except Exception as e:
+        db.rollback()
+        raise e
 
 def get_saved_articles_for_user(
     db: Session,
@@ -125,18 +127,18 @@ def get_saved_articles_for_user(
             articles=[]
         )
 
-    # 2. Get paginated saved article IDs
-    saved_rows = (
-        db.query(UserInteraction.article_id)
-        .filter(UserInteraction.user_id == user_id)
-        .filter(UserInteraction.interaction_type == "save")
-        .order_by(UserInteraction.created_at.desc())
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-        .all()
-    )
-
-    article_ids = [row.article_id for row in saved_rows]
+    # 2. Get paginated saved article IDs (IMPORTANT: use scalars)
+    article_ids = [
+        row[0] for row in (
+            db.query(UserInteraction.article_id)
+            .filter(UserInteraction.user_id == user_id)
+            .filter(UserInteraction.interaction_type == "save")
+            .order_by(UserInteraction.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+            .all()
+        )
+    ]
 
     if not article_ids:
         return PaginatedSavedArticlesResponse(
@@ -147,29 +149,38 @@ def get_saved_articles_for_user(
             articles=[]
         )
 
-    # 3. Load articles with authors
-    articles = (
-        db.query(Article, User.user_name)
+    # 3. Load articles with author name + like count
+    rows = (
+        db.query(
+            Article,
+            User.user_name,
+            ArticleStat.like_count
+        )
         .join(User, Article.author_id == User.user_id)
+        .join(ArticleStat, Article.article_id == ArticleStat.article_id)
         .filter(Article.article_id.in_(article_ids))
+        .filter(Article.is_published)
         .all()
     )
 
+    # Map article_id -> (Article, username, likes)
     article_map = {
-        article.article_id: (article, username)
-        for article, username in articles
+        article.article_id: (article, username, likes)
+        for article, username, likes in rows
     }
 
-    # 4. Build response in original order (skip missing articles safely)
+    # 4. Build response preserving save order
     result = []
     for aid in article_ids:
         if aid not in article_map:
-            continue  # article deleted but interaction still exists
+            continue  # article deleted but save still exists
 
-        article, username = article_map[aid]
+        article, username, likes = article_map[aid]
+
         result.append(
             SavedArticleResponse(
                 article_id=article.article_id,
+                likes=likes,
                 title=article.title,
                 content=article.content,
                 author_username=username,
@@ -253,7 +264,6 @@ def get_articles_by_user(
         articles=articles
     )
 
-
 def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsResponse:
     # total articles
     total_articles = (
@@ -313,3 +323,144 @@ def delete_article(db: Session, article_id: int, user_id: int):
     db.commit()
 
     return {"message": "Article deleted successfully"}
+
+def get_articles_by_tag(
+    db: Session,
+    tag_id: int,
+    page: int = 1,
+    page_size: int = 5
+):
+    if page < 1:
+        page = 1
+
+    offset = (page - 1) * page_size
+
+    # Fetch tag name
+    tag = db.query(Tag).filter(Tag.tag_id == tag_id).first()
+    if not tag:
+        return None, None, 0, 0  # handled in router
+
+    base_query = (
+        db.query(Article)
+        .join(ArticleTag, Article.article_id == ArticleTag.article_id)
+        .filter(ArticleTag.tag_id == tag_id)
+        .filter(Article.is_published)
+        .order_by(Article.created_at.desc())
+    )
+
+    total_articles = base_query.count()
+    total_pages = (total_articles + page_size - 1) // page_size
+
+    articles = (
+        base_query
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+
+    return tag.tag_name, articles, total_articles, total_pages
+
+def get_articles_by_author(
+    db: Session,
+    author_id: int,
+    page: int = 1,
+    page_size: int = 5
+):
+    if page < 1:
+        page = 1
+
+    offset = (page - 1) * page_size
+
+    # 🔹 Fetch author name from users table
+    author = db.query(User).filter(User.user_id == author_id).first()
+    if not author:
+        return None, None, 0, 0
+
+    base_query = (
+        db.query(Article)
+        .filter(Article.author_id == author_id)
+        .filter(Article.is_published)
+        .order_by(Article.created_at.desc())
+    )
+
+    total_articles = base_query.count()
+    total_pages = (total_articles + page_size - 1) // page_size
+
+    articles = (
+        base_query
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+
+    return author.user_name, articles, total_articles, total_pages
+
+def update_article(
+    db: Session,
+    article_id: int,
+    user_id: int,
+    data: ArticleUpdateRequest
+):
+    try:
+        # 1. Fetch article
+        article = db.query(Article).filter(Article.article_id == article_id).first()
+        if not article:
+            return None
+
+        # 2. AUTHORIZATION CHECK
+        if article.author_id != user_id:
+            raise PermissionError("Not your article")
+
+        # 3. Update fields
+        article.title = data.title
+        article.content = data.content
+        article.updated_at = datetime.utcnow()
+
+        # 4. Remove old tags
+        db.query(ArticleTag).filter(
+            ArticleTag.article_id == article_id
+        ).delete()
+
+        tag_objects = []
+
+        # 5. Recreate tags
+        for tag_name in data.tag_names:
+            tag_name = tag_name.strip().lower()
+
+            tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+            if not tag:
+                tag = Tag(tag_name=tag_name)
+                db.add(tag)
+                db.flush()
+
+            tag_objects.append(tag)
+
+        # 6. Recreate article-tag links
+        for tag in tag_objects:
+            link = ArticleTag(
+                article_id=article.article_id,
+                tag_id=tag.tag_id
+            )
+            db.add(link)
+
+        # 7. Delete old vectors
+        db.query(ArticleVector).filter(
+            ArticleVector.article_id == article.article_id
+        ).delete()
+
+        # 8. Recompute vectors
+        create_article_vector(db, article.article_id)
+
+        # ✅ SINGLE COMMIT at the end
+        db.commit()
+        db.refresh(article)
+
+        return article, [t.tag_name for t in tag_objects]
+
+    except PermissionError:
+        db.rollback()
+        raise
+
+    except Exception as e:
+        db.rollback()
+        raise e

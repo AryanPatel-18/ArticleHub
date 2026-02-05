@@ -159,17 +159,6 @@ function renderTags() {
     container.appendChild(input);
 }
 
-// Auto-save functionality
-// function autoSave() {
-//     clearTimeout(autoSaveTimer);
-//     document.getElementById('save-status').textContent = 'Saving...';
-    
-//     autoSaveTimer = setTimeout(() => {
-//         // Simulate saving to localStorage or backend
-//         localStorage.setItem('draft_article', JSON.stringify(articleData));
-//         document.getElementById('save-status').textContent = 'All changes saved';
-//     }, 1000);
-// }
 
 // Load draft on page load
 window.addEventListener('load', function() {

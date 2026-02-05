@@ -71,6 +71,7 @@ class PaginatedArticleRecommendationResponse(BaseModel):
 
 class SavedArticleResponse(BaseModel):
     article_id: int
+    likes : int
     title: str
     content: str
     author_username: str
@@ -105,3 +106,60 @@ class UserArticleStatsResponse(BaseModel):
     total_views: int
     total_likes: int
     total_saves: int
+
+class ArticleByTagSchema(BaseModel):
+    article_id: int
+    author_id: int
+    title: str
+    content: str
+    created_at: datetime
+
+class PaginatedArticlesByTagSchema(BaseModel):
+    tag_id: int
+    tag_name : str
+    page: int
+    page_size: int
+    total_articles: int
+    total_pages: int
+    articles: List[ArticleByTagSchema]
+
+class ArticleByAuthorSchema(BaseModel):
+    article_id: int
+    author_id: int
+    title: str
+    content: str
+    created_at: datetime
+
+class PaginatedArticlesByAuthorSchema(BaseModel):
+    author_id: int
+    author_name: str
+    page: int
+    page_size: int
+    total_articles: int
+    total_pages: int
+    articles: List[ArticleByAuthorSchema]
+
+class SavedArticleSchema(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    created_at: datetime
+    like_count: int
+
+class SavedArticlesResponseSchema(BaseModel):
+    user_id: int
+    articles: List[SavedArticleSchema]
+
+class ArticleUpdateRequest(BaseModel):
+    title: str = Field(..., min_length=3, max_length=150)
+    content: str = Field(..., min_length=50)
+    tag_names: List[str] = []
+
+class ArticleUpdateResponse(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    author_id: int
+    updated_at: datetime
+    tag_names: List[str]
+

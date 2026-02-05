@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database.db import engine
 from database.db import Base
-from routers import auth_router, recommendation_router, article_router, interaction_router, search_router
+from routers import auth_router, recommendation_router, article_router, interaction_router, search_router, trending_router, user_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -23,3 +23,5 @@ app.include_router(recommendation_router.router)
 app.include_router(article_router.router)
 app.include_router(interaction_router.router)
 app.include_router(search_router.router)
+app.include_router(trending_router.router)
+app.include_router(user_router.router)
