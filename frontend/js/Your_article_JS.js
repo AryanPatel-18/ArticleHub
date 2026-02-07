@@ -56,7 +56,7 @@ function renderArticles() {
             <div class="empty-state">
                 <h2>No articles yet</h2>
                 <p>Create your first article.</p>
-                <a href="Create.html">Create Article</a>
+                <a href="Create.html" class="create-btn">Create Article</a>
             </div>
         `;
         return;

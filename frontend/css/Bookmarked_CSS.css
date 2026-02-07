@@ -7,20 +7,13 @@ body {
 /* NAVBAR */
 .custom-navbar {
     background-color: #d7b071;
-    padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
     font-family: "BBH Hegarty", sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: #4e0f0f;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.navbar-brand:hover {
-    color: #551414;
 }
 
 /* BACK BUTTON */

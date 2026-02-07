@@ -20,7 +20,7 @@
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm" id="home-navbar">
     <div class="container-fluid">
         <!-- Mobile: Title and Offcanvas Toggle -->
-        <h1 class="navbar-brand my-2" id="nav-brand-link">write.it.</h1>
+        <h1 class="navbar-brand my-2" id="nav-brand-link"> write.it.</h1>
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas" id="nav-offcanvas-toggle">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -47,7 +47,7 @@
                 <div class="input-group" style="max-width: 420px; width: 100%;">
                     <input 
                         type="search" 
-                        class="form-control search-input" 
+                        class="form-control search-input shadow-sm" 
                         placeholder="Search articles, writers, tags" 
                         id="navbar-search-input-desktop"
                     >
@@ -154,7 +154,7 @@
 
             <!-- LEFT (Desktop only) -->
             <div class="col-lg-3" id="home-left-column">
-                <div class="side-panel h-100 shadow-sm" id="featured-writers-panel">
+                <div class="side-panel shadow-sm" id="featured-writers-panel">
                     <div class="section-title" id="featured-writers-title">Featured Writers</div>
                         <!-- Authors will go here -->
                 </div>
@@ -166,7 +166,7 @@
 
             <!-- CENTER ARTICLES -->
             <div class="col-lg-5 px-4" id="home-center-column">
-                <div class="section-title mb-2" id="latest-articles-title">Latest Articles</div>
+                <div class="section-title mb-4" id="latest-articles-title">Latest Articles</div>
 
                 <div id="article-loader" class="text-center my-4">
                     <div class="spinner-border" role="status"></div>
@@ -225,7 +225,7 @@
                 <div class="pagination-controls mt-3" id="article-pagination-controls">
                     <button 
                         id="prev-page-btn"
-                        class="btn btn-sm btn-outline-dark"
+                        class="btn btn-sm btn-outline-dark page-btn"
                         >
                         Previous
                     </button>
@@ -234,7 +234,7 @@
 
                     <button 
                         id="next-page-btn"
-                        class="btn btn-sm btn-outline-dark"
+                        class="btn btn-sm btn-outline-dark page-btn"
                         >
                         Next
                     </button>
@@ -247,7 +247,7 @@
 
             <!-- RIGHT (Desktop only) -->
             <div class="col-lg-2" id="home-right-column">
-                <div class="side-panel h-100 shadow-sm" id="trending-tags-panel">
+                <div class="side-panel shadow-sm" id="trending-tags-panel">
                     <div class="section-title" id="trending-tags-title">Trending Tags</div>
 
                     <div class="d-flex flex-wrap gap-2" id="trending-tags-container">
