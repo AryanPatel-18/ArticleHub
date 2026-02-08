@@ -54,18 +54,16 @@ def create_article(
     data: ArticleCreateRequest
 ):
     try:
-        # 1. Create article
         article = Article(
             title=data.title,
             content=data.content,
             author_id=author_id
         )
         db.add(article)
-        db.flush()  # get article.article_id
+        db.flush()
 
         tag_objects = []
 
-        # 2. Handle tags (create if missing)
         for tag_name in data.tag_names:
             tag_name = tag_name.strip().lower()
 
@@ -73,26 +71,20 @@ def create_article(
             if not tag:
                 tag = Tag(tag_name=tag_name)
                 db.add(tag)
-                db.flush()  # get tag.tag_id
+                db.flush()
 
             tag_objects.append(tag)
 
-        # 3. Create article-tag links
         for tag in tag_objects:
-            link = ArticleTag(
-                article_id=article.article_id,
-                tag_id=tag.tag_id
+            db.add(
+                ArticleTag(
+                    article_id=article.article_id,
+                    tag_id=tag.tag_id
+                )
             )
-            db.add(link)
 
-        # 4. Create stats row
-        stats = ArticleStat(article_id=article.article_id)
-        db.add(stats)
+        db.add(ArticleStat(article_id=article.article_id))
 
-        # 5. Create vectors (same transaction)
-        create_article_vector(db, article.article_id)
-
-        # ✅ SINGLE COMMIT
         db.commit()
         db.refresh(article)
 
@@ -101,6 +93,7 @@ def create_article(
     except Exception as e:
         db.rollback()
         raise e
+
 
 def get_saved_articles_for_user(
     db: Session,
@@ -402,28 +395,26 @@ def update_article(
     data: ArticleUpdateRequest
 ):
     try:
-        # 1. Fetch article
-        article = db.query(Article).filter(Article.article_id == article_id).first()
+        article = db.query(Article).filter(
+            Article.article_id == article_id
+        ).first()
+
         if not article:
             return None
 
-        # 2. AUTHORIZATION CHECK
         if article.author_id != user_id:
             raise PermissionError("Not your article")
 
-        # 3. Update fields
         article.title = data.title
         article.content = data.content
         article.updated_at = datetime.utcnow()
 
-        # 4. Remove old tags
         db.query(ArticleTag).filter(
             ArticleTag.article_id == article_id
         ).delete()
 
         tag_objects = []
 
-        # 5. Recreate tags
         for tag_name in data.tag_names:
             tag_name = tag_name.strip().lower()
 
@@ -435,23 +426,19 @@ def update_article(
 
             tag_objects.append(tag)
 
-        # 6. Recreate article-tag links
         for tag in tag_objects:
-            link = ArticleTag(
-                article_id=article.article_id,
-                tag_id=tag.tag_id
+            db.add(
+                ArticleTag(
+                    article_id=article.article_id,
+                    tag_id=tag.tag_id
+                )
             )
-            db.add(link)
 
-        # 7. Delete old vectors
+        # Remove old vector (index invalidated)
         db.query(ArticleVector).filter(
             ArticleVector.article_id == article.article_id
         ).delete()
 
-        # 8. Recompute vectors
-        create_article_vector(db, article.article_id)
-
-        # ✅ SINGLE COMMIT at the end
         db.commit()
         db.refresh(article)
 
@@ -464,3 +451,5 @@ def update_article(
     except Exception as e:
         db.rollback()
         raise e
+
+
