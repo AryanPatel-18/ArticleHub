@@ -16,6 +16,17 @@ body {
     font-family: "BBH Hegarty", sans-serif;
 }
 
+/* Override bootstrap navbar brand color */
+.custom-navbar .navbar-brand {
+    color: var(--primary);
+}
+
+.custom-navbar .navbar-brand:hover,
+.custom-navbar .navbar-brand:focus {
+    color: var(--primary-hover);
+}
+
+
 /* BACK BUTTON */
 .back-btn {
     position: relative;

@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="../css/Home_CSS.css">
     <script type="module" src="../js/Home_JS.js"></script>
     <script type="module" src="../js/auth_guard.js"></script>
+    <link rel="stylesheet" href="../css/Themes_CSS.css">
+    <script src="/frontend/js/Themes_JS.js"></script>
 </head>
 <body id="home-body">
 
@@ -62,6 +64,7 @@
             </form>
 
             <!-- Desktop Profile -->
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">🌙</button>
             <div class="dropdown ms-3">
                 <a href="#" id="navbar-profile-link-desktop" class="d-flex align-items-end" data-bs-toggle="dropdown" aria-expanded="false">
                     <img 
@@ -126,14 +129,28 @@
     </div>
 </div>
 
-<!-- Mobile Search Bar (Below Navbar) -->
-<div class="mobile-search-container" id="mobile-search-container">
-    <div class="container-fluid py-2">
+<!-- MOBILE SEARCH TRIGGER (inside navbar right side)
+<button class="btn rounded-circle mobile-search-btn d-lg-none" id="mobile-search-open">
+    🔍
+</button>
+
+
+MOBILE SEARCH OVERLAY
+<div class="mobile-search-overlay d-lg-none" id="mobile-search-overlay">
+
+    <div class="mobile-search-bar">
+        <button class="btn rounded-circle mobile-search-close" id="mobile-search-close">←</button>
+
         <form class="search-form w-100" action="search.html" id="nav-search-form-mobile">
-            <input type="search" class="form-control search-input" placeholder="Search articles, writers, tags" id="navbar-search-input-mobile">
+            <input type="search"
+                   class="form-control search-input"
+                   placeholder="Search articles, writers, tags"
+                   id="navbar-search-input-mobile"
+                   autofocus>
         </form>
     </div>
-</div>
+
+</div> --> 
 
 <!-- PAGE CONTENT -->
 <div class="container-fluid page-wrapper" id="home-page-wrapper">
@@ -168,6 +185,8 @@
             <div class="col-lg-5 px-4" id="home-center-column">
                 <div class="section-title mb-4" id="latest-articles-title">Latest Articles</div>
 
+                <div class="horizontal-divider mb-3"></div>
+                  
                 <div id="article-loader" class="text-center my-4">
                     <div class="spinner-border" role="status"></div>
                 </div>

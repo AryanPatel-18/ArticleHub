@@ -52,11 +52,56 @@ body {
     border: 2px solid #551414;
 }
 
-/* Mobile search bar below navbar */
-.mobile-search-container {
-    background-color: #d7b071;
-    display: none;
+/* Mobile search bar below navbar 
+ Hidden by default 
+.mobile-search-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1050;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    padding-top: 10px;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
 }
+
+.mobile-search-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Search bar layout 
+.mobile-search-bar {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--divider);
+    background: var(--surface);
+}
+
+/* Icon buttons 
+.mobile-search-btn,
+.mobile-search-close {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* input style fix 
+.mobile-search-bar input {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+} */
+
 
 /* Desktop navbar visible on large screens */
 #desktop-navbar {
@@ -79,10 +124,16 @@ body {
     margin: 0 auto;
 }
 
-.vertical-divider {
+.vertical-divider{
     width: 1px;
-    background-color: rgba(85, 20, 20, 0.15);
+    background-color: #d7b071;
     height: 100%;
+}
+
+.horizontal-divider{
+    background-color: #d7b071;
+    width: 545px;
+    height: 0.5px;
 }
 
 /* Panels */
@@ -100,7 +151,7 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     color: #551414;
-    border-bottom: 1px solid rgba(85, 20, 20, 0.25);
+    /* border-bottom: 1px solid rgba(85, 20, 20, 0.25); */
     padding-bottom: 6px;
     margin-bottom: 14px;
 }
@@ -130,6 +181,7 @@ body {
     border-radius: 12px;
     padding: 4px 10px;
     font-size: 0.80rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -159,7 +211,7 @@ body {
 /* ================= SEARCH BAR FIX (TRUE CENTER) ================= */
 
 .search-form {
-    position: absolute;
+    position: fixed;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;

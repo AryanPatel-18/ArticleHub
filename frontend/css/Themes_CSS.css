@@ -1,0 +1,156 @@
+/* ================= GLOBAL THEME VARIABLES ================= */
+:root {
+    --bg: #e7e4d2;
+    --surface: #f6efd6;
+    --navbar: #d7b071;
+    --divider: rgba(85, 20, 20, 0.15);
+    --primary: #551414;
+    --primary-hover: #6b1b1b;
+    --text: #333;
+    --muted: #666;
+    --border: rgba(85, 20, 20, 0.15);
+    --bs-navbar-brand-color: var(--primary);
+    --bs-navbar-brand-hover-color: var(--primary-hover);
+
+    /* brand button system */
+    --btn-bg: #551414;
+    --btn-text: #ffffff;
+    --btn-border: #551414;
+
+    --btn-hover-bg: #6b1b1b;
+    --btn-hover-border: #6b1b1b;
+
+    --btn-active-bg: #3e0d0d;
+    --btn-active-border: #3e0d0d;
+
+    --btn-disabled-bg: #b7a7a7;
+}
+
+[data-theme="dark"] {
+    --bg: #0f1115;
+    --surface: #1a1d23;
+    --navbar: #15181d;
+    --divider: rgb(255, 75, 75 ,0.8);
+    --primary: #ff4b4b;
+    --primary-hover: #ff6b6b;
+    --tag-btn: #2a2a2b;
+    --text: #e6e6e6;
+    --muted: #9aa4af;
+    --border: rgba(255,255,255,0.08);
+
+    /* ONLY for write.it */
+    --bs-navbar-brand-color: var(--primary);
+    --bs-navbar-brand-hover-color: var(--primary-hover);
+
+    --btn-bg: #ff4b4b;
+    --btn-text: #ffffff;
+    --btn-border: #ff4b4b;
+
+    --btn-hover-bg: #ff6b6b;
+    --btn-hover-border: #ff6b6b;
+
+    --btn-active-bg: #cc3c3c;
+    --btn-active-border: #cc3c3c;
+
+    --btn-disabled-bg: #5a3a3a;
+
+}
+
+
+/* global element overrides */
+body { 
+    background-color: var(--bg); 
+    color: var(--text); 
+}
+
+.article-body{
+    color: var(--text); 
+}
+
+.vertical-divider,.horizontal-divider
+{
+    background-color: var(--divider); 
+}
+
+.custom-navbar {
+    background-color: var(--navbar); 
+}
+
+.page-header,
+.side-panel,
+.article-card,
+.empty-state {
+    background-color: var(--surface);
+}
+
+.tag-btn{
+    background-color: var(--tag-btn);
+    color: var(--text);
+    border: 1px solid var(--btn-border);
+}
+
+.tag-btn:hover{
+    background-color: var(--primary);
+    color: black;
+}
+.page-title,
+.stat-number,
+.section-title,
+.article-title,
+.nav-link,
+.navbar-brand {
+    color: var(--primary);
+}
+
+.page-subtitle,
+.stat-label,
+.article-meta {
+    color: var(--muted);
+}
+
+.btn {
+    --bs-btn-bg: var(--btn-bg);
+    --bs-btn-color: var(--btn-text);
+    --bs-btn-border-color: var(--btn-border);
+
+    --bs-btn-hover-bg: var(--btn-hover-bg);
+    --bs-btn-hover-border-color: var(--btn-hover-border);
+
+    --bs-btn-active-bg: var(--btn-active-bg);
+    --bs-btn-active-border-color: var(--btn-active-border);
+
+    --bs-btn-disabled-bg: var(--btn-disabled-bg);
+    --bs-btn-disabled-border-color: var(--btn-disabled-bg);
+}
+
+.btn-outline-dark,
+.btn-outline-secondary {
+    --bs-btn-color: var(--primary);
+    --bs-btn-border-color: var(--primary);
+
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--btn-bg);
+    --bs-btn-hover-border-color: var(--btn-bg);
+
+    --bs-btn-active-bg: var(--btn-active-bg);
+    --bs-btn-active-border-color: var(--btn-active-bg);
+}
+
+.action-btn,
+.sort-btn,
+.pagination-controls button,
+.create-btn,
+.offcanvas-toggle-btn {
+    border-color: var(--btn-border);
+    color: var(--btn-text);
+    background: var(--btn-bg);
+}
+
+.action-btn:hover,
+.sort-btn:hover,
+.pagination-controls button:hover,
+.create-btn:hover,
+.offcanvas-toggle-btn:hover {
+    background: var(--btn-hover-bg);
+    border-color: var(--btn-hover-border);
+}
