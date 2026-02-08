@@ -14,10 +14,12 @@ from core.security import (
     create_access_token
 )
 from services.user_vector_service import create_default_user_vector
-
+from core.logger import get_logger
+logger = get_logger(__name__)
 
 def register_user(db: Session, user: RegistrationRequest):
-    # Check for existing email or username
+    logger.info(f"user_registration_start email={user.user_email}")
+
     existing_user = db.query(User).filter(
         or_(
             User.user_email == user.user_email,
@@ -26,6 +28,7 @@ def register_user(db: Session, user: RegistrationRequest):
     ).first()
 
     if existing_user:
+        logger.warning("user_registration_conflict")
         if existing_user.user_email == user.user_email:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,17 +40,15 @@ def register_user(db: Session, user: RegistrationRequest):
                 detail="Username already exists"
             )
 
-    # bcrypt hard limit (security requirement)
     if len(user.password.encode("utf-8")) > 72:
+        logger.warning("user_registration_password_too_long")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Password is too long"
         )
 
-    # Hash password
     hashed_password = hash_password(user.password)
 
-    # Create user instance
     new_user = User(
         user_name=user.user_name,
         user_email=user.user_email,
@@ -62,39 +63,60 @@ def register_user(db: Session, user: RegistrationRequest):
 
     try:
         db.commit()
+        logger.info(f"user_created user_id={new_user.user_id}")
+
     except Exception:
         db.rollback()
+        logger.exception("user_creation_failed")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Database error while creating user"
         )
 
     db.refresh(new_user)
-    create_default_user_vector(db,new_user.user_id)
+
+    create_default_user_vector(db, new_user.user_id)
+    logger.info(f"user_vector_initialized user_id={new_user.user_id}")
+
     return RegistrationResponse(
         user_id=new_user.user_id,
         message="User registered successfully"
     )
 
 
-def login_user(db: Session, payload: LoginRequest):
-    user = db.query(User).filter(
-        User.user_email == payload.user_email
-    ).first()
 
-    if not user or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
+def login_user(db: Session, payload: LoginRequest):
+    logger.info(f"login_attempt email={payload.user_email}")
+
+    try:
+        user = db.query(User).filter(
+            User.user_email == payload.user_email
+        ).first()
+
+        if not user or not verify_password(payload.password, user.password_hash):
+            logger.warning(f"login_failed email={payload.user_email}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid credentials"
+            )
+
+        access_token = create_access_token({
+            "sub": str(user.user_id),
+            "role": user.user_role
+        })
+
+        logger.info(f"login_success user_id={user.user_id}")
+
+        return LoginResponse(
+            user_id=user.user_id,
+            access_token=access_token,
+            token_type="Bearer"
         )
 
-    access_token = create_access_token({
-        "sub": str(user.user_id),
-        "role": user.user_role
-    })
+    except HTTPException:
+        raise
 
-    return LoginResponse(
-        user_id=user.user_id,
-        access_token=access_token,
-        token_type="Bearer"
-    )
+    except Exception:
+        logger.exception("login_error")
+        raise
+

@@ -8,50 +8,69 @@ from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, Sa
 from sqlalchemy import func, desc, asc
 from fastapi import HTTPException
 from datetime import datetime
+from core.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
-    article = (
-        db.query(Article)
-        .filter(Article.article_id == get_id)
-        .filter(Article.is_published)
-        .first()
-    )
+    logger.info(f"article_fetch_start article_id={get_id}")
 
-    if article is None:
-        return None
+    try:
+        article = (
+            db.query(Article)
+            .filter(Article.article_id == get_id)
+            .filter(Article.is_published)
+            .first()
+        )
 
-    author = (
-        db.query(User.user_name)
-        .filter(User.user_id == article.author_id)
-        .first()
-    )
+        if article is None:
+            logger.warning(f"article_not_found article_id={get_id}")
+            return None
 
-    if author is None:
-        return None
+        author = (
+            db.query(User.user_name)
+            .filter(User.user_id == article.author_id)
+            .first()
+        )
 
-    tag_rows = (
-        db.query(Tag.tag_name)
-        .join(ArticleTag, Tag.tag_id == ArticleTag.tag_id)
-        .filter(ArticleTag.article_id == article.article_id)
-        .all()
-    )
+        if author is None:
+            logger.warning(
+                f"article_author_missing article_id={get_id} author_id={article.author_id}"
+            )
+            return None
 
-    tags = [row.tag_name for row in tag_rows]
+        tag_rows = (
+            db.query(Tag.tag_name)
+            .join(ArticleTag, Tag.tag_id == ArticleTag.tag_id)
+            .filter(ArticleTag.article_id == article.article_id)
+            .all()
+        )
 
-    return ArticleReadResponse(
-        article_id=article.article_id,
-        title=article.title,
-        content=article.content,
-        author_username=author.user_name,
-        created_at=article.created_at,
-        tags=tags
-    )
+        tags = [row.tag_name for row in tag_rows]
+
+        logger.info(f"article_loaded article_id={get_id}")
+
+        return ArticleReadResponse(
+            article_id=article.article_id,
+            title=article.title,
+            content=article.content,
+            author_username=author.user_name,
+            created_at=article.created_at,
+            tags=tags
+        )
+
+    except Exception:
+        logger.exception(f"article_fetch_failed article_id={get_id}")
+        raise
+
 
 def create_article(
     db: Session,
     author_id: int,
     data: ArticleCreateRequest
 ):
+    logger.info(f"article_create_start author_id={author_id}")
     try:
         article = Article(
             title=data.title,
@@ -81,16 +100,26 @@ def create_article(
                     tag_id=tag.tag_id
                 )
             )
-
+        
+        # Tags are processed
+        logger.info(
+            f"article_tags_attached article_id={article.article_id} "
+            f"tag_count={len(tag_objects)}"
+        )
+        
         db.add(ArticleStat(article_id=article.article_id))
 
         db.commit()
         db.refresh(article)
-
+        
+        # Process was completed
+        logger.info(f"article_created article_id={article.article_id}")
+        
         return article
 
     except Exception as e:
         db.rollback()
+        logger.exception("article_create_failed")
         raise e
 
 
@@ -99,7 +128,7 @@ def get_saved_articles_for_user(
     user_id: int,
     page: int = 1,
     page_size: int = 5
-):
+):    
     # 1. Count total saved articles
     total_results = (
         db.query(UserInteraction)
@@ -179,7 +208,10 @@ def get_saved_articles_for_user(
                 created_at=article.created_at
             )
         )
-
+    logger.info(
+        f"saved_articles_loaded user_id={user_id} "
+        f"results={len(result)} page={page}"
+    )
     return PaginatedSavedArticlesResponse(
         page=page,
         page_size=page_size,
@@ -247,6 +279,11 @@ def get_articles_by_user(
                 created_at=article.created_at
             )
         )
+        
+    logger.info(
+        f"user_articles_loaded user_id={user_id} "
+        f"page={page} sort={sort} results={len(articles)}"
+    )
 
     return PaginatedUserArticlesResponse(
         page=page,
@@ -285,6 +322,7 @@ def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsRespons
     )
 
     total_views, total_likes, total_saves = stats
+    logger.info(f"user_article_stats_loaded user_id={user_id}")
 
     return UserArticleStatsResponse(
         total_articles=total_articles,
@@ -301,6 +339,7 @@ def delete_article(db: Session, article_id: int, user_id: int):
         .filter(Article.author_id == user_id)
         .first()
     )
+    logger.info(f"article_delete_start article_id={article_id} user_id={user_id}")
 
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
@@ -313,6 +352,7 @@ def delete_article(db: Session, article_id: int, user_id: int):
 
     db.delete(article)
     db.commit()
+    logger.info(f"article_deleted article_id={article_id}")
 
     return {"message": "Article deleted successfully"}
 
@@ -349,6 +389,10 @@ def get_articles_by_tag(
         .limit(page_size)
         .all()
     )
+    logger.info(
+        f"articles_by_tag_loaded tag_id={tag_id} "
+        f"results={len(articles)} page={page}"
+    )
 
     return tag.tag_name, articles, total_articles, total_pages
 
@@ -384,6 +428,10 @@ def get_articles_by_author(
         .limit(page_size)
         .all()
     )
+    logger.info(
+        f"articles_by_author_loaded author_id={author_id} "
+        f"results={len(articles)} page={page}"
+    )
 
     return author.user_name, articles, total_articles, total_pages
 
@@ -393,6 +441,10 @@ def update_article(
     user_id: int,
     data: ArticleUpdateRequest
 ):
+    logger.info(
+        f"article_update_start article_id={article_id} user_id={user_id}"
+    )
+
     try:
         article = db.query(Article).filter(
             Article.article_id == article_id
@@ -411,7 +463,9 @@ def update_article(
         db.query(ArticleTag).filter(
             ArticleTag.article_id == article_id
         ).delete()
-
+        
+        # Article Vectors deleted
+        logger.info(f"article_vector_invalidated article_id={article_id}")
         tag_objects = []
 
         for tag_name in data.tag_names:
@@ -439,16 +493,21 @@ def update_article(
         ).delete()
 
         db.commit()
+        logger.info(f"article_updated article_id={article_id}")
         db.refresh(article)
 
         return article, [t.tag_name for t in tag_objects]
 
     except PermissionError:
         db.rollback()
+        logger.warning(
+            f"article_update_permission_denied article_id={article_id} user_id={user_id}"
+        )
         raise
 
     except Exception as e:
         db.rollback()
+        logger.exception("article_update_failed")
         raise e
 
 
