@@ -1,20 +1,20 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from fastapi import HTTPException, status
-from models.user_model import User
-from schemas.auth_schema import (
+from app.models.user_model import User
+from app.schemas.auth_schema import (
     RegistrationRequest,
     RegistrationResponse,
     LoginRequest,
     LoginResponse
 )
-from core.security import (
+from app.core.security import (
     hash_password,
     verify_password,
     create_access_token
 )
-from services.user_vector_service import create_default_user_vector
-from core.logger import get_logger
+from app.services.user_vector_service import create_default_user_vector
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 def register_user(db: Session, user: RegistrationRequest):

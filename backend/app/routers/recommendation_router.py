@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from services.recommendation_service import get_top_articles_for_user
-from schemas.article_schema import PaginatedArticleRecommendationResponse
+from app.core.dependencies import get_db
+from app.services.recommendation_service import get_top_articles_for_user
+from app.schemas.article_schema import PaginatedArticleRecommendationResponse
 
 router = APIRouter(prefix="/recommendations", tags=["Recommendations"])
 

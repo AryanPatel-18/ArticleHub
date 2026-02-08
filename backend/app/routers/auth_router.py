@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from jose import JWTError
-from schemas.auth_schema import RegistrationRequest,  LoginRequest, LoginResponse, TokenValidationResponse
+from app.schemas.auth_schema import RegistrationRequest,  LoginRequest, LoginResponse, TokenValidationResponse
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from services.auth_service import register_user, login_user
-from core.security import decode_access_token
+from app.core.dependencies import get_db
+from app.services.auth_service import register_user, login_user
+from app.core.security import decode_access_token
 
 
 router = APIRouter(

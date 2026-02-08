@@ -1,12 +1,12 @@
 import json
 from collections import defaultdict
 from sqlalchemy.orm import Session
-from models.vector_model import UserVector
-from models.article_model import ArticleStat
-from models.vector_model import ArticleVector
-from models.interaction_model import UserInteraction
+from app.models.vector_model import UserVector
+from app.models.article_model import ArticleStat
+from app.models.vector_model import ArticleVector
+from app.models.interaction_model import UserInteraction
 from datetime import datetime
-from core.logger import get_logger
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from schemas.interaction_schema import UserInteractionCreateRequest, UserInteractionResponse, InteractionStatusResponse, InteractionToggleResponse , InteractionToggleRequest
-from services.interaction_service import create_interaction, get_interaction_status, toggle_interaction
+from app.core.dependencies import get_db
+from app.schemas.interaction_schema import UserInteractionCreateRequest, UserInteractionResponse, InteractionStatusResponse, InteractionToggleResponse , InteractionToggleRequest
+from app.services.interaction_service import create_interaction, get_interaction_status, toggle_interaction
 
 router = APIRouter(prefix="/interactions", tags=["Interactions"])
 

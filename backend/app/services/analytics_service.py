@@ -4,10 +4,10 @@ from collections import defaultdict
 import matplotlib
 import matplotlib.pyplot as plt
 from sqlalchemy.orm import Session
-from models.article_model import Article
-from models.interaction_model import UserInteraction
-from models.user_model import User
-from core.logger import get_logger
+from app.models.article_model import Article
+from app.models.interaction_model import UserInteraction
+from app.models.user_model import User
+from app.core.logger import get_logger
 
 logger = get_logger(__name__)
 matplotlib.use("Agg")

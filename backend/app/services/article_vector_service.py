@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from sklearn.feature_extraction.text import TfidfVectorizer
 import re
 from collections import Counter
-from models.article_model import Article, ArticleTag, Tag
-from models.vector_model import ArticleVector
-from core.logger import get_logger
+from app.models.article_model import Article, ArticleTag, Tag
+from app.models.vector_model import ArticleVector
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

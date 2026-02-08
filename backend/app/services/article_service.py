@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
-from models.article_model import Article, ArticleTag, Tag, ArticleStat
-from models.vector_model import ArticleVector
-from models.user_model import User
-from models.interaction_model import UserInteraction
+from app.models.article_model import Article, ArticleTag, Tag, ArticleStat
+from app.models.vector_model import ArticleVector
+from app.models.user_model import User
+from app.models.interaction_model import UserInteraction
 import math
-from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
+from app.schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
 from sqlalchemy import func, desc, asc
 from fastapi import HTTPException
 from datetime import datetime
-from core.logger import get_logger
+from app.core.logger import get_logger
 
 logger = get_logger(__name__)
 

@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from models.user_model import User
-from schemas.user_schema import UserProfileUpdateRequest, PasswordChangeRequest
-from core.security import hash_password, verify_password
-from core.logger import get_logger
+from app.models.user_model import User
+from app.schemas.user_schema import UserProfileUpdateRequest, PasswordChangeRequest
+from app.core.security import hash_password, verify_password
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

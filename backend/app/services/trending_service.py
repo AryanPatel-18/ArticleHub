@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
-from models.interaction_model import UserInteraction
-from models.article_model import Article, Tag, ArticleTag
-from models.user_model import User
-from core.logger import get_logger
+from app.models.interaction_model import UserInteraction
+from app.models.article_model import Article, Tag, ArticleTag
+from app.models.user_model import User
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

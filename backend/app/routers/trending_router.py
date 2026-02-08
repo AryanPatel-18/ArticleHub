@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from services.trending_service import get_trending_tags, get_trending_authors
-from schemas.trending_schema import TrendingTagSchema, TrendingAuthorSchema
+from app.core.dependencies import get_db
+from app.services.trending_service import get_trending_tags, get_trending_authors
+from app.schemas.trending_schema import TrendingTagSchema, TrendingAuthorSchema
 from typing import List
 
 router = APIRouter(prefix="/trending", tags=["Trending"])

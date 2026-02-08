@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 from math import log
 import time
 import re
-from models.article_model import Article, ArticleStat
-from models.vector_model import ArticleVector
-from models.user_model import User
-from schemas.search_schema import SearchArticleResponse
-from core.logger import get_logger
+from app.models.article_model import Article, ArticleStat
+from app.models.vector_model import ArticleVector
+from app.models.user_model import User
+from app.schemas.search_schema import SearchArticleResponse
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 # ------------------------------------------------------------------

@@ -1,6 +1,6 @@
-from database.db import SessionLocal
-from services.article_vector_service import create_article_vector
-from core.logger import get_logger
+from app.database.db import SessionLocal
+from app.services.article_vector_service import create_article_vector
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

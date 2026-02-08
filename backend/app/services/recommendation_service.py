@@ -2,12 +2,12 @@ import json
 import math
 from collections import defaultdict
 from sqlalchemy.orm import Session
-from models import ArticleVector, Article, UserInteraction, User
-from models.user_model import UserRecommendationCache
-from models.vector_model import UserVector
-from schemas.article_schema import ArticleRecommendationResponse, PaginatedArticleRecommendationResponse
-from services.user_vector_service import recompute_user_vector_from_interactions
-from core.logger import get_logger
+from app.models import ArticleVector, Article, UserInteraction, User
+from app.models.user_model import UserRecommendationCache
+from app.models.vector_model import UserVector
+from app.schemas.article_schema import ArticleRecommendationResponse, PaginatedArticleRecommendationResponse
+from app.services.user_vector_service import recompute_user_vector_from_interactions
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

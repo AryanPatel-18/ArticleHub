@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from database.db import engine
-from database.db import Base
-from routers import auth_router, recommendation_router, article_router, interaction_router, search_router, trending_router, user_router, analytics_router
+from app.database.db import engine
+from app.database.db import Base
+from app.routers import auth_router, recommendation_router, article_router, interaction_router, search_router, trending_router, user_router, analytics_router
 from fastapi.middleware.cors import CORSMiddleware
-from core.logging_config import configure_logging
-from core.middleware import RequestLoggingMiddleware
+from app.core.logging_config import configure_logging
+from app.core.middleware import RequestLoggingMiddleware
 
 configure_logging()
 app = FastAPI()

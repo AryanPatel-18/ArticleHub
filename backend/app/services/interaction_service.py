@@ -1,15 +1,15 @@
 from sqlalchemy.orm import Session
-from models.interaction_model import UserInteraction
-from models.article_model import ArticleStat
-from schemas.interaction_schema import (
+from app.models.interaction_model import UserInteraction
+from app.models.article_model import ArticleStat
+from app.schemas.interaction_schema import (
     UserInteractionCreateRequest,
     UserInteractionResponse,
     InteractionStatusResponse,
     InteractionToggleRequest,
     InteractionToggleResponse
 )
-from services.user_vector_service import mark_user_vector_dirty
-from core.logger import get_logger
+from app.services.user_vector_service import mark_user_vector_dirty
+from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 

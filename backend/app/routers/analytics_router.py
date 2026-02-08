@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from core.dependencies import get_db
-from core.dependencies import get_current_user_id
-from services.analytics_service import (
+from app.core.dependencies import get_db
+from app.core.dependencies import get_current_user_id
+from app.services.analytics_service import (
     generate_user_article_interaction_graph
 )
 
