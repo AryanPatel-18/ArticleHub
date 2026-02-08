@@ -5,6 +5,7 @@ let currentPage = 1;
 const pageSize = 5;
 
 document.addEventListener("DOMContentLoaded", function () {
+    loadInteractionGraph();
     loadArticleStats();
     fetchUserArticles();
 });
@@ -249,4 +250,34 @@ function showDeleteConfirm() {
         yesBtn.addEventListener("click", yesHandler);
         noBtn.addEventListener("click", noHandler);
     });
+}
+
+async function loadInteractionGraph() {
+    try {
+        const response = await fetch(
+            "http://localhost:8000/analytics/my-articles/interactions-graph",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AUTH_TOKEN}`
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch interaction graph");
+        }
+
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+
+        const img = document.getElementById("interaction-graph");
+        img.src = imageUrl;
+
+    } catch (error) {
+        console.error("Error loading interaction graph:", error);
+
+        const container = document.querySelector(".graph-container");
+        container.innerHTML = `<p class="graph-error">Unable to load graph.</p>`;
+    }
 }
