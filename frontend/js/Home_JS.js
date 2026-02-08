@@ -10,7 +10,7 @@ function makePreview(text) {
     return preview.length < text.length ? preview + "..." : preview;
 }
 
-let currentPage = 1;
+let currentPage = Number(sessionStorage.getItem("home_current_page")) || 1;
 let totalPages = 1;
 
 // generate or reuse session_id for this page load
@@ -66,6 +66,10 @@ async function loadArticles() {
             metaEl.textContent = `By ${article.author_username}`;
 
             linkEl.href = `view_article.html?article_id=${article.article_id}`;
+
+            linkEl.addEventListener("click", () => {
+                sessionStorage.setItem("home_current_page", currentPage);
+            });
         });
 
         // show cards after data is loaded
@@ -96,6 +100,7 @@ const nextButton = document.getElementById("next-page-btn");
 prevButton.addEventListener('click', () => {
     if (currentPage > 1) {
         currentPage--;
+        sessionStorage.setItem("home_current_page", currentPage);
         loadArticles();
     }
 });
@@ -103,6 +108,7 @@ prevButton.addEventListener('click', () => {
 nextButton.addEventListener("click", () => {
     if (currentPage < totalPages) {
         currentPage++;
+        sessionStorage.setItem("home_current_page", currentPage);
         loadArticles();
     }
 });

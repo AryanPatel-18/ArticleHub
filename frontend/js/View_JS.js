@@ -1,12 +1,19 @@
-// import { protectRoute } from "./auth_guard.js";
+let article_Id;
 
+let liked = false;
+let saved = false;
+
+let likeButton;
+let saveButton;
 
 document.addEventListener("DOMContentLoaded", () => {
+    likeButton = document.getElementById("likeButton");
+    saveButton = document.getElementById("saveButton");
+
+    setBackNavigation();
     loadArticle();
     loadInteractionStatus();
 });
-
-let article_Id;
 
 async function loadArticle() {
     const loader = document.getElementById("article-loader");
@@ -14,14 +21,13 @@ async function loadArticle() {
 
     const params = new URLSearchParams(window.location.search);
     const articleId = params.get("article_id");
-    article_Id = articleId
+    article_Id = articleId;
 
     if (!articleId) {
         console.error("No article_id in URL");
         return;
     }
 
-    // show loader, hide content
     loader.style.display = "block";
     container.style.display = "none";
 
@@ -29,15 +35,12 @@ async function loadArticle() {
         const response = await fetch(`http://localhost:8000/articles/${articleId}`);
         const article = await response.json();
 
-        // fill title
         document.getElementById("article-title").textContent = article.title;
 
-        // fill author
         document.getElementById("author-name").textContent = article.author_username;
         document.getElementById("author-initial").textContent =
             article.author_username.charAt(0).toUpperCase();
 
-        // fill date
         const date = new Date(article.created_at);
         document.getElementById("article-date").textContent =
             date.toLocaleDateString("en-US", {
@@ -46,10 +49,8 @@ async function loadArticle() {
                 day: "numeric"
             });
 
-        // fill content
         document.getElementById("article-content").textContent = article.content;
 
-        // fill tags
         const tagsList = document.getElementById("tags-list");
         tagsList.innerHTML = "";
 
@@ -60,12 +61,11 @@ async function loadArticle() {
             tagsList.appendChild(span);
         });
 
-        // hide loader, show content
         loader.style.display = "none";
         container.style.display = "block";
 
         setTimeout(() => {
-            logArticle(articleId,"view")
+            logArticle(articleId, "view");
         }, 2000);
 
     } catch (error) {
@@ -74,8 +74,7 @@ async function loadArticle() {
     }
 }
 
-
-function logArticle(articleId,type) {
+function logArticle(articleId, type) {
     const userId = localStorage.getItem("user_id");
     if (!userId) return;
 
@@ -89,17 +88,11 @@ function logArticle(articleId,type) {
     }).catch(() => {});
 }
 
-let liked = false
-let saved = false
-const likeButton = document.getElementById("likeButton")
-const saveButton = document.getElementById("saveButton")
-
 async function loadInteractionStatus() {
     const userId = localStorage.getItem("user_id");
 
     const urlParams = new URLSearchParams(window.location.search);
     const articleId = urlParams.get("article_id");
-
 
     if (!userId || !articleId) {
         console.error("Missing user_id or article_id");
@@ -111,26 +104,23 @@ async function loadInteractionStatus() {
             `http://localhost:8000/interactions/status?user_id=${userId}&article_id=${articleId}`
         );
 
-        if (!response.ok) {
-            console.error("Failed to fetch interaction status");
-            return;
-        }
+        if (!response.ok) return;
 
         const data = await response.json();
 
         liked = data.liked;
         saved = data.saved;
 
-        if(liked){
-            likeButton.setAttribute("fill","currentColor")
-        }else{
-            likeButton.setAttribute('fill','none')
+        if (liked) {
+            likeButton.setAttribute("fill", "currentColor");
+        } else {
+            likeButton.setAttribute("fill", "none");
         }
 
-        if(saved){
-            saveButton.setAttribute("fill","currentColor")
-        }else{
-            saveButton.setAttribute('fill','none')
+        if (saved) {
+            saveButton.setAttribute("fill", "currentColor");
+        } else {
+            saveButton.setAttribute("fill", "none");
         }
 
     } catch (error) {
@@ -143,7 +133,6 @@ async function toggleInteraction(type) {
     const urlParams = new URLSearchParams(window.location.search);
     const articleId = urlParams.get("article_id");
 
-    
     if (!userId || !articleId) {
         console.error("Missing user_id or article_id");
         return;
@@ -154,9 +143,7 @@ async function toggleInteraction(type) {
             `http://localhost:8000/interactions/toggle?user_id=${userId}`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     article_id: parseInt(articleId),
                     interaction_type: type
@@ -164,25 +151,14 @@ async function toggleInteraction(type) {
             }
         );
 
-        if (!response.ok) {
-            console.error("Toggle request failed");
-            return;
-        }
+        if (!response.ok) return;
 
         const data = await response.json();
-        // console.log(data)
-        if(data.interaction_type == 'like'){
-            if(data.active){
-                likeButton.setAttribute("fill","currentColor")
-            }else{
-                likeButton.setAttribute("fill","none")
-            }
-        }else{
-            if(data.active){
-                saveButton.setAttribute("fill","currentColor")
-            }else{
-                saveButton.setAttribute("fill","none")
-            }
+
+        if (data.interaction_type === "like") {
+            likeButton.setAttribute("fill", data.active ? "currentColor" : "none");
+        } else {
+            saveButton.setAttribute("fill", data.active ? "currentColor" : "none");
         }
 
     } catch (error) {
@@ -190,10 +166,35 @@ async function toggleInteraction(type) {
     }
 }
 
-function toggleLike(){
-    toggleInteraction('like')
+function toggleLike() {
+    toggleInteraction("like");
 }
 
-function toggleBookmark(){
-    toggleInteraction('save')
+function toggleBookmark() {
+    toggleInteraction("save");
+}
+
+function setBackNavigation() {
+    const backBtn = document.getElementById("back-to-home-btn");
+    const referrer = sessionStorage.getItem("article_referrer");
+
+    if (!referrer) {
+        backBtn.href = "home.html";
+        backBtn.textContent = "← Back to Home";
+        return;
+    }
+
+    backBtn.href = referrer;
+
+    if (referrer.includes("TrendingTag")) {
+        backBtn.textContent = "← Back to Trending Tag";
+    }
+    else if (referrer.includes("trendingAuthor")) {
+        backBtn.textContent = "← Back to Author Articles";
+    }
+    else {
+        backBtn.textContent = "← Back";
+    }
+
+    sessionStorage.removeItem("article_referrer");
 }

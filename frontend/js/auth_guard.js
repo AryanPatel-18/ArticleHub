@@ -21,6 +21,7 @@ export async function protectRoute() {
             // Token invalid or expired
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user_id");
+            sessionStorage.clear();
             window.location.href = "../pages/Session_timeout.html";
             return;
         }
