@@ -4,7 +4,6 @@ from core.dependencies import get_db, get_current_user_id
 from schemas.article_schema import ArticleReadResponse
 from services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author, update_article
 from schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
-from core.security import decode_access_token
 from services.vector_background_service import create_article_vector_background
 
 router = APIRouter(prefix="/articles", tags=["Articles"])

@@ -5,7 +5,6 @@ from models.user_model import User
 from models.interaction_model import UserInteraction
 import math
 from schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
-from services.article_vector_service import create_article_vector
 from sqlalchemy import func, desc, asc
 from fastapi import HTTPException
 from datetime import datetime
