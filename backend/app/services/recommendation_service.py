@@ -10,13 +10,14 @@ from app.services.user_vector_service import recompute_user_vector_from_interact
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
-
+# Weights that are used for the recommendation vectors
 INTERACTION_WEIGHTS = {
     "view": 1.0,
     "like": 2.0,
     "save": 3.0
 }
 
+# For finding the relation between two sparse vectors
 def cosine_sparse(v1, v2):
     dot = 0.0
     norm1 = 0.0
@@ -35,12 +36,12 @@ def cosine_sparse(v1, v2):
 
     return dot / (math.sqrt(norm1) * math.sqrt(norm2))
 
-
+# Converts the sparse vector stored in json format back to a dictionary format for easier manipulation.
 def dict_from_sparse(vec_json):
     vec = json.loads(vec_json)
     return dict(zip(vec["indices"], vec["values"]))
 
-
+# Main function to get the top recommended articles for a user. The function first checks if the user has a vector, if not it triggers a lazy recomputation of the user vector based on the user's interactions. Then it checks if there is a cache of recommendations for the user and session, if not it builds the cache by scoring all articles against the user vector and storing the top recommendations in the UserRecommendationCache table.
 def build_user_vector_from_interactions(db: Session, user_id: int):
     logger.info(f"user_vector_build_start user_id={user_id}")
 
@@ -106,7 +107,7 @@ def build_user_vector_from_interactions(db: Session, user_id: int):
     return dict(weighted_text_vec), dict(weighted_tag_vec)
 
 
-
+# Retrieves the top recommended articles for a user based on their user vector and the article vectors. The function also implements pagination and caching of recommendations for performance optimization.
 def get_top_articles_for_user(
     db: Session,
     user_id: int,

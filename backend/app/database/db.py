@@ -9,6 +9,8 @@ from app.core.config import (
     DATABASE_NAME
 )
 
+# Establishing a connection to the database
+
 DATABASE_URL = (
     f"postgresql://{DATABASE_USER}:"
     f"{DATABASE_PASSWORD}@"
@@ -17,6 +19,7 @@ DATABASE_URL = (
     f"{DATABASE_NAME}"
 )
 
+# Creating session for the database
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()

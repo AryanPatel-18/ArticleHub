@@ -1,3 +1,6 @@
+// This file contains the functions for the login and registering the user
+// Here in all the function the auth token is passed in the header section of the request
+
 const registerForm = document.getElementById("auth-register-form");
 const loginForm = document.getElementById("auth-login-form")
 
@@ -50,6 +53,8 @@ function loadSpinner(){
     registerSpinner.style.opacity = "1";
 }
 
+
+// Main function that takes in the data from the frontend and submits the request to the backend for the creation of the user
 registerForm.addEventListener("submit", async function (event) {
     event.preventDefault(); // prevent form reload
     reloadRegisterPage()
@@ -112,10 +117,9 @@ registerForm.addEventListener("submit", async function (event) {
             return;
         }
 
-        // Loading the spinner
         loadSpinner()
-        
-        // Switching to the home page
+
+        // Switching to home page after a one second delay
         setTimeout(() => {    
             window.location.href = "Authentication.html";
         }, 1000);
@@ -126,6 +130,8 @@ registerForm.addEventListener("submit", async function (event) {
     }
 });
 
+
+// same as register function takes in the information from the frontend and sends it back the backend in the payload
 loginForm.addEventListener("submit", async function(event){
     event.preventDefault();
     // Inputs
@@ -135,8 +141,6 @@ loginForm.addEventListener("submit", async function(event){
     // Error message elements
     const emailError = document.getElementById("error-login-email");
     const passwordError = document.getElementById("error-login-password");
-
-    // Button
     const loginButton = document.getElementById("auth-login-submit-btn");
 
     // Reset styles
@@ -148,14 +152,14 @@ loginForm.addEventListener("submit", async function(event){
     const email = loginEmailInput.value.trim();
     const password = loginPasswordInput.value;
 
-    // Validate email
+    // Validating email
     if (!email) {
         loginEmailInput.classList.add("input-error");
         emailError.innerText = "Email is required.";
         return;
     }
 
-    // Validate password
+    // Validating password
     if (!password) {
         loginPasswordInput.classList.add("input-error");
         passwordError.innerText = "Password is required.";

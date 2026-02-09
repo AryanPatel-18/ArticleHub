@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 
 from app.database.db import Base
 
+# All database models related to the articles
 
 class Article(Base):
     __tablename__ = "articles"

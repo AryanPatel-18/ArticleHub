@@ -13,6 +13,11 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 
+"""
+This service contains the core business logic for managing articles, including creating, reading, updating, and deleting articles, as well as fetching articles by tag or author and getting user-specific article statistics. The service interacts with the database to perform these operations and is used by the article router to handle API requests related to articles.
+"""
+
+# This is for fetching articles based on the id
 def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
     logger.info(f"article_fetch_start article_id={get_id}")
 
@@ -64,7 +69,7 @@ def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
         logger.exception(f"article_fetch_failed article_id={get_id}")
         raise
 
-
+"""This is for creating an article. It takes in the article creation request which contains the title, content, and tags. It returns the created article with the article id and author id. The tags are normalized to lowercase and stripped of whitespace. If a tag does not exist, it is created. The article is also added to the ArticleStat table for tracking views, likes, and saves. The article vectors are also created in the background, but that logic is handled in the background whereas the output of the function is sent first therefore the user does not have to wait for the vectorization. Thus there is a delay between the creation of the article and the vectors being used for the recommendation system and search feature for the other users"""
 def create_article(
     db: Session,
     author_id: int,
@@ -132,7 +137,7 @@ def create_article(
         raise
 
 
-
+# get the articles that were saved by the user
 def get_saved_articles_for_user(
     db: Session,
     user_id: int,
@@ -229,7 +234,8 @@ def get_saved_articles_for_user(
         total_pages=total_pages,
         articles=result
     )
-    
+
+# Get the articles that were created by the user
 def get_articles_by_user(
     db: Session,
     user_id: int,
@@ -311,6 +317,8 @@ def get_articles_by_user(
         articles=articles
     )
 
+
+# Get the stats ( likes, saves and views) of all the articles that were created by the user
 def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsResponse:
     # total articles
     total_articles = (
@@ -350,6 +358,7 @@ def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsRespons
         total_saves=total_saves
     )
 
+# Delete the article that were created by the user. In this case only the articles that were created by the user would be deleted and if the user has not created the said article then it would return the 401 unauthorized error
 def delete_article(db: Session, article_id: int, user_id: int):
     article = (
         db.query(Article)
@@ -383,6 +392,7 @@ def delete_article(db: Session, article_id: int, user_id: int):
 
     return {"message": "Article deleted successfully"}
 
+# Get all the articles based on the tag name 
 def get_articles_by_tag(
     db: Session,
     tag_id: int,
@@ -423,6 +433,7 @@ def get_articles_by_tag(
 
     return tag.tag_name, articles, total_articles, total_pages
 
+# Get all the articles based on the author id
 def get_articles_by_author(
     db: Session,
     author_id: int,
@@ -462,6 +473,8 @@ def get_articles_by_author(
 
     return author.user_name, articles, total_articles, total_pages
 
+
+# This function is almost the same as the created article function just in this case the information is updated , but the vectorization portion of this function remains the same as the create vector function. Also there is another verification of the user id that check if the article was created by the user id that requested to edit the said article.
 def update_article(
     db: Session,
     article_id: int,

@@ -11,6 +11,7 @@ from sqlalchemy.sql import func
 
 from app.database.db import Base
 
+# The user interaction model for likes, saves and views
 
 class UserInteraction(Base):
     __tablename__ = "user_interactions"

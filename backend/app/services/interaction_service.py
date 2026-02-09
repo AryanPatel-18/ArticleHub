@@ -12,7 +12,7 @@ from app.services.user_vector_service import mark_user_vector_dirty
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
-
+# Creating the interaction and updating the article stats accordingly. If its like or save then the user would be marked as dirty
 def create_interaction(
     db: Session,
     user_id: int,
@@ -85,7 +85,7 @@ def create_interaction(
         raise
 
 
-
+# Simply fetch the interaction status for the given user
 def get_interaction_status(db: Session, user_id: int, article_id: int):
     like_exists = (
         db.query(UserInteraction)
@@ -119,7 +119,7 @@ def get_interaction_status(db: Session, user_id: int, article_id: int):
     )
 
 
-
+# This function is used to toggle like/save interactions. If the interaction already exists, it is removed. If it does not exist, it is created. The function also updates the ArticleStat counts accordingly and marks the user vector as dirty if a like or save interaction is toggled. The user is marked as dirty in this case to reduce the load of the database and the system, and prevent system overload due to the user spamming either like or save buttons while interacting.
 def toggle_interaction(
     db: Session,
     user_id: int,

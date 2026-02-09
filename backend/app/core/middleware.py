@@ -5,7 +5,7 @@ from app.core.logger import get_logger
 
 logger = get_logger("request")
 
-
+# Middleware to log and check all the requests
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()

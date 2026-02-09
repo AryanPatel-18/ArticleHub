@@ -2,6 +2,9 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Literal
 
+# This schema defines the data schemas for user interactions with articles, including creating interactions (views, likes, saves), responses for interaction creation, checking interaction status, and toggling interactions. These schemas ensure that the data sent to and received from the API regarding user interactions is structured and validated properly.
+
+
 class UserInteractionCreateRequest(BaseModel):
     article_id: int
     interaction_type: str = Field(..., pattern="^(view|like|save)$")

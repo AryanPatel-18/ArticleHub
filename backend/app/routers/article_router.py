@@ -6,9 +6,14 @@ from app.services.article_service import get_article_by_id, create_article, get_
 from app.schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
 from app.services.vector_background_service import create_article_vector_background
 import os
+
+
+# Article router for endpoints related to article management (CRUD operations, fetching by tag/author)
+
 router = APIRouter(prefix="/articles", tags=["Articles"])
 
-@router.get("/{article_id}", response_model=ArticleReadResponse)
+# Endpoint to get an article by its ID. This is a basic read operation that allows users to view the details of a specific article. The article id in this case is passed through the url. This would return the article if it exists or it would simply return 404 error if the article does not exist
+@router.get("/{article_id}", response_model=ArticleReadResponse, summary="Get an article by its ID")
 def read_article(article_id: int, db: Session = Depends(get_db)):
     article = get_article_by_id(db, article_id)
 
@@ -17,7 +22,9 @@ def read_article(article_id: int, db: Session = Depends(get_db)):
 
     return article
 
-@router.post("/", response_model=ArticleResponse, status_code=201)
+# Endpoint to create a new article. This allows only authenticated users to create articles. The article details are passed in the request body in json format. The vector generation is done in the background to avoid blocking the user from browsing the rest of the webpage. This endpoint would return the article details if the article is created successfully or it would return 401 error if the user is not authenticated.
+
+@router.post("/", response_model=ArticleResponse, status_code=201, summary="Create a new article")
 def create_article_endpoint(
     payload: ArticleCreateRequest,
     background_tasks: BackgroundTasks,
@@ -36,17 +43,8 @@ def create_article_endpoint(
     return article
 
 
-@router.get("/saved/list", response_model=PaginatedSavedArticlesResponse)
-def get_saved_articles(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(5, ge=1, le=50),
-    db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user_id)
-):
-    return get_saved_articles_for_user(db, user_id, page, page_size)
-
-
-@router.get("/user/me",response_model=PaginatedUserArticlesResponse)
+# Gets the user the paginated list of the articles that it has created. return 401 if the user if not authenticated. Also you can pass the page size as well as the page length in the url parameters
+@router.get("/user/me",response_model=PaginatedUserArticlesResponse, summary="Get a paginated list of your articles with sorting options")
 def get_my_articles(
     sort: str = "newest",
     page: int = Query(1, ge=1),
@@ -57,15 +55,17 @@ def get_my_articles(
     return get_articles_by_user(db, user_id, page, page_size,sort)
 
 
-
-@router.get("/stats/me",response_model=UserArticleStatsResponse)
+# Return the stats of the user articles such as total articles, total likes, total saves, total views. This would return 401 if the user is not authenticated.
+@router.get("/stats/me",response_model=UserArticleStatsResponse, summary="Get statistics about your articles (total, interactions, etc.)")
 def get_my_article_stats(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
     return get_user_article_stats(db, user_id)
 
-@router.delete("/{article_id}")
+
+# For deleting the article. User can only delete the articles that he or she has created. return 401 if the user is not authenticated or not authorized to delete the article. Also returns 404 if the article does not exist.
+@router.delete("/{article_id}", summary="Delete an article you authored")
 def delete_article_endpoint(
     article_id: int,
     db: Session = Depends(get_db),
@@ -73,7 +73,8 @@ def delete_article_endpoint(
 ):
     return delete_article(db, article_id, user_id)
 
-@router.get("/get/by-tag", response_model=PaginatedArticlesByTagSchema)
+# Endpoint to fetch the articles based on the tag. return 401 if the user is not authenticated. Or would return 404 if the tag does not exist
+@router.get("/get/by-tag", response_model=PaginatedArticlesByTagSchema, summary="Get a paginated list of articles by tag")
 def fetch_articles_by_tag(
     tag_id: int = Query(..., description="Tag ID"),
     page: int = Query(1, ge=1),
@@ -110,7 +111,9 @@ def fetch_articles_by_tag(
         ]
     )
 
-@router.get("/get/by-author", response_model=PaginatedArticlesByAuthorSchema)
+# Endpoint to fetch the articles based on the author. return 401 if the user is not authenticated. Or would return 404 if the author does not exist
+
+@router.get("/get/by-author", response_model=PaginatedArticlesByAuthorSchema, summary="Get a paginated list of articles by author")
 def fetch_articles_by_author(
     author_id: int = Query(..., description="User ID (author)"),
     page: int = Query(1, ge=1),
@@ -146,8 +149,8 @@ def fetch_articles_by_author(
             for a in articles
         ]
     )
-
-@router.get("/get/saved", response_model=PaginatedSavedArticlesResponse)
+# Endpoint to get a paginated list of user's saved articles. This would return 401 if the user is not authenticated. The pagination parameters that is the page number and page size can be passed in as the url parameters.
+@router.get("/get/saved", response_model=PaginatedSavedArticlesResponse, summary="Get a paginated list of your saved articles")
 def fetch_saved_articles(
     page: int = Query(1, ge=1),
     page_size: int = Query(5, ge=1, le=50),
@@ -156,7 +159,10 @@ def fetch_saved_articles(
 ):
     return get_saved_articles_for_user(db, user_id,page, page_size)
 
-@router.put("/{article_id}", response_model=ArticleUpdateResponse)
+
+# Endpoint to update an article. User can only update the articles that he or she has created. return 401 if the user is not authenticated or not authorized to update the article. Also returns 404 if the article does not exist. The vector generation is done in the background to avoid blocking the user from browsing the rest of the webpage.
+
+@router.put("/{article_id}", response_model=ArticleUpdateResponse, summary="Update an article you authored")
 def edit_article(
     article_id: int,
     data: ArticleUpdateRequest,

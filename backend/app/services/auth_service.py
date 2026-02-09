@@ -17,6 +17,8 @@ from app.services.user_vector_service import create_default_user_vector
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
+
+# For registering a new user, this also creates a default vector based on the top 10 articles in the system to ensure that only the most trending articles are suggested to the user until the user has enough interactions that can be used to build its own recommendation vectors
 def register_user(db: Session, user: RegistrationRequest):
     logger.info(f"user_registration_start email={user.user_email}")
 
@@ -84,7 +86,7 @@ def register_user(db: Session, user: RegistrationRequest):
     )
 
 
-
+# Used for user login
 def login_user(db: Session, payload: LoginRequest):
     logger.info(f"login_attempt email={payload.user_email}")
 

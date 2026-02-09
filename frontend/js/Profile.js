@@ -1,5 +1,11 @@
+// This js file loads all the information of the user from the backend, also allows the user to change the information and also change the password for the account
+import { protectRoute } from "./auth_guard.js";
 
-window.addEventListener("DOMContentLoaded", () =>{
+window.addEventListener("DOMContentLoaded", async () =>{
+    const isValid = await protectRoute();
+
+    if (!isValid) return;
+    
     loadUserProfile();
 });
 
@@ -22,6 +28,7 @@ function cancelEdit(section) {
     if (editMode) editMode.classList.remove('active');
 }
 
+// Saves the information from the form
 function saveSection(section) {
     if (section === "personal-info" || section === "about" || section === "social") {
         updateUserProfile(section);
@@ -39,9 +46,9 @@ document.getElementById('edit-image-btn').addEventListener('click', () => {
 function logout() {
     const modal = new bootstrap.Modal(document.getElementById("confirmLogoutModal"));
     modal.show();
-
-
 }
+
+// Main function that requests the data from the backend, the user id is passed through the auth token that is stored in the local storage
 async function loadUserProfile() {
     const token = localStorage.getItem("auth_token");
 
@@ -66,7 +73,7 @@ async function loadUserProfile() {
 
         const data = await response.json();
 
-        // ===== Populate VIEW MODE =====
+        // for populating the view mode
         document.getElementById("profile-username-display").textContent = data.user_name;
         document.getElementById("profile-user-handle").textContent = `@${data.user_name}`;
 
@@ -92,7 +99,7 @@ async function loadUserProfile() {
             document.getElementById("social-url-display").textContent = "No link provided";
         }
 
-        // ===== Populate EDIT MODE =====
+        //For populating the edit mode
         document.getElementById("username-input").value = data.user_name;
         document.getElementById("email-input").value = data.user_email;
         document.getElementById("birthdate-input").value = data.birth_date || "";
@@ -106,6 +113,7 @@ async function loadUserProfile() {
     }
 }
 
+// Creates the payload based on the information that the user updated, since any of the sections can be left as none in the payload as per the backend schema. In this way a single endpoint can be used to update all the information of the user except the password
 function buildProfileUpdatePayload(section) {
     const payload = {};
 
@@ -126,6 +134,8 @@ function buildProfileUpdatePayload(section) {
     return payload;
 }
 
+
+// The main function that updates the user information by sending the payload to the endpoint in the backend
 async function updateUserProfile(section) {
     const token = localStorage.getItem("auth_token");
     if (!token) {
@@ -152,7 +162,7 @@ async function updateUserProfile(section) {
 
         const data = await response.json();
 
-        // ---- VIEW MODE UPDATE ----
+        // update the view mode
         document.getElementById("profile-username-display").textContent = data.user_name;
         document.getElementById("profile-user-handle").textContent = `@${data.user_name}`;
 
@@ -176,7 +186,7 @@ async function updateUserProfile(section) {
             document.getElementById("social-url-display").textContent = "No link provided";
         }
 
-        // ---- EDIT MODE UPDATE ----
+        // updating the edit mode
         document.getElementById("username-input").value = data.user_name;
         document.getElementById("email-input").value = data.user_email;
         document.getElementById("birthdate-input").value = data.birth_date || "";
@@ -193,6 +203,7 @@ async function updateUserProfile(section) {
 
 let pendingPasswordPayload = null;
 
+// The function that checks that both the new password and the confirm password are the same as also prompts the user to confirm wether they want to change the password or not
 function handlePasswordChange() {
     const oldPassword = document.getElementById("current-password-input").value;
     const newPassword = document.getElementById("new-password-input").value;
@@ -218,7 +229,7 @@ function handlePasswordChange() {
     modal.show();
 }
 
-
+// The function that actually sends the new password to the backend for updating through the payload. Also sends the auth token for verification of the old password. In case the backend returns false that is the old password was not valid then the user would be prompted with an alert modal that would say invalid password
 async function updatePassword() {
     const token = localStorage.getItem("auth_token");
     if (!token) {
@@ -258,6 +269,7 @@ async function updatePassword() {
     }
 }
 
+// All the modals are in the below functions
 document.getElementById("confirm-password-change-btn")
     .addEventListener("click", () => {
         const modalEl = document.getElementById("confirmPasswordModal");

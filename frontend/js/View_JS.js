@@ -1,3 +1,6 @@
+// This file loads the entire article, also update the interaction values as the user interacts with the like and save button. View is updated by default once the user leaves the page
+import { protectRoute } from "./auth_guard.js";
+
 let article_Id;
 
 let liked = false;
@@ -6,7 +9,10 @@ let saved = false;
 let likeButton;
 let saveButton;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     likeButton = document.getElementById("likeButton");
     saveButton = document.getElementById("saveButton");
 
@@ -15,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadInteractionStatus();
 });
 
+// Loading all the information from the backend
 async function loadArticle() {
     const loader = document.getElementById("article-loader");
     const container = document.getElementById("article-container");
@@ -74,6 +81,7 @@ async function loadArticle() {
     }
 }
 
+// Updating the interaction value in the database ( like, save, view )
 function logArticle(articleId, type) {
     const userId = localStorage.getItem("user_id");
     if (!userId) return;
@@ -88,6 +96,7 @@ function logArticle(articleId, type) {
     }).catch(() => {});
 }
 
+// Fetches interaction states from the backend, that is checks if the user has already either liked or saved the article that it is viewing
 async function loadInteractionStatus() {
     const userId = localStorage.getItem("user_id");
 
@@ -128,6 +137,7 @@ async function loadInteractionStatus() {
     }
 }
 
+// Toggling the interaction state based on the like and saved buttons clicked. Final state would be updated after the user exits the page
 async function toggleInteraction(type) {
     const token = localStorage.getItem("auth_token");
     const urlParams = new URLSearchParams(window.location.search);
@@ -178,7 +188,7 @@ async function toggleInteraction(type) {
     }
 }
 
-
+// Functions activated when the like or save buttons are clicked
 function toggleLike() {
     toggleInteraction("like");
 }
@@ -187,6 +197,7 @@ function toggleBookmark() {
     toggleInteraction("save");
 }
 
+// Since a single view page is used for trending author/tags as well as the normal viewing and for the searching algorithm, the back to home button's ( Set by default ) URL as well as the text is changed based on from which page the view page was accessed
 function setBackNavigation() {
     const backBtn = document.getElementById("back-to-home-btn");
     const referrer = sessionStorage.getItem("article_referrer");

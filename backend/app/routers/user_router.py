@@ -4,11 +4,11 @@ from app.core.dependencies import get_db, get_current_user_id
 from app.services.user_service import get_user_profile,update_user_profile,change_user_password
 from sqlalchemy.orm import Session
 
-
+# This router handles all the endpoints related to user profiles, including fetching the user's profile information, updating the profile, and changing the password. It ensures that only authenticated users can access and modify their own profile information.
 router = APIRouter(prefix="/users", tags=["User"])
 
-
-@router.get("/me", response_model=UserProfileResponse)
+# Endpoint to get the profile information of the currently authenticated user. This includes details such as email, name, birth date, bio, social links, and account creation date.
+@router.get("/me", response_model=UserProfileResponse, summary="Get the profile information of the currently authenticated user")
 def get_my_profile(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
@@ -31,8 +31,8 @@ def get_my_profile(
         created_at=user.created_at
     )
 
-
-@router.put("/me", response_model=UserProfileResponse)
+# Endpoint to update the profile information of the currently authenticated user. Users can update their name, birth date, bio, and social links. The endpoint ensures that only the authenticated user can update their own profile information.
+@router.put("/me", response_model=UserProfileResponse, summary="Update the profile information of the currently authenticated user")
 def update_my_profile(
     data: UserProfileUpdateRequest,
     db: Session = Depends(get_db),
@@ -54,8 +54,8 @@ def update_my_profile(
         social_link=user.social_link,
         created_at=user.created_at
     )
-
-@router.put("/me/password", response_model=PasswordChangeResponse)
+# Endpoint to change the password of the currently authenticated user. Users must provide their old password and a new password. The endpoint verifies the old password before updating to the new password to ensure security.
+@router.put("/me/password", response_model=PasswordChangeResponse, summary="Change the password of the currently authenticated user")
 def change_my_password(
     data: PasswordChangeRequest,
     db: Session = Depends(get_db),

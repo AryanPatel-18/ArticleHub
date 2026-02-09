@@ -1,15 +1,22 @@
+// This file loads all the articles that the user has created, as well as the stats from the backend ( likes, saves, views). Also renders the png image that is sent from the backend that stores the graph that shows the stats of the user over time
+import { protectRoute } from "./auth_guard.js";
+
 const AUTH_TOKEN = localStorage.getItem("auth_token");
 
 let articles = [];
 let currentPage = 1;
 const pageSize = 5;
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     loadInteractionGraph();
     loadArticleStats();
     fetchUserArticles();
 });
 
+// Main function to fetch the articles from the backend
 async function fetchUserArticles(type="newest",page = 1) {
     try {
 
@@ -49,6 +56,7 @@ async function fetchUserArticles(type="newest",page = 1) {
     }
 }
 
+// Adding the information to individual containers
 function renderArticles() {
     const container = document.getElementById("articles-container");
 
@@ -95,6 +103,7 @@ function renderArticles() {
     `).join("");
 }
 
+// Functions for pagination
 function updatePagination(totalPages) {
     const pagination = document.getElementById("pagination-controls");
 
@@ -121,6 +130,7 @@ function nextPage() {
     fetchUserArticles("newest",currentPage + 1);
 }
 
+// Helper functions
 function showError(message) {
     const container = document.getElementById("articles-container");
     container.innerHTML = `<p>${message}</p>`;
@@ -140,7 +150,7 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
 
-
+// The function that fetches all the stats of the user from the backend
 async function loadArticleStats() {
     try {
         const response = await fetch("http://localhost:8000/articles/stats/me", {
@@ -177,6 +187,7 @@ function setActiveSort(buttonId) {
     document.getElementById(buttonId).classList.add("active");
 }
 
+// Allows the user to delete the article. Is activated when the delete button is pressed
 async function deleteArticle(articleId) {
     const confirmed = await showDeleteConfirm();
     if (!confirmed) return;
@@ -209,6 +220,7 @@ async function deleteArticle(articleId) {
     }
 }
 
+// A pop up that shows that the articles was deleted or not. Is removed automatically after 2s
 function showDeleteToast(message) {
     const container = document.getElementById("toast-container");
 
@@ -224,6 +236,7 @@ function showDeleteToast(message) {
     }, 2000);
 }
 
+// Prompts the user before executing the delete operation
 function showDeleteConfirm() {
     return new Promise((resolve) => {
         const overlay = document.getElementById("confirm-overlay");
@@ -252,6 +265,7 @@ function showDeleteConfirm() {
     });
 }
 
+// Loading the png graph from the backend 
 async function loadInteractionGraph() {
     try {
         const response = await fetch(

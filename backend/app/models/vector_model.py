@@ -10,6 +10,7 @@ from sqlalchemy.sql import func
 
 from app.database.db import Base
 
+# database models for storing the vectors
 
 class ArticleVector(Base):
     __tablename__ = "article_vectors"

@@ -1,334 +1,270 @@
-# 📰 ArticleHub
+# ArticleHub
 
-**ArticleHub** is a content-based article publishing and recommendation system.
-It allows users to read and write articles, interact with them (view, like, save), and receive personalized recommendations based on content similarity and interaction history.
+ArticleHub is a full-stack article publishing platform with a content-based recommendation engine.
+The system allows users to create, read, and interact with articles while generating personalized recommendations using natural-language feature extraction and similarity scoring.
 
-The system is designed with proper separation between:
-**content**, **user interactions**, and **derived recommendation data**.
-
----
-
-## 🚀 Features
-
-### 🧑‍💻 User Features
-
-* Read articles
-* Write and publish articles
-* Tag articles by topic
-* Like and save articles
-* View personalized article recommendations
-* Interaction state persists across refresh (liked/saved status)
+This project demonstrates backend API design, relational database modeling, frontend integration, and applied machine-learning concepts in a single system.
 
 ---
 
-### 🤖 Recommendation System
+## Project Overview
 
-* TF-IDF vectorization of:
+ArticleHub separates application concerns into three major domains:
 
-  * Article text
-  * Article tags
-* Cosine similarity for ranking
-* User vector computed from past interactions:
+* Content management (articles, tags, authorship)
+* User interaction tracking (views, likes, saves)
+* Recommendation data (vectors, similarity scoring, statistics)
 
-  * view = weight 1
-  * like = weight 2
-  * save = weight 3
-* Cold-start users get recommendations from the global article centroid
+The backend acts as the single source of truth for all interaction and recommendation data.
 
 ---
 
-## 🧱 Technology Stack
+## Features
 
-### Frontend
+### Content System
 
-* HTML
-* CSS
-* JavaScript (no framework)
-* REST API communication
+* Article creation and publishing
+* Tagging system
+* Article viewing interface
+* Author attribution
+* Rich text article content
+
+### Interaction System
+
+* View tracking
+* Like / Unlike articles
+* Save / Unsave articles
+* Persistent interaction state
+* Automatic statistics updates
+
+### Recommendation Engine
+
+* TF-IDF vectorization of article content
+* Tag-based similarity scoring
+* Weighted user-interaction profiling
+* Cold-start recommendation handling
+* Cosine similarity ranking
+
+---
+
+## Recommendation Logic
+
+Article similarity is computed using vector representations derived from:
+
+* Article text content
+* Article tags
+
+User preference vectors are calculated using weighted interactions:
+
+| Interaction | Weight |
+| ----------- | ------ |
+| View        | 1      |
+| Like        | 2      |
+| Save        | 3      |
+
+Final recommendation score:
+
+score = 0.7 × text_similarity + 0.3 × tag_similarity
+
+Cold-start users receive recommendations based on the global article centroid.
+
+---
+
+## Technology Stack
 
 ### Backend
 
 * Python
 * FastAPI
-* SQLAlchemy ORM
+* SQLAlchemy
 * PostgreSQL
+
+### Frontend
+
+* HTML
+* CSS
+* Vanilla JavaScript
+* REST API integration
 
 ### Machine Learning
 
 * scikit-learn
 * TF-IDF Vectorizer
-* Cosine similarity
+* Cosine Similarity
 
 ---
 
-## 🗄️ Database Schema
+## Database Design
 
 ### Core Tables
 
-* **users**
-* **articles**
-* **tags**
-* **article_tags**
-* **user_interactions**
+* users
+* articles
+* tags
+* article_tags
+* user_interactions
 
 ### Derived Tables
 
-* **article_vectors**
-* **user_vectors**
-* **article_stats**
-* **user_preferred_tags**
+* article_vectors
+* user_vectors
+* article_stats
+* user_preferred_tags
 
-### Important Constraint
+### Interaction Constraint
 
 ```sql
 UNIQUE (user_id, article_id, interaction_type)
 ```
 
-Prevents duplicate likes and saves.
+This prevents duplicate interactions such as multiple likes from the same user.
 
 ---
 
-## 🔁 Interaction System (Like / Save)
+## API Endpoints
 
-Each interaction is stored as:
-
-```
-(user_id, article_id, interaction_type)
-```
-
-Where:
-
-* interaction_type ∈ { view, like, save }
-
-Presence of a row = active
-Absence of a row = inactive
-
-Backend is the **source of truth**.
-
----
-
-## 🌐 API Endpoints
-
-### 📄 Articles
+### Articles
 
 ```
 GET /articles/{article_id}
 ```
 
-Returns a full article with author and tags.
+Returns a complete article with metadata and tags.
 
 ---
 
-### 📊 Recommendations
+### Recommendations
 
 ```
 GET /recommendations/{user_id}
 ```
 
-Returns top recommended articles for a user.
+Returns ranked article recommendations for a user.
 
 ---
 
-### ❤️ Interaction Status
+### Interaction Status
 
 ```
-GET /interactions/status?user_id=U&article_id=A
+GET /interactions/status?user_id={id}&article_id={id}
 ```
 
-Response:
-
-```json
-{
-  "liked": true,
-  "saved": false
-}
-```
+Returns like/save state for an article.
 
 ---
 
-### 🔁 Toggle Interaction
+### Toggle Interaction
 
 ```
-POST /interactions/toggle?user_id=U
+POST /interactions/toggle?user_id={id}
 ```
 
-Body:
-
-```json
-{
-  "article_id": 5,
-  "interaction_type": "like"
-}
-```
-
-Response:
-
-```json
-{
-  "interaction_type": "like",
-  "active": true,
-  "new_count": 12
-}
-```
-
-Used for:
-
-* like / unlike
-* save / unsave
+Used for like/unlike and save/unsave operations.
 
 ---
 
-## 🖥️ Frontend Pages
+## Frontend Pages
 
-### 🏠 Home Page
+Home Page
 
 * Displays recommended articles
-* Uses a loading spinner while fetching data
-* Each article links to:
+* Loading state handling
+* Navigation to article pages
 
-```
-view_article.html?article_id=...
-```
+View Article Page
 
----
+* Dynamic article loading
+* Tag display
+* Interaction buttons
+* Metadata display
 
-### 📖 View Article Page
-
-* Loads article dynamically
-* Shows:
-
-  * title
-  * author
-  * date
-  * tags
-  * content
-* Like & Save buttons:
-
-  * Filled when active
-  * Outline when inactive
-
----
-
-### ✍️ Create Article Page
+Create Article Page
 
 * Rich text editor
 * Tag input system
-* Autosave
-* Preview
-* Publish and discard functionality
+* Autosave support
+* Preview functionality
+* Publish and discard options
 
 ---
 
-## 🧠 Recommendation Logic
+## Setup Instructions
 
-Final recommendation score:
-
-```
-score = 0.7 × text_similarity + 0.3 × tag_similarity
-```
-
-Similarity is computed using:
-
-```
-cosine_similarity(user_vector, article_vector)
-```
-
----
-
-## 📈 Article Statistics
-
-Stored in:
-
-```
-article_stats
-```
-
-Tracks:
-
-* view_count
-* like_count
-
-Updated automatically when:
-
-* interaction rows are inserted or removed
-
----
-
-## 🧪 Testing
-
-Example:
-
-```
-GET http://localhost:8000/interactions/status?user_id=1&article_id=5
-```
-
----
-
-## ⚙️ Setup Instructions
-
-### 1. Clone the repository
+### Clone Repository
 
 ```bash
 git clone https://github.com/your-username/articlehub.git
 cd articlehub
 ```
 
-### 2. Install backend dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Start the backend server
+### Run Backend Server
 
 ```bash
 uvicorn main:app --reload
 ```
 
-### 4. Open frontend
+Backend runs at:
 
-Open the HTML files directly in a browser or serve them with a static server.
+```
+http://localhost:8000
+```
+
+### Open Frontend
+
+Open the HTML files directly in a browser or serve them using a static server.
 
 ---
 
-## 🧩 Design Principles
+## Design Principles
 
-* Backend is authoritative
-* No frontend trust for likes/saves
-* Proper normalization
-* No duplicate interaction rows
-* Explainable recommendation logic
-* Separation of:
+* Backend-driven state management
+* Normalized relational schema
+* Deterministic recommendation logic
+* Clear separation of system responsibilities
+* Idempotent interaction operations
+* Explainable ML pipeline
 
-```
-articles ≠ interactions ≠ stats ≠ vectors
+---
+
+## Testing
+
+Example request:
+
+```bash
+GET http://localhost:8000/interactions/status?user_id=1&article_id=5
 ```
 
 ---
 
-## 🛠️ Future Improvements
+## Future Improvements
 
-* Track time spent per article
-* Add FAISS / pgvector for faster similarity search
-* Add search functionality
-* Improve UI/UX
-* Add authentication (JWT)
-* Pagination for articles
+* Authentication system (JWT)
+* Search functionality
+* Pagination support
 * Trending articles endpoint
+* Vector search optimization (FAISS / pgvector)
+* UI improvements
+* Reading-time tracking
 
 ---
 
-## 📜 License
+## License
 
-This project is for educational and experimental use.
+This project is intended for educational and experimental purposes.
 
 ---
 
-## 👤 Author
+## Author
 
-Developed as a full-stack and ML-integrated project combining:
+ArticleHub was developed as a full-stack system integrating:
 
 * database design
-* backend APIs
-* frontend logic
-* and recommendation systems
+* backend API development
+* frontend interaction logic
+* content-based recommendation systems

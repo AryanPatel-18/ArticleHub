@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+# This schema defines the data schemas for trending articles, tags, and authors.
+
 class TrendingArticleSchema(BaseModel):
     article_id: int
     score: float

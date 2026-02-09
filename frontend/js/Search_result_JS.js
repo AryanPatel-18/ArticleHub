@@ -1,10 +1,17 @@
+// This file loads the search results as well as allows the user to sort them
+import { protectRoute } from "./auth_guard.js";
+
+
 const API_BASE_URL = "http://127.0.0.1:8000";
 const AUTH_TOKEN = localStorage.getItem("auth_token");
 
 let allArticles = [];
 let currentSort = "newest";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     const params = new URLSearchParams(window.location.search);
     const query = params.get("q");
 
@@ -16,6 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchSearchResults(query);
 });
 
+
+// Main function that requests the data from the backend
 async function fetchSearchResults(query) {
     if (!AUTH_TOKEN) {
         console.error("Auth token missing");
@@ -52,8 +61,8 @@ async function fetchSearchResults(query) {
     }
 }
 
-/* ================= UI STATE ================= */
 
+// Functions for UI state
 function showLoading() {
     document.getElementById("loading-state").style.display = "block";
     document.getElementById("articles-container").style.display = "none";
@@ -76,7 +85,7 @@ function showError(message) {
     `;
 }
 
-/* ================= SORTING ================= */
+// Function for sorting functionality are below
 
 function sortArticles(sortType) {
     currentSort = sortType;
@@ -87,7 +96,7 @@ function sortArticles(sortType) {
     document.getElementById(`sort-${sortType}`).classList.add("active");
 
     if (sortType === "relevance") {
-        // 🔥 Sort by backend-provided relevance score
+        // Sort by backend-provided relevance score
         allArticles.sort((a, b) =>
             (b.score || 0) - (a.score || 0)
         );
@@ -111,9 +120,7 @@ function sortArticles(sortType) {
     renderArticles();
 }
 
-
-/* ================= RENDER ================= */
-
+// Adding the updated information into the given containers
 function renderArticles() {
     const container = document.getElementById("articles-container");
 
@@ -135,7 +142,7 @@ function renderArticles() {
             : "";
 
         return `
-            <a href="view_article.html?id=${article.article_id}" class="article-link">
+            <a href="view_article.html?article_id=${article.article_id}" class="article-link">
                 <div class="article-card p-3 mb-3">
                     <h3 class="article-title">${escapeHtml(article.title)}</h3>
 
@@ -155,8 +162,8 @@ function renderArticles() {
 }
 
 
-/* ================= HELPERS ================= */
 
+// Helper functions
 function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString();
 }

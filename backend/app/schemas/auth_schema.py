@@ -2,6 +2,8 @@ from pydantic import BaseModel, EmailStr, Field,model_validator,field_validator
 from typing import Optional
 from datetime import date
 
+# This schema defines the data schemas for user authentication and registration, including the request and response models for user registration, login, and token validation. It ensures that the data sent to and received from the authentication endpoints is structured and validated properly.
+
 
 class RegistrationRequest(BaseModel):
     user_email: EmailStr
