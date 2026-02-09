@@ -1,3 +1,5 @@
+// File renders all the articles for the author that was selected by the user
+
 const baseURL = "http://127.0.0.1:8000";
 
 let currentPage = Number(sessionStorage.getItem("author_current_page")) || 1;
@@ -15,9 +17,7 @@ const prevBtn = document.getElementById("prev-page-btn");
 const nextBtn = document.getElementById("next-page-btn");
 const pageTitle = document.getElementById("page-title");
 
-/* -----------------------------
-   INIT
------------------------------ */
+
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
 
@@ -47,9 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* -----------------------------
-   FETCH
------------------------------ */
+// Main function that fetches all the articles from the backend
 async function fetchArticles() {
     showLoading();
 
@@ -79,9 +77,7 @@ async function fetchArticles() {
     }
 }
 
-/* -----------------------------
-   RENDER
------------------------------ */
+// Adding the data into their separate containers
 function renderArticles(articles) {
     articlesContainer.innerHTML = "";
 
@@ -121,9 +117,7 @@ function renderArticles(articles) {
     });
 }
 
-/* -----------------------------
-   SORTING
------------------------------ */
+// this decides the sorting types and updates the active buttons according to the current sorting type
 function sortArticles(type) {
     currentSort = type;
     sessionStorage.setItem("author_sort", currentSort);
@@ -137,7 +131,7 @@ function sortArticles(type) {
     applySorting();
 }
 
-
+// Actually sorts the functions based on the values
 function applySorting() {
     let sorted = [...articlesCache];
 
@@ -152,9 +146,7 @@ function applySorting() {
     renderArticles(sorted);
 }
 
-/* -----------------------------
-   PAGINATION
------------------------------ */
+// Functions for pagination
 function nextPage() {
     if (currentPage < totalPages) {
         currentPage++;
@@ -181,9 +173,7 @@ function updatePaginationUI(page, total) {
         total > 1 ? "flex" : "none";
 }
 
-/* -----------------------------
-   LOADING
------------------------------ */
+// Loader functions
 function showLoading() {
     loadingState.style.display = "block";
     articlesContainer.style.display = "none";

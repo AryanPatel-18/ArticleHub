@@ -1,4 +1,6 @@
-const baseURL = "http://127.0.0.1:8000"; // change if deployed
+// This file loads all the articles of a tag that was selected by the user
+
+const baseURL = "http://127.0.0.1:8000"; 
 
 let currentPage = Number(sessionStorage.getItem("trending_current_page")) || 1;
 
@@ -16,9 +18,7 @@ const prevBtn = document.getElementById("prev-page-btn");
 const nextBtn = document.getElementById("next-page-btn");
 const pageTitle = document.getElementById("page-title");
 
-/* -----------------------------
-   INIT
------------------------------ */
+
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
 
@@ -48,9 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-/* -----------------------------
-   FETCH ARTICLES
------------------------------ */
+// Main function that fetches the articles from the backend
 async function fetchArticles() {
     showLoading();
 
@@ -82,9 +80,7 @@ async function fetchArticles() {
     }
 }
 
-/* -----------------------------
-   RENDER ARTICLES
------------------------------ */
+// Adding the information from the backend into the frontend containers
 function renderArticles(articles) {
     articlesContainer.innerHTML = "";
 
@@ -126,9 +122,7 @@ function renderArticles(articles) {
 }
 
 
-/* -----------------------------
-   SORTING
------------------------------ */
+// Decides the sorting type and makes the valid sorting button active
 function sortArticles(type) {
     currentSort = type;
     sessionStorage.setItem("trending_sort", currentSort);
@@ -142,7 +136,7 @@ function sortArticles(type) {
     applySorting();
 }
 
-
+// Sorts the articles based on the values decided by the above function
 function applySorting() {
     let sorted = [...articlesCache];
 
@@ -159,9 +153,7 @@ function applySorting() {
     renderArticles(sorted);
 }
 
-/* -----------------------------
-   PAGINATION
------------------------------ */
+// Function for pagination
 function nextPage() {
     if (currentPage < totalPages) {
         currentPage++;
@@ -189,9 +181,7 @@ function updatePaginationUI(page, total) {
         total > 1 ? "flex" : "none";
 }
 
-/* -----------------------------
-   LOADING STATE
------------------------------ */
+// Loader functions
 function showLoading() {
     loadingState.style.display = "block";
     articlesContainer.style.display = "none";

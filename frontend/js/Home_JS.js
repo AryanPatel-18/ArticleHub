@@ -1,6 +1,8 @@
 import { protectRoute } from "./auth_guard.js";
-console.log("HOME SCRIPT EXECUTED", Date.now());
+// console.log("HOME SCRIPT EXECUTED", Date.now());
 
+
+// Reducing the content length of the articles to include them in the containers ( To make preview )
 function makePreview(text) {
     if (!text) return "";
 
@@ -10,6 +12,7 @@ function makePreview(text) {
     return preview.length < text.length ? preview + "..." : preview;
 }
 
+// The page remembers the current page the user is on through the session storage
 let currentPage = Number(sessionStorage.getItem("home_current_page")) || 1;
 let totalPages = 1;
 
@@ -20,6 +23,7 @@ if (!sessionId) {
     sessionStorage.setItem("rec_session_id", sessionId);
 }
 
+// This function is executed as soon as the page is loaded. This is responsible for requesting the recommended articles for the user based on the user vectors from the backend
 async function loadArticles() {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
@@ -81,6 +85,8 @@ async function loadArticles() {
     }
 }
 
+
+// Loading the trending tags from the backend and also creating the container to hold the trending tags and adding them in the trending tag section
 async function loadTrendingTags() {
     const container = document.getElementById("trending-tags-container");
     container.innerHTML = "";
@@ -103,6 +109,7 @@ async function loadTrendingTags() {
     }
 }
 
+// Used to render the trending author tags. Backend returns the list of authors that is added into individual rectangles and loaded in the trending author section
 async function loadTrendingAuthors() {
     const panel = document.getElementById("featured-writers-panel");
 
@@ -129,6 +136,7 @@ async function loadTrendingAuthors() {
     }
 }
 
+// Adds all the event listeners once the page is loaded
 document.addEventListener("DOMContentLoaded", async () => {
     const valid = await protectRoute();
     if (!valid) return;
@@ -138,6 +146,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logoutButton = document.getElementById("dropdown-logout-desktop");
     const searchForm = document.getElementById("nav-search-form-desktop");
 
+
+    // Both functions are responsible for changing the current page number in the session storage
     prevButton.addEventListener("click", () => {
         if (currentPage > 1) {
             currentPage--;
@@ -154,12 +164,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Logs the user out
     logoutButton.addEventListener("click", () => {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = "../pages/Authentication.html";
     });
 
+    // Responsible the functioning of the search bar in the navbar section of the page
     searchForm.addEventListener("submit", function (e) {
         e.preventDefault();
         const query = document

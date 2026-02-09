@@ -1,3 +1,5 @@
+// This files handles the article edit form
+
 const baseURL = "http://localhost:8000";
 
 let tags = [];
@@ -14,17 +16,13 @@ let articleData = {
     tags: []
 };
 
-/* -------------------------------
-   READ ARTICLE ID FROM URL
--------------------------------- */
+// Get the article id from teh url
 function getArticleIdFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id");
 }
 
-/* -------------------------------
-   LOAD ARTICLE FROM BACKEND
--------------------------------- */
+// loading the articles from the backend
 async function loadArticle() {
     articleId = getArticleIdFromURL();
 
@@ -49,7 +47,7 @@ async function loadArticle() {
         articleData.title = data.title;
         articleData.content = data.content;
 
-        // ✅ Populate tags
+        // Populate tags
         if (data.tag_names && Array.isArray(data.tag_names)) {
             tags = data.tag_names;
         } else if (data.tags && Array.isArray(data.tags)) {
@@ -58,8 +56,7 @@ async function loadArticle() {
             tags = [];
         }
 
-        renderTags();   // 🔥 this makes chips appear
-
+        renderTags();
         updateWordCounter();
 
     } catch (error) {
@@ -68,6 +65,7 @@ async function loadArticle() {
     }
 }
 
+// Used for creating dismissible boxes that contains all the tags
 function renderTags() {
     const container = document.getElementById('tag-container');
     const input = document.getElementById('tag-input');
@@ -87,9 +85,7 @@ function renderTags() {
     container.appendChild(input);
 }
 
-/* -------------------------------
-   WORD COUNTER
--------------------------------- */
+// word counter
 function updateWordCounter() {
     const text = contentArea.innerText || contentArea.textContent;
     const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
@@ -106,9 +102,7 @@ titleInput.addEventListener('input', function() {
     articleData.title = this.value;
 });
 
-/* -------------------------------
-   FORMAT FUNCTIONS
--------------------------------- */
+// all the formatting functions are defined below
 function formatText(command) {
     const selection = window.getSelection();
     if (!selection.toString()) {
@@ -147,9 +141,7 @@ function insertLink() {
     }
 }
 
-/* -------------------------------
-   TAG SYSTEM (UI ONLY)
--------------------------------- */
+// handling the tag input by detecting the enter key being pressed
 function handleTagInput(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -190,9 +182,7 @@ function renderTags() {
     container.appendChild(input);
 }
 
-/* -------------------------------
-   UPDATE ARTICLE (PUT)
--------------------------------- */
+// The main function that sends data to the backend using payload as well as passing the auth token in the header section
 async function publishArticle() {
     const title = titleInput.value.trim();
     const content = contentArea.innerText.trim();
@@ -211,11 +201,11 @@ async function publishArticle() {
     const publishBtn = document.getElementById("publish-article-btn");
     const cancelBtn = document.getElementById("discard-article-btn");
 
-    // 🔒 Disable buttons
+    //Disable buttons
     publishBtn.disabled = true;
     cancelBtn.disabled = true;
 
-    // 🔄 Spinner state
+    //Spinner state
     const originalText = publishBtn.innerHTML;
     publishBtn.innerHTML = `
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -251,30 +241,26 @@ async function publishArticle() {
 
         const updatedArticle = await response.json();
 
-        // ✅ Redirect after success
+        // Redirect after success
         window.location.href = `view_article.html?article_id=${updatedArticle.article_id}`;
 
     } catch (error) {
         console.error("Update error:", error);
         alert("Server error while updating article");
 
-        // 🔓 Re-enable buttons on error
+        // Re-enable buttons on error
         publishBtn.disabled = false;
         cancelBtn.disabled = false;
         publishBtn.innerHTML = originalText;
     }
 }
 
-/* -------------------------------
-   DISCARD
--------------------------------- */
+// Discarding the article and moving to the home page
 function discardArticle() {
     window.location.href = "Your_articles.html"
 }
 
-/* -------------------------------
-   INIT
--------------------------------- */
+
 window.addEventListener("DOMContentLoaded", () => {
     loadArticle();
 });

@@ -8,7 +8,7 @@ let articleData = {
     tags: []
 };
 
-// Word Counter
+
 const contentArea = document.getElementById('article-content');
 const wordCounter = document.getElementById('word-counter');
 
@@ -25,7 +25,6 @@ contentArea.addEventListener('input', function() {
 // Title input
 document.getElementById('article-title').addEventListener('input', function() {
     articleData.title = this.value;
-    // autoSave();
 });
 
 // Format Text Functions
@@ -46,7 +45,7 @@ function insertHeading() {
         return;
     }
     
-    // Check if already a heading by traversing up the parent chain
+    // Checking if already a heading by traversing up the parent chain
     let element = selection.anchorNode;
     let isHeading = false;
     
@@ -128,7 +127,6 @@ function handleTagInput(event) {
             renderTags();
             input.value = '';
             articleData.tags = tags;
-            // autoSave();
         }
     }
 }
@@ -137,9 +135,10 @@ function removeTag(tagToRemove) {
     tags = tags.filter(tag => tag !== tagToRemove);
     renderTags();
     articleData.tags = tags;
-    // autoSave();
+
 }
 
+// Converts the tag entered into a dismissible block format
 function renderTags() {
     const container = document.getElementById('tag-container');
     const input = document.getElementById('tag-input');
@@ -185,6 +184,7 @@ window.addEventListener('load', function() {
 
 const publishButton = document.getElementById("publish-article-btn")
 
+// Main function that sends the payload to the backend to create the article, Here the article information is returned but is not used, and the user is sent back to the home page
 async function publishArticle() {
     const title = document.getElementById('article-title').value.trim();
     const content = document.getElementById('article-content').innerText.trim();

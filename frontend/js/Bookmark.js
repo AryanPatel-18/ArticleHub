@@ -1,3 +1,7 @@
+// This file is responsible for the rendering of saved articles of the user
+
+
+// default variables
 const API_BASE_URL = "http://127.0.0.1:8000";
 let currentPage = 1;
 let totalPages = 1;
@@ -9,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchBookmarkedArticles();
 });
 
-// ================= FETCH =================
 
+// The main function that fetches the saved articles from the backend, here it would send the auth token through the header which would be used to get the user id
 async function fetchBookmarkedArticles() {
     showLoading(true);
 
@@ -50,8 +54,7 @@ async function fetchBookmarkedArticles() {
     }
 }
 
-// ================= RENDER =================
-
+// After the request has been sent this function is responsible for adding the data into the container that are created in the html file
 function renderArticles(articles) {
     const container = document.getElementById("articles-container");
     container.innerHTML = "";
@@ -83,8 +86,8 @@ function renderArticles(articles) {
     container.style.display = "block";
 }
 
-// ================= SORTING =================
 
+// This file changes the sort variable and also updates the active button from the button list in the sort container
 function sortArticles(type) {
     currentSort = type;
 
@@ -96,6 +99,7 @@ function sortArticles(type) {
     applySorting();
 }
 
+// Actually responsible sorting the articles based on the type
 function applySorting() {
     let sorted = [...articlesCache];
 
@@ -110,8 +114,8 @@ function applySorting() {
     renderArticles(sorted);
 }
 
-// ================= PAGINATION =================
 
+// Both functions are responsible for the functioning of the next and prev button
 function nextPage() {
     if (currentPage < totalPages) {
         currentPage++;
@@ -126,6 +130,7 @@ function prevPage() {
     }
 }
 
+// Updating the prev and the next buttons as well as the page number at the bottom of the page after changing the page
 function updatePaginationUI() {
     document.getElementById("page-indicator").textContent =
         `Page ${currentPage} of ${totalPages}`;
@@ -137,7 +142,6 @@ function updatePaginationUI() {
         totalPages > 1 ? "flex" : "none";
 }
 
-// ================= HELPERS =================
 
 function showLoading(isLoading) {
     document.getElementById("loading-state").style.display =
