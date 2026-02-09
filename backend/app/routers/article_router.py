@@ -13,7 +13,7 @@ def read_article(article_id: int, db: Session = Depends(get_db)):
     article = get_article_by_id(db, article_id)
 
     if not article:
-        raise HTTPException(status_code=404, detail="Random Random")
+        raise HTTPException(status_code=404, detail="Article Does Not Exist")
 
     return article
 

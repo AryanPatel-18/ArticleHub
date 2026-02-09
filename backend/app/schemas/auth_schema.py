@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field,model_validator
+from pydantic import BaseModel, EmailStr, Field,model_validator,field_validator
 from typing import Optional
 from datetime import date
 
@@ -13,9 +13,23 @@ class RegistrationRequest(BaseModel):
     social_link: Optional[str] = None
 
     @model_validator(mode="after")
-    def passwords_match(self):
+    def validate_fields(self):
+        # Password match validation
         if self.password != self.confirm_password:
             raise ValueError("Passwords do not match")
+
+        # Empty username validation
+        if not self.user_name.strip():
+            raise ValueError("Username cannot be empty")
+
+        # Future birth date validation
+        if self.birth_date > date.today():
+            raise ValueError("Birth date cannot be in the future")
+
+        # Social link length validation
+        if self.social_link and len(self.social_link) > 255:
+            raise ValueError("Social link too long")
+
         return self
 
 
@@ -26,6 +40,11 @@ class RegistrationResponse(BaseModel):
 class LoginRequest(BaseModel):
     user_email : EmailStr
     password : str
+    
+    @field_validator("user_email")
+    @classmethod
+    def normalize_email(cls, v):
+        return v.lower()
 
 class LoginResponse(BaseModel):
     user_id : int

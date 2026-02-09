@@ -1,97 +1,83 @@
 import json
+import pickle
 from sqlalchemy.orm import Session
-from sklearn.feature_extraction.text import TfidfVectorizer
 import re
-from collections import Counter
+# from collections import Counter
+from pathlib import Path
+
 from app.models.article_model import Article, ArticleTag, Tag
 from app.models.vector_model import ArticleVector
 from app.core.logger import get_logger
+
 logger = get_logger(__name__)
+
+MODEL_DIR = Path("model_store")
+TEXT_MODEL_PATH = MODEL_DIR / "tfidf_vectorizer.pkl"
+TAG_MODEL_PATH = MODEL_DIR / "tag_vectorizer.pkl"
+
+_text_vectorizer = None
+_tag_vectorizer = None
+
+
+def load_vectorizers():
+    global _text_vectorizer, _tag_vectorizer
+
+    if _text_vectorizer is None:
+        with open(TEXT_MODEL_PATH, "rb") as f:
+            _text_vectorizer = pickle.load(f)
+
+    if _tag_vectorizer is None:
+        with open(TAG_MODEL_PATH, "rb") as f:
+            _tag_vectorizer = pickle.load(f)
+
+    return _text_vectorizer, _tag_vectorizer
 
 
 def create_article_vector(db: Session, article_id: int):
-    """
-    Recompute TF-IDF using ALL articles,
-    then store vector ONLY for the given article_id.
-
-    Safe version:
-    - prevents duplicate vector inserts
-    - handles missing article safely
-    - avoids DB crashes
-    """
-
     logger.info(f"vector_recompute_start article_id={article_id}")
 
     try:
-        # -------------------------------------------------
-        # 1. Fetch corpus
-        # -------------------------------------------------
-        articles = db.query(Article).all()
+        text_vectorizer, tag_vectorizer = load_vectorizers()
 
-        if not articles:
-            logger.warning("vector_recompute_skipped no_articles_exist")
+        article = (
+            db.query(Article)
+            .filter(Article.article_id == article_id)
+            .first()
+        )
+
+        if not article:
+            logger.warning(f"article_not_found article_id={article_id}")
             return
 
-        article_ids = [a.article_id for a in articles]
-        texts = [a.content for a in articles]
+        # -----------------------
+        # TEXT VECTOR
+        # -----------------------
+        text = (article.content or "")[:5000]
+        text_vector = text_vectorizer.transform([text])[0]
 
-        if article_id not in article_ids:
-            logger.warning(f"article_not_found_in_corpus article_id={article_id}")
-            return
+        text_vector_json = {
+            "indices": text_vector.indices.tolist(),
+            "values": text_vector.data.tolist(),
+        }
 
-        logger.info(f"vector_corpus_loaded size={len(article_ids)}")
-
-        # -------------------------------------------------
-        # 2. Fetch tags
-        # -------------------------------------------------
+        # -----------------------
+        # TAG VECTOR
+        # -----------------------
         rows = (
-            db.query(ArticleTag.article_id, Tag.tag_name)
-            .join(Tag, ArticleTag.tag_id == Tag.tag_id)
+            db.query(Tag.tag_name)
+            .join(ArticleTag, ArticleTag.tag_id == Tag.tag_id)
+            .filter(ArticleTag.article_id == article_id)
             .all()
         )
 
-        tag_map = {}
-        for aid, tag_name in rows:
-            tag_map.setdefault(aid, []).append(tag_name)
-
-        tag_texts = [" ".join(tag_map.get(aid, [])) for aid in article_ids]
-
-        # -------------------------------------------------
-        # 3. TF-IDF computation
-        # -------------------------------------------------
-        text_vectorizer = TfidfVectorizer(
-            stop_words="english",
-            max_features=50000
-        )
-
-        tag_vectorizer = TfidfVectorizer()
-
-        text_vectors = text_vectorizer.fit_transform(texts)
-        tag_vectors = tag_vectorizer.fit_transform(tag_texts)
-
-        logger.info("tfidf_fit_complete")
-
-        # -------------------------------------------------
-        # 4. Extract target article vector
-        # -------------------------------------------------
-        target_index = article_ids.index(article_id)
-
-        text_row = text_vectors[target_index]
-        tag_row = tag_vectors[target_index]
-
-        text_vector_json = {
-            "indices": text_row.indices.tolist(),
-            "values": text_row.data.tolist(),
-        }
+        tag_text = " ".join([r[0] for r in rows])
+        tag_vector = tag_vectorizer.transform([tag_text])[0]
 
         tag_vector_json = {
-            "indices": tag_row.indices.tolist(),
-            "values": tag_row.data.tolist(),
+            "indices": tag_vector.indices.tolist(),
+            "values": tag_vector.data.tolist(),
         }
 
-        # -------------------------------------------------
-        # 5. UPSERT behavior (fix duplicate key bug)
-        # -------------------------------------------------
         existing_vector = (
             db.query(ArticleVector)
             .filter(ArticleVector.article_id == article_id)
@@ -102,18 +88,16 @@ def create_article_vector(db: Session, article_id: int):
             existing_vector.text_vector = json.dumps(text_vector_json)
             existing_vector.tag_vector = json.dumps(tag_vector_json)
             existing_vector.vector_version += 1
-
             logger.info(f"article_vector_updated article_id={article_id}")
-
         else:
-            vector = ArticleVector(
-                article_id=article_id,
-                text_vector=json.dumps(text_vector_json),
-                tag_vector=json.dumps(tag_vector_json),
-                vector_version=1
+            db.add(
+                ArticleVector(
+                    article_id=article_id,
+                    text_vector=json.dumps(text_vector_json),
+                    tag_vector=json.dumps(tag_vector_json),
+                    vector_version=1
+                )
             )
-            db.add(vector)
-
             logger.info(f"article_vector_created article_id={article_id}")
 
         db.commit()
@@ -124,7 +108,6 @@ def create_article_vector(db: Session, article_id: int):
         raise
 
 
-
 TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")
 
 
@@ -133,53 +116,16 @@ def tokenize(text: str) -> list[str]:
 
 
 def build_query_vector(db: Session, query: str) -> dict:
-    """
-    Builds a TF-IDF sparse vector for a search query.
-    """
-
     logger.info("query_vector_build_start")
 
     try:
-        sample_vector = (
-            db.query(ArticleVector)
-            .order_by(ArticleVector.vector_version.desc())
-            .first()
-        )
+        text_vectorizer, _ = load_vectorizers()
 
-        if not sample_vector:
-            logger.error("query_vector_build_failed no_article_vectors")
-            raise RuntimeError("No article vectors exist. Cannot build query vector.")
-
-        vocab = sample_vector.text_vector["vocabulary"]
-        idf = sample_vector.text_vector["idf"]
-
-        tokens = tokenize(query)
-        if not tokens:
-            logger.warning("query_vector_empty_query")
-            return {"indices": [], "values": []}
-
-        term_counts = Counter(tokens)
-        total_terms = sum(term_counts.values())
-
-        indices = []
-        values = []
-
-        for term, count in term_counts.items():
-            if term not in vocab:
-                continue
-
-            idx = vocab[term]
-            tf = count / total_terms
-            tf_idf = tf * idf[idx]
-
-            indices.append(idx)
-            values.append(tf_idf)
-
-        logger.info(f"query_vector_built terms={len(indices)}")
+        vec = text_vectorizer.transform([query])[0]
 
         return {
-            "indices": indices,
-            "values": values
+            "indices": vec.indices.tolist(),
+            "values": vec.data.tolist(),
         }
 
     except Exception:

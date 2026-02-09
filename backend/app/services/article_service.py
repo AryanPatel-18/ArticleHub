@@ -6,7 +6,7 @@ from app.models.interaction_model import UserInteraction
 import math
 from app.schemas.article_schema import ArticleReadResponse, ArticleCreateRequest, SavedArticleResponse, PaginatedSavedArticlesResponse,UserArticleResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, ArticleUpdateRequest
 from sqlalchemy import func, desc, asc
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from datetime import datetime
 from app.core.logger import get_logger
 
@@ -71,6 +71,7 @@ def create_article(
     data: ArticleCreateRequest
 ):
     logger.info(f"article_create_start author_id={author_id}")
+
     try:
         article = Article(
             title=data.title,
@@ -80,12 +81,24 @@ def create_article(
         db.add(article)
         db.flush()
 
+        # Normalize + deduplicate tags
+        normalized_tags = {
+            tag.strip().lower()
+            for tag in data.tag_names
+            if tag and tag.strip()
+        }
+
+        if not normalized_tags:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="At least one valid tag is required"
+            )
+
         tag_objects = []
 
-        for tag_name in data.tag_names:
-            tag_name = tag_name.strip().lower()
-
+        for tag_name in normalized_tags:
             tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+
             if not tag:
                 tag = Tag(tag_name=tag_name)
                 db.add(tag)
@@ -100,27 +113,24 @@ def create_article(
                     tag_id=tag.tag_id
                 )
             )
-        
-        # Tags are processed
-        logger.info(
-            f"article_tags_attached article_id={article.article_id} "
-            f"tag_count={len(tag_objects)}"
-        )
-        
+
         db.add(ArticleStat(article_id=article.article_id))
 
         db.commit()
         db.refresh(article)
-        
-        # Process was completed
+
         logger.info(f"article_created article_id={article.article_id}")
-        
         return article
 
-    except Exception as e:
+    except HTTPException:
+        db.rollback()
+        raise
+
+    except Exception:
         db.rollback()
         logger.exception("article_create_failed")
-        raise e
+        raise
+
 
 
 def get_saved_articles_for_user(
@@ -225,8 +235,16 @@ def get_articles_by_user(
     user_id: int,
     page: int = 1,
     page_size: int = 5,
-    sort: str = "newest"   # ✅ added
+    sort: str = "newest"
 ):
+    valid_sorts = {"newest", "oldest", "most_liked"}
+
+    if sort not in valid_sorts:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid sort value"
+        )
+
     total_results = (
         db.query(Article)
         .filter(Article.author_id == user_id)
@@ -250,15 +268,16 @@ def get_articles_by_user(
         .filter(Article.author_id == user_id)
     )
 
-    # ✅ only new logic: sorting
     if sort == "oldest":
         query = query.order_by(asc(Article.created_at))
+
     elif sort == "most_liked":
         query = (
             query.join(ArticleStat, Article.article_id == ArticleStat.article_id)
                  .order_by(desc(ArticleStat.like_count))
         )
-    else:  # newest (default)
+
+    else:  # newest
         query = query.order_by(desc(Article.created_at))
 
     rows = (
@@ -268,18 +287,17 @@ def get_articles_by_user(
         .all()
     )
 
-    articles = []
-    for article, username in rows:
-        articles.append(
-            UserArticleResponse(
-                article_id=article.article_id,
-                title=article.title,
-                content=article.content,
-                author_username=username,
-                created_at=article.created_at
-            )
+    articles = [
+        UserArticleResponse(
+            article_id=article.article_id,
+            title=article.title,
+            content=article.content,
+            author_username=username,
+            created_at=article.created_at
         )
-        
+        for article, username in rows
+    ]
+
     logger.info(
         f"user_articles_loaded user_id={user_id} "
         f"page={page} sort={sort} results={len(articles)}"
@@ -339,11 +357,20 @@ def delete_article(db: Session, article_id: int, user_id: int):
         .filter(Article.author_id == user_id)
         .first()
     )
-    logger.info(f"article_delete_start article_id={article_id} user_id={user_id}")
+    
+    found_article = (
+        db.query(Article)
+        .filter(Article.article_id == article_id)
+        .first()
+    )
+    
+    if not found_article:
+        raise HTTPException(status_code=404, detail="Article Not Found")
 
     if not article:
-        raise HTTPException(status_code=404, detail="Article not found")
+        raise HTTPException(status_code=403, detail="You cannot delete this article")
 
+    logger.info(f"article_delete_start article_id={article_id} user_id={user_id}")
     # delete dependent rows first
     db.query(ArticleStat).filter(ArticleStat.article_id == article_id).delete()
     db.query(ArticleVector).filter(ArticleVector.article_id == article_id).delete()
@@ -456,6 +483,21 @@ def update_article(
         if article.author_id != user_id:
             raise PermissionError("Not your article")
 
+        # -----------------------------
+        # TAG VALIDATION + NORMALIZATION
+        # -----------------------------
+        cleaned_tags = {
+            tag.strip().lower()
+            for tag in data.tag_names
+            if tag and tag.strip()
+        }
+
+        if not cleaned_tags:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Tag list cannot be empty"
+            )
+
         article.title = data.title
         article.content = data.content
         article.updated_at = datetime.utcnow()
@@ -463,15 +505,14 @@ def update_article(
         db.query(ArticleTag).filter(
             ArticleTag.article_id == article_id
         ).delete()
-        
-        # Article Vectors deleted
+
         logger.info(f"article_vector_invalidated article_id={article_id}")
+
         tag_objects = []
 
-        for tag_name in data.tag_names:
-            tag_name = tag_name.strip().lower()
-
+        for tag_name in cleaned_tags:
             tag = db.query(Tag).filter(Tag.tag_name == tag_name).first()
+
             if not tag:
                 tag = Tag(tag_name=tag_name)
                 db.add(tag)
@@ -487,7 +528,6 @@ def update_article(
                 )
             )
 
-        # Remove old vector (index invalidated)
         db.query(ArticleVector).filter(
             ArticleVector.article_id == article.article_id
         ).delete()
@@ -505,9 +545,11 @@ def update_article(
         )
         raise
 
-    except Exception as e:
+    except HTTPException:
+        db.rollback()
+        raise
+
+    except Exception:
         db.rollback()
         logger.exception("article_update_failed")
-        raise e
-
-
+        raise
