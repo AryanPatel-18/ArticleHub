@@ -183,7 +183,7 @@ async function deleteArticle(articleId) {
 
     try {
         const response = await fetch(
-            `http://localhost:8000/articles/delete/${articleId}`,
+            `http://localhost:8000/articles/${articleId}`,
             {
                 method: "DELETE",
                 headers: {

@@ -129,21 +129,24 @@ async function loadInteractionStatus() {
 }
 
 async function toggleInteraction(type) {
-    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("auth_token");
     const urlParams = new URLSearchParams(window.location.search);
     const articleId = urlParams.get("article_id");
 
-    if (!userId || !articleId) {
-        console.error("Missing user_id or article_id");
+    if (!token || !articleId) {
+        console.error("Missing auth token or article_id");
         return;
     }
 
     try {
         const response = await fetch(
-            `http://localhost:8000/interactions/toggle?user_id=${userId}`,
+            "http://localhost:8000/interactions/toggle",
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     article_id: parseInt(articleId),
                     interaction_type: type
@@ -151,20 +154,30 @@ async function toggleInteraction(type) {
             }
         );
 
-        if (!response.ok) return;
+        if (!response.ok) {
+            console.error("Toggle interaction failed:", response.status);
+            return;
+        }
 
         const data = await response.json();
 
         if (data.interaction_type === "like") {
-            likeButton.setAttribute("fill", data.active ? "currentColor" : "none");
+            likeButton.setAttribute(
+                "fill",
+                data.active ? "currentColor" : "none"
+            );
         } else {
-            saveButton.setAttribute("fill", data.active ? "currentColor" : "none");
+            saveButton.setAttribute(
+                "fill",
+                data.active ? "currentColor" : "none"
+            );
         }
 
     } catch (error) {
         console.error("Error calling toggle endpoint:", error);
     }
 }
+
 
 function toggleLike() {
     toggleInteraction("like");
