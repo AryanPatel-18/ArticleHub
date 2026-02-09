@@ -7,7 +7,7 @@ from typing import List
 
 router = APIRouter(prefix="/trending", tags=["Trending"])
 
-@router.get("/tags", response_model=List[TrendingTagSchema])
+@router.get("/tags", response_model=List[TrendingTagSchema], summary="Get a list of trending tags based on recent article interactions")
 def fetch_trending_tags(db: Session = Depends(get_db)):
     tags = get_trending_tags(db, days=7, limit=10)
 
@@ -21,7 +21,7 @@ def fetch_trending_tags(db: Session = Depends(get_db)):
     ]
 
 
-@router.get("/authors", response_model=list[TrendingAuthorSchema])
+@router.get("/authors", response_model=list[TrendingAuthorSchema], summary="Get a list of trending authors based on recent article interactions")
 def fetch_trending_authors(db: Session = Depends(get_db)):
     authors = get_trending_authors(db, days=7, limit=10)
 

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/users", tags=["User"])
 
 
-@router.get("/me", response_model=UserProfileResponse)
+@router.get("/me", response_model=UserProfileResponse, summary="Get the profile information of the currently authenticated user")
 def get_my_profile(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
@@ -32,7 +32,7 @@ def get_my_profile(
     )
 
 
-@router.put("/me", response_model=UserProfileResponse)
+@router.put("/me", response_model=UserProfileResponse, summary="Update the profile information of the currently authenticated user")
 def update_my_profile(
     data: UserProfileUpdateRequest,
     db: Session = Depends(get_db),
@@ -55,7 +55,7 @@ def update_my_profile(
         created_at=user.created_at
     )
 
-@router.put("/me/password", response_model=PasswordChangeResponse)
+@router.put("/me/password", response_model=PasswordChangeResponse, summary="Change the password of the currently authenticated user")
 def change_my_password(
     data: PasswordChangeRequest,
     db: Session = Depends(get_db),

@@ -7,7 +7,7 @@ from app.services.search_service import hybrid_search
 router = APIRouter(prefix="/search", tags=["Search"])
 
 
-@router.get("", response_model=SearchResponse)
+@router.get("", response_model=SearchResponse, summary="Search for articles using keywords in title, content, or tags")
 def search_articles(q: str = Query(..., min_length=2),db: Session = Depends(get_db), user_id : int = Depends(get_current_user_id)):
     results = hybrid_search(db=db, query=q, user_id=user_id)
     return SearchResponse(results=results)

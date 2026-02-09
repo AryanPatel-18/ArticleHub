@@ -8,7 +8,7 @@ from app.schemas.article_schema import PaginatedArticleRecommendationResponse
 router = APIRouter(prefix="/recommendations", tags=["Recommendations"])
 
 
-@router.get("/", response_model=PaginatedArticleRecommendationResponse)
+@router.get("/", response_model=PaginatedArticleRecommendationResponse, summary="Get personalized article recommendations based on your interactions")
 def recommend_articles(
     page: int = 1,
     page_size: int = 5,

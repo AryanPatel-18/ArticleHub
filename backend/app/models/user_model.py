@@ -14,6 +14,8 @@ from sqlalchemy.sql import func
 from app.database.db import Base
 
 
+# Models for the user
+
 class UserRecommendationCache(Base):
     __tablename__ = "user_recommendation_cache"
 

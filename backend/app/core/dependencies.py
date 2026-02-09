@@ -3,6 +3,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.core.security import decode_access_token
 
+
+# Creating Session for the database that closes after task is completed
 def get_db():
     db = SessionLocal()
     try:
@@ -13,6 +15,8 @@ def get_db():
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
+
+# Extracting user id from the auth token
 def get_current_user_id(token: str = Depends(oauth2_scheme)) -> int:
     payload = decode_access_token(token)
 

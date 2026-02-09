@@ -16,7 +16,7 @@ router = APIRouter(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-@router.post("/register", status_code=201)
+@router.post("/register", status_code=201, summary="Register a new user")
 def registerUser(
     payload: RegistrationRequest,
     db: Session = Depends(get_db),
@@ -25,11 +25,11 @@ def registerUser(
 
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post("/login", response_model=LoginResponse, summary="Login and receive an access token")
 def loginUser(payload: LoginRequest, db: Session = Depends(get_db)):
     return login_user(db, payload)
 
-@router.get("/validate-token")
+@router.get("/validate-token", response_model=TokenValidationResponse, summary="Validate an access token")
 def validateToken(token : str = Depends(oauth2_scheme)):
     try:
         payload = decode_access_token(token)

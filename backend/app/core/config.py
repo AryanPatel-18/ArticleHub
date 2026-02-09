@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# All the sensitive variables that are not be leaked
+
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 DATABASE_HOST = os.getenv("DATABASE_HOST")

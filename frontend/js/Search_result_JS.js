@@ -135,7 +135,7 @@ function renderArticles() {
             : "";
 
         return `
-            <a href="view_article.html?id=${article.article_id}" class="article-link">
+            <a href="view_article.html?article_id=${article.article_id}" class="article-link">
                 <div class="article-card p-3 mb-3">
                     <h3 class="article-title">${escapeHtml(article.title)}</h3>
 

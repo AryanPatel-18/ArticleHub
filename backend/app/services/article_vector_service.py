@@ -1,43 +1,22 @@
 import json
-import pickle
-from sqlalchemy.orm import Session
 import re
-# from collections import Counter
-from pathlib import Path
+from sqlalchemy.orm import Session
 
 from app.models.article_model import Article, ArticleTag, Tag
 from app.models.vector_model import ArticleVector
 from app.core.logger import get_logger
+from app.ml.tfidf_model_loader import get_vectorizers
 
 logger = get_logger(__name__)
 
-MODEL_DIR = Path("model_store")
-TEXT_MODEL_PATH = MODEL_DIR / "tfidf_vectorizer.pkl"
-TAG_MODEL_PATH = MODEL_DIR / "tag_vectorizer.pkl"
-
-_text_vectorizer = None
-_tag_vectorizer = None
-
-
-def load_vectorizers():
-    global _text_vectorizer, _tag_vectorizer
-
-    if _text_vectorizer is None:
-        with open(TEXT_MODEL_PATH, "rb") as f:
-            _text_vectorizer = pickle.load(f)
-
-    if _tag_vectorizer is None:
-        with open(TAG_MODEL_PATH, "rb") as f:
-            _tag_vectorizer = pickle.load(f)
-
-    return _text_vectorizer, _tag_vectorizer
+TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")
 
 
 def create_article_vector(db: Session, article_id: int):
     logger.info(f"vector_recompute_start article_id={article_id}")
 
     try:
-        text_vectorizer, tag_vectorizer = load_vectorizers()
+        text_vectorizer, tag_vectorizer = get_vectorizers()
 
         article = (
             db.query(Article)
@@ -108,9 +87,6 @@ def create_article_vector(db: Session, article_id: int):
         raise
 
 
-TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")
-
-
 def tokenize(text: str) -> list[str]:
     return TOKEN_PATTERN.findall(text.lower())
 
@@ -119,7 +95,7 @@ def build_query_vector(db: Session, query: str) -> dict:
     logger.info("query_vector_build_start")
 
     try:
-        text_vectorizer, _ = load_vectorizers()
+        text_vectorizer, _ = get_vectorizers()
 
         vec = text_vectorizer.transform([query])[0]
 
