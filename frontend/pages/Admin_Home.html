@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
-    <script src="/frontend/js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Home_CSS.css">
+    <link rel="stylesheet" href="../css/Admin_Home_CSS.css">
     <script type="module" src="../js/Home_JS.js"></script>
     <script type="module" src="../js/auth_guard.js"></script>
     <link rel="stylesheet" href="../css/Themes_CSS.css">
-    
+    <script src="../js/Themes_JS.js"></script>
 </head>
 <body id="home-body">
 
@@ -66,6 +66,7 @@
 
             <!-- Desktop Profile -->
             <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">🌙</button>
+            <span class="admin-indicator" id="admin-indicator">ADMIN</span>
             <div class="dropdown ms-3">
                 <a href="#" id="navbar-profile-link-desktop" class="d-flex align-items-end" data-bs-toggle="dropdown" aria-expanded="false">
                     <img 
@@ -77,6 +78,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" style="min-width: 250px;">
                     <li><a class="dropdown-item" id="dropdown-profile-desktop" href="Profile.html">Profile</a></li>
                     <li><a class="dropdown-item" id="dropdown-create-desktop" href="../pages/Your_articles.html">Your Articles</a></li>
+                    <li><a class="dropdown-item" id="dropdown-create-desktop" href="../pages/Manage.html">Manage</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <!-- <li><a class="dropdown-item" id="dropdown-logout-desktop" href="#">Logout</a></li> -->
                     <li><button class="dropdown-item" id="dropdown-logout-desktop">Logout</button></li>
@@ -196,10 +198,10 @@ MOBILE SEARCH OVERLAY
                 
                 <a href="article.html" class="article-link">
                     <div class="card article-card shadow-sm mb-4">
-                        <div class="card-body">
+                       <div class="card-body">
                             <h5 class="article-title"></h5>
                             <p class="article-body"></p>
-                            <div class="article-meta"></div>
+                            <div class="article-meta mb-2"></div>
                         </div>
                     </div>
                 </a>

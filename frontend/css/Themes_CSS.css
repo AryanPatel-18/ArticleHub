@@ -3,11 +3,11 @@
     --bg: #e7e4d2;
     --surface: #f6efd6;
     --navbar: #d7b071;
-    --divider: rgba(85, 20, 20, 0.15);
+    --divider: rgba(85, 20, 20, 0.8);
     --primary: #551414;
     --primary-hover: #6b1b1b;
     --text: #333;
-    --muted: #666;
+    --muted: #797979;
     --border: rgba(85, 20, 20, 0.15);
     --bs-navbar-brand-color: var(--primary);
     --bs-navbar-brand-hover-color: var(--primary-hover);
@@ -18,6 +18,7 @@
     --btn-border: #551414;
 
     --btn-hover-bg: #6b1b1b;
+    --btn-hover-color: white;
     --btn-hover-border: #6b1b1b;
 
     --btn-active-bg: #3e0d0d;
@@ -35,7 +36,7 @@
     --primary-hover: #ff6b6b;
     --tag-btn: #2a2a2b;
     --text: #e6e6e6;
-    --muted: #9aa4af;
+    --muted: #666;
     --border: rgba(255,255,255,0.08);
 
     /* ONLY for write.it */
@@ -47,6 +48,7 @@
     --btn-border: #ff4b4b;
 
     --btn-hover-bg: #ff6b6b;
+    --btn-hover-color: black;
     --btn-hover-border: #ff6b6b;
 
     --btn-active-bg: #cc3c3c;
@@ -63,8 +65,33 @@ body {
     color: var(--text); 
 }
 
-.article-body{
+.article-body,
+.article-title,
+.article-excerpt,
+.article-body
+.info-value{
     color: var(--text); 
+}
+
+.page-subtitle,
+.stat-label,
+.subtext,
+.results-count,
+.word-counter,
+.article-meta {
+    color: var(--muted);
+}
+.page-title,
+.stat-number,
+.section-title,
+.article-title,
+.nav-link,
+.tags-label,
+.profile-title,
+.username-display,
+.author-name,
+.navbar-brand {
+    color: var(--primary);
 }
 
 .vertical-divider,.horizontal-divider
@@ -76,36 +103,62 @@ body {
     background-color: var(--navbar); 
 }
 
+.toolbar-btn,
+.edit-image-overlay,
+.btn-cancel{
+    background-color: var(--surface);
+    border: 2px solid var(--divider);
+    color: var(--text);
+}
+
+.btn-cancel:hover,
+
 .page-header,
 .side-panel,
 .article-card,
+.entity-header,
+.profile-card,
+.edit-image-overlay,
+.editor-card,
 .empty-state {
     background-color: var(--surface);
 }
 
-.tag-btn{
+.form-control,
+.info-row,
+.social-link-display,
+.tag-input-container,
+.tag-input-field,
+.profile-image,
+.toolbar{
+    background-color: var(--bg);
+    border-color: var(--divider);
+    color: var(--text);
+}
+
+.form-control:focus{
+    background-color: #0f1115;
+    border-color: var(--divider);
+    color: var(--text);
+}
+
+.tag-btn,
+.edit-section-btn{
     background-color: var(--tag-btn);
     color: var(--text);
     border: 1px solid var(--btn-border);
 }
 
-.tag-btn:hover{
+.tag-btn:hover,
+.edit-section-btn:hover{
     background-color: var(--primary);
     color: black;
 }
-.page-title,
-.stat-number,
-.section-title,
-.article-title,
-.nav-link,
-.navbar-brand {
-    color: var(--primary);
-}
 
-.page-subtitle,
-.stat-label,
-.article-meta {
-    color: var(--muted);
+.form-label,
+.read-more
+{
+    color: var(--divider);
 }
 
 .btn {
@@ -136,8 +189,12 @@ body {
     --bs-btn-active-border-color: var(--btn-active-bg);
 }
 
+
+
 .action-btn,
+.back-btn,
 .sort-btn,
+.btn-save,
 .pagination-controls button,
 .create-btn,
 .offcanvas-toggle-btn {
@@ -148,6 +205,7 @@ body {
 
 .action-btn:hover,
 .sort-btn:hover,
+.back-btn:hover,
 .pagination-controls button:hover,
 .create-btn:hover,
 .offcanvas-toggle-btn:hover {

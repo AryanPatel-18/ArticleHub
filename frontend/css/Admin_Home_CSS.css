@@ -1,0 +1,32 @@
+/* ===== ADMIN MODE VISUALS ===== */
+
+.admin-indicator {
+    background: #4e0f0f;
+    color: white;
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+    letter-spacing: 1px;
+    margin-left: 10px;
+}
+
+.admin-controls {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(220,53,69,0.4);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-delete-article-btn {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    border-radius: 999px;
+}
+
+#featured-writers-panel.admin-mode .writer-btn:hover {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 600;
+}

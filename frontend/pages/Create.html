@@ -9,10 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+    <script src="../js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Create_CSS.css">
+    <link rel="stylesheet" href="../css/Themes_CSS.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="../js/auth_guard.js" type="module"></script>
+
 </head>
 <body>
 
@@ -33,7 +35,7 @@
 <!-- CREATE ARTICLE CONTAINER -->
 <div class="create-container">
     <div class="editor-card" id="editor-section">
-        <h2 class="mb-4" style="color: #551414;">Create New Article</h2>
+        <h2 class="mb-4 page-title">Create New Article</h2>
         
         <!-- Article Title -->
         <div class="mb-4">
@@ -81,7 +83,7 @@
                     placeholder="Add tags..."
                     onkeypress="handleTagInput(event)">
             </div>
-            <small class="text-muted">Suggested: Writing, Reflection, Stories, Life, Psychology</small>
+            <small class="subtext">Suggested: Writing, Reflection, Stories, Life, Psychology</small>
         </div>
 
         <!-- Action Buttons -->
