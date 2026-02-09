@@ -56,7 +56,7 @@ async function loadArticle() {
 
         article.tags.forEach(tag => {
             const span = document.createElement("span");
-            span.className = "tag";
+            span.className = "tag-btn";
             span.textContent = tag;
             tagsList.appendChild(span);
         });

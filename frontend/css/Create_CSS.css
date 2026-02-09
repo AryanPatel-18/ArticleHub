@@ -55,6 +55,10 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+.page-title{
+    color: #4e0f0f;
+}
+
 .form-label {
     color: #551414;
     font-weight: 600;
@@ -119,6 +123,7 @@ body {
 
 .toolbar {
     background-color: #e7e4d2;
+    border: 2px solid #d7b071;
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 15px;
@@ -155,7 +160,6 @@ body {
 .tag-input-container {
     display: flex;
     flex-wrap: wrap;
-    
     gap: 8px;
     padding: 8px;
     border: 2px solid #d7b071;

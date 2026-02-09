@@ -20,7 +20,7 @@ body {
 
 .navbar-brand {
     font-size: 1.6rem;
-    color: #4e0f0f !important;
+    color: #4e0f0f;
     font-family: "BBH Hegarty", sans-serif;
 }
 
@@ -99,9 +99,13 @@ box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
 /* ARTICLE HEADER */
 .article-header {
-margin-bottom: 2rem;
-padding-bottom: 2rem;
-border-bottom: 2px solid #f5ebe0;
+margin-bottom: 1rem;
+}
+
+.horizontal-divider{
+    background-color: #d7b071;
+    width: 638px;
+    height: 0.5px;
 }
 
 .article-title {
@@ -154,8 +158,9 @@ margin-top: 0.2rem;
 }
 
 .tags-section {
-margin-bottom: 2rem;
-border-bottom: 2px solid #f5ebe0;
+margin-bottom: 1rem;
+padding-top: 1rem;
+/* border-bottom: 2px solid #f5ebe0; */
 }
 
 .tags-label {
@@ -171,7 +176,7 @@ flex-wrap: wrap;
 gap: 0.6rem;
 }
 
-.tag {
+.tag-btn {
     background-color: #e7e4d2;
     color: #4e0f0f;
     border: 1px solid #d7b071;
@@ -181,54 +186,54 @@ gap: 0.6rem;
     cursor: pointer;
 }
 
-.tag:hover {
+.tag-btn:hover {
     background-color: #d7b071;
 }
 
 /* ARTICLE CONTENT */
-.article-content {
+.article-body {
 font-size: 1.1rem;
 line-height: 1.8;
 color: #333;
 margin-bottom: 3rem;
 }
 
-.article-content p {
+.article-body p {
 margin-bottom: 1.5rem;
 }
 
-.article-content h1,
-.article-content h2,
-.article-content h3 {
+.article-body h1,
+.article-body h2,
+.article-body h3 {
 color: #551414;
 margin-top: 2rem;
 margin-bottom: 1rem;
 font-weight: 600;
 }
 
-.article-content h1 {
+.article-body h1 {
 font-size: 2rem;
 }
 
-.article-content h2 {
+.article-body h2 {
 font-size: 1.6rem;
 }
 
-.article-content h3 {
+.article-body h3 {
 font-size: 1.3rem;
 }
 
-.article-content ul,
-.article-content ol {
+.article-body ul,
+.article-body ol {
 margin-left: 2rem;
 margin-bottom: 1.5rem;
 }
 
-.article-content li {
+.article-body li {
 margin-bottom: 0.5rem;
 }
 
-.article-content blockquote {
+.article-body blockquote {
 border-left: 4px solid #551414;
 padding-left: 1.5rem;
 margin: 2rem 0;
@@ -236,19 +241,19 @@ font-style: italic;
 color: #555;
 }
 
-.article-content a {
+.article-body a {
 color: #551414;
 text-decoration: underline;
 }
 
-.article-content a:hover {
+.article-body a:hover {
 color: #6b1b1b;
 }
 
 /* ARTICLE FOOTER */
 .article-footer {
-padding-top: 2rem;
-border-top: 2px solid #f5ebe0;
+padding-top: 1rem;
+/* border-top: 2px solid #f5ebe0; */
 }
 
 
@@ -303,7 +308,7 @@ fill: #551414;
     align-items: flex-start;
 }
 
-.article-content {
+.article-body {
     font-size: 1rem;
 }
 

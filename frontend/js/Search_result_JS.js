@@ -144,9 +144,9 @@ function renderArticles() {
                     </p>
 
                     <div class="article-meta">
-                        <span>📅 ${formatDate(article.created_at)}</span>
-                        <span> ❤️ ${article.likes || 0}</span>
-                        <span> 🔍 ${article.score.toFixed(2)}</span>
+                        <span class="meta-item">📅 ${formatDate(article.created_at)}</span>
+                        <span class="meta-item"> ❤️ ${article.likes || 0}</span>
+                        <span class="meta-item"> 🔍 ${article.score.toFixed(2)}</span>
                     </div>
                 </div>
             </a>

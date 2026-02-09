@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>write.it. | Manage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/Manage_CSS.css">
+    <link rel="stylesheet" href="../css/Themes_CSS.css">
+
+    <!-- <script src="../js/manage_enti.js"></script> -->
+    <script src="../js/Themes_JS.js"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar custom-navbar">
+    <div class="container-fluid ms-1">
+        <a class="navbar-brand mt-2" id="nav-home-link">write.it.</a>
+        <form class="search-form mx-auto d-flex justify-content-center" id="nav-search-form-desktop">
+            <div class="input-group">
+                <input 
+                    type="search" 
+                    class="form-control search-input shadow-sm" 
+                    placeholder="Search articles, writers, tags" 
+                    id="navbar-search-input-desktop"
+                >
+                <button 
+                    class="btn btn-outline-light" 
+                    type="submit"
+                    aria-label="Search"
+                >
+                    🔍
+                </button>
+            </div>
+        </form>
+        <button id="theme-toggle" class="btn ms-auto border-dark theme-btn">🌙</button>
+    </div>
+</nav>
+
+<a href="Admin_Home.html" class="back-btn">← Back to Home</a>
+
+<div class="page-wrapper">
+
+    <!-- ENTITY HEADER CARD -->
+    <div class="entity-header">
+
+        <div class="entity-title-area">
+            <h1 class="page-title" id="entity-name">Python</h1>
+            <p id="page-subtitle">Tag Management</p>
+        </div>
+
+        <div class="stats-container d-flex justify-content-evenly">
+            <div class="stat-item">
+                <span class="stat-number" id="total-articles">0</span>
+                <span class="stat-label">Articles</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-views">0</span>
+                <span class="stat-label">Views</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-likes">0</span>
+                <span class="stat-label">Likes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-saves">0</span>
+                <span class="stat-label">Saves</span>
+            </div>
+        </div>
+
+        <div class="entity-actions">
+            <button class="action-btn view-btn" id="view-articles">View Articles</button>
+            <button class="action-btn delete-btn" id="delete-article">Delete</button>
+        </div>
+
+    </div>
+
+    <!-- ARTICLES LIST -->
+    <div class="articles-container" id="articles-container">
+        <!-- dynamically inserted -->
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-controls" id="pagination-controls" style="display:none;">
+        <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
+        <span id="page-indicator">Page 1 of 1</span>
+        <button id="next-page-btn" onclick="nextPage()" disabled>Next</button>
+    </div>
+
+</div>
+</body>
+</html>

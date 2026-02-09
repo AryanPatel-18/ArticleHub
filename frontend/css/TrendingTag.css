@@ -169,6 +169,10 @@ body {
     gap: 0.3rem;
 }
 
+.read-more{
+    color: #4e0f0f;
+}
+
 .article-tags {
     display: flex;
     gap: 0.5rem;

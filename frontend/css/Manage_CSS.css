@@ -1,0 +1,128 @@
+body {
+    background-color: #e7e4d2;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* NAVBAR */
+.custom-navbar {
+    background: #d7b071;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-family: "BBH Hegarty", sans-serif;
+    font-size: 1.6rem;
+    color: #4e0f0f;
+}
+
+
+/* BACK BUTTON */
+.back-btn {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    background: #f6efd6;
+    color: #4e0f0f;
+    border: 2px solid #4e0f0f;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #4e0f0f;
+    color: white;
+}
+
+/* WRAPPER */
+.page-wrapper {
+    max-width: 900px;
+    margin: 2rem auto 4rem;
+    padding: 0 2rem;
+}
+
+/* ENTITY HEADER */
+.entity-header {
+    background-color: #f6efd6;
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.section-title{
+    font-size: 2rem;
+    color: #551414;
+}
+
+.section-subtitle{
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.stats-container {
+    margin-top: 1rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #551414;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* ACTION BUTTONS */
+.entity-actions {
+    margin-top: 1.8rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.action-btn {
+    border: 2px solid #551414;
+    background: transparent;
+    color: #551414;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    transition: all 0.25s;
+    font-weight: 500;
+}
+
+.view-btn:hover {
+    background: #551414;
+    color: white;
+}
+
+.delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.delete-btn:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.search-form {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+}
+
+.search-form .input-group {
+    width: 100%;
+}
+
+.search-input {
+    /* border-radius: 20px 0 0 20px; */
+    padding: 8px 16px;
+}
