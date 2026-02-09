@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from core.config import (
+from app.core.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     SECRET_KEY,
     ALGORITHM

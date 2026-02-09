@@ -1,35 +1,63 @@
 from sqlalchemy.orm import Session
-from models.user_model import User
-from schemas.user_schema import UserProfileUpdateRequest, PasswordChangeRequest
-from core.security import hash_password, verify_password
+from app.models.user_model import User
+from app.schemas.user_schema import UserProfileUpdateRequest, PasswordChangeRequest
+from app.core.security import hash_password, verify_password
+from app.core.logger import get_logger
+logger = get_logger(__name__)
+
+
 
 def get_user_profile(db: Session, user_id: int):
-    user = db.query(User).filter(User.user_id == user_id).first()
-    return user
+    logger.info(f"user_profile_fetch user_id={user_id}")
+    try:
+        user = db.query(User).filter(User.user_id == user_id).first()
+
+        if not user:
+            logger.warning(f"user_profile_not_found user_id={user_id}")
+
+        return user
+
+    except Exception:
+        logger.exception(f"user_profile_fetch_failed user_id={user_id}")
+        raise
+
 
 def update_user_profile(db: Session, user_id: int, data: UserProfileUpdateRequest):
-    user = db.query(User).filter(User.user_id == user_id).first()
-    if not user:
-        return None
+    logger.info(f"user_profile_update_start user_id={user_id}")
 
-    if data.user_name is not None:
-        user.user_name = data.user_name
+    try:
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            logger.warning(f"user_profile_update_missing user_id={user_id}")
+            return None
 
-    if data.birth_date is not None:
-        user.birth_date = data.birth_date
+        if data.user_name is not None:
+            user.user_name = data.user_name
 
-    if data.bio is not None:
-        user.bio = data.bio
+        if data.birth_date is not None:
+            user.birth_date = data.birth_date
 
-    if data.social_link is not None:
-        user.social_link = data.social_link
-    
-    if data.email is not None:
-        user.user_email = data.email
+        if data.bio is not None:
+            user.bio = data.bio
 
-    db.commit()
-    db.refresh(user)
-    return user
+        if data.social_link is not None:
+            user.social_link = data.social_link
+
+        if data.email is not None:
+            user.user_email = data.email
+
+        db.commit()
+        db.refresh(user)
+
+        logger.info(f"user_profile_updated user_id={user_id}")
+
+        return user
+
+    except Exception:
+        db.rollback()
+        logger.exception(f"user_profile_update_failed user_id={user_id}")
+        raise
+
 
 
 def change_user_password(
@@ -37,23 +65,33 @@ def change_user_password(
     user_id: int,
     data: PasswordChangeRequest
 ):
-    user = db.query(User).filter(User.user_id == user_id).first()
-    if not user:
-        return None
+    logger.info(f"password_change_attempt user_id={user_id}")
 
-    # 🔐 Verify old password
-    if not verify_password(data.old_password, user.password_hash):
-        return False
+    try:
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            logger.warning(f"password_change_user_missing user_id={user_id}")
+            return None
 
-    if data.new_password != data.confirm_new_password:
-        return False
-    
-    # 🔐 Hash new password
-    new_hashed_password = hash_password(data.new_password)
+        if not verify_password(data.old_password, user.password_hash):
+            logger.warning(f"password_change_invalid_old user_id={user_id}")
+            return False
 
-    # 🔐 Update password
-    user.password_hash = new_hashed_password
-    db.commit()
-    db.refresh(user)
+        if data.new_password != data.confirm_new_password:
+            logger.warning(f"password_change_mismatch user_id={user_id}")
+            return False
 
-    return True
+        new_hashed_password = hash_password(data.new_password)
+        user.password_hash = new_hashed_password
+
+        db.commit()
+        db.refresh(user)
+
+        logger.info(f"password_changed user_id={user_id}")
+
+        return True
+
+    except Exception:
+        db.rollback()
+        logger.exception(f"password_change_failed user_id={user_id}")
+        raise

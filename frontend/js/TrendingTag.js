@@ -1,8 +1,9 @@
 const baseURL = "http://127.0.0.1:8000"; // change if deployed
 
-let currentPage = 1;
+let currentPage = Number(sessionStorage.getItem("trending_current_page")) || 1;
+
 let totalPages = 1;
-let currentSort = "newest";
+let currentSort = sessionStorage.getItem("trending_sort") || "newest";
 let tagId = null;
 let articlesCache = [];
 
@@ -20,16 +21,32 @@ const pageTitle = document.getElementById("page-title");
 ----------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
+
     tagId = params.get("tag_id");
 
-    if (!tagId) {
-        pageTitle.textContent = "Invalid Tag";
-        return;
+    const pageFromURL = params.get("page");
+    if (pageFromURL) {
+        currentPage = Number(pageFromURL);
+        sessionStorage.setItem("trending_current_page", currentPage);
     }
 
-    pageTitle.textContent = `Tag #${tagId}`;
+    const storedSort = sessionStorage.getItem("trending_sort");
+    if (storedSort) currentSort = storedSort;
+
+    document.getElementById(`sort-${currentSort}`)?.classList.add("active");
+
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            sessionStorage.removeItem("trending_current_page");
+            sessionStorage.removeItem("trending_sort");
+        });
+    }
+
     fetchArticles();
 });
+
+
 
 /* -----------------------------
    FETCH ARTICLES
@@ -80,6 +97,19 @@ function renderArticles(articles) {
         const articleCard = document.createElement("div");
         articleCard.className = "article-card";
 
+        const link = document.createElement("a");
+        link.href = `view_article.html?article_id=${article.article_id}`;
+        link.className = "read-more";
+        link.textContent = "Read more →";
+
+        // 🔑 SAVE REFERRER
+        link.addEventListener("click", () => {
+            sessionStorage.setItem(
+                "article_referrer",
+                `TrendingTag.html?tag_id=${tagId}&page=${currentPage}`
+            );
+        });
+
         articleCard.innerHTML = `
             <h3 class="article-title">${article.title}</h3>
             <p class="article-content">
@@ -88,28 +118,30 @@ function renderArticles(articles) {
             <p class="article-meta">
                 Created: ${new Date(article.created_at).toLocaleDateString()}
             </p>
-            <a href="view_article.html?article_id=${article.article_id}" class="read-more">
-                Read more →
-            </a>
         `;
 
+        articleCard.appendChild(link);
         articlesContainer.appendChild(articleCard);
     });
 }
+
 
 /* -----------------------------
    SORTING
 ----------------------------- */
 function sortArticles(type) {
     currentSort = type;
+    sessionStorage.setItem("trending_sort", currentSort);
 
     document.querySelectorAll(".sort-btn").forEach(btn =>
         btn.classList.remove("active")
     );
+
     document.getElementById(`sort-${type}`).classList.add("active");
 
     applySorting();
 }
+
 
 function applySorting() {
     let sorted = [...articlesCache];
@@ -133,6 +165,7 @@ function applySorting() {
 function nextPage() {
     if (currentPage < totalPages) {
         currentPage++;
+        sessionStorage.setItem("trending_current_page", currentPage);
         fetchArticles();
     }
 }
@@ -140,9 +173,11 @@ function nextPage() {
 function prevPage() {
     if (currentPage > 1) {
         currentPage--;
+        sessionStorage.setItem("trending_current_page", currentPage);
         fetchArticles();
     }
 }
+
 
 function updatePaginationUI(page, total) {
     pageIndicator.textContent = `Page ${page} of ${total}`;
@@ -165,4 +200,8 @@ function showLoading() {
 function hideLoading() {
     loadingState.style.display = "none";
     articlesContainer.style.display = "grid";
+}
+
+function clearTrendingState() {
+    sessionStorage.removeItem("trending_current_page");
 }

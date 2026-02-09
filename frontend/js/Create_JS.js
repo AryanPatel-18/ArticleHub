@@ -188,67 +188,58 @@ const publishButton = document.getElementById("publish-article-btn")
 async function publishArticle() {
     const title = document.getElementById('article-title').value.trim();
     const content = document.getElementById('article-content').innerText.trim();
-    
+
     if (!title || !content) {
         alert('Please add a title and content before publishing.');
         return;
     }
+
     const token = localStorage.getItem("auth_token");
-    // 🔄 spinner state
+
     publishButton.disabled = true;
-    publishButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Publishing...`;
+    publishButton.innerHTML =
+        `<span class="spinner-border spinner-border-sm" role="status"></span> Publishing...`;
 
     const payload = {
-        token: token,
         title: title,
         content: content,
         tag_names: articleData.tags
     };
 
-    console.log(payload)
-
     try {
-        console.log("request sent")
         const response = await fetch("http://localhost:8000/articles/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
             const err = await response.json();
-            // alert(err.detail || "Failed to publish article");
-            // console.log(err)
+
             if (err.detail && Array.isArray(err.detail)) {
-                // loop over validation errors
                 err.detail.forEach(e => {
-                    // e.loc = ["body", "content"]
-                    const field = e.loc[e.loc.length - 1]; // "content"
-                    const message = e.msg;                  // "String should have at least 50 characters"
+                    const field = e.loc[e.loc.length - 1];
 
                     if (field === "content") {
                         alert("Your article content is too short. Please write at least 50 characters.");
                     } else if (field === "title") {
                         alert("Your title is too short. Please write a longer title.");
                     } else {
-                        alert(message); // fallback
+                        alert(e.msg);
                     }
                 });
             } else {
                 alert("Failed to publish article.");
             }
+
             publishButton.disabled = false;
             publishButton.innerText = "Publish Article";
             return;
         }
 
-        const data = await response.json();
-        // console.log("Article created:", data);
-
-        // alert("Article published successfully!");
-        // localStorage.removeItem('draft_article');
         window.location.href = "home.html";
 
     } catch (error) {
@@ -258,10 +249,8 @@ async function publishArticle() {
         publishButton.disabled = false;
         publishButton.innerText = "Publish Article";
     }
-    // console.log(title)
-    // console.log(content)
-    // console.log(tags)
 }
+
 
 function saveDraft() {
     // autoSave();

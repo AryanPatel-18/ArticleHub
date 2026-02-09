@@ -9,7 +9,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from database.db import Base
+from app.database.db import Base
 
 
 class UserInteraction(Base):

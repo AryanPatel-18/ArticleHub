@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
 from sqlalchemy.orm import Session
-from core.dependencies import get_db, get_current_user_id
-from schemas.article_schema import ArticleReadResponse
-from services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author, update_article
-from schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
-from core.security import decode_access_token
-
+from app.core.dependencies import get_db, get_current_user_id
+from app.schemas.article_schema import ArticleReadResponse
+from app.services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author, update_article
+from app.schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
+from app.services.vector_background_service import create_article_vector_background
+import os
 router = APIRouter(prefix="/articles", tags=["Articles"])
 
 @router.get("/{article_id}", response_model=ArticleReadResponse)
@@ -13,17 +13,27 @@ def read_article(article_id: int, db: Session = Depends(get_db)):
     article = get_article_by_id(db, article_id)
 
     if not article:
-        raise HTTPException(status_code=404, detail="Random Random")
+        raise HTTPException(status_code=404, detail="Article Does Not Exist")
 
     return article
 
-@router.post("/", response_model=ArticleResponse)
+@router.post("/", response_model=ArticleResponse, status_code=201)
 def create_article_endpoint(
     payload: ArticleCreateRequest,
-    db: Session = Depends(get_db)
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
 ):
-    user_id = decode_access_token(payload.token)['sub']
-    return create_article(db, user_id, payload)
+    article = create_article(db, user_id, payload)
+
+    # Skip heavy background jobs during tests
+    if os.getenv("TESTING") != "1":
+        background_tasks.add_task(
+            create_article_vector_background,
+            article.article_id
+        )
+
+    return article
 
 
 @router.get("/saved/list", response_model=PaginatedSavedArticlesResponse)
@@ -55,7 +65,7 @@ def get_my_article_stats(
 ):
     return get_user_article_stats(db, user_id)
 
-@router.delete("/delete/{article_id}")
+@router.delete("/{article_id}")
 def delete_article_endpoint(
     article_id: int,
     db: Session = Depends(get_db),
@@ -150,8 +160,9 @@ def fetch_saved_articles(
 def edit_article(
     article_id: int,
     data: ArticleUpdateRequest,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user_id)  # your JWT dependency
+    user_id: int = Depends(get_current_user_id)
 ):
     try:
         result = update_article(
@@ -161,12 +172,20 @@ def edit_article(
             data=data
         )
     except PermissionError:
-        raise HTTPException(status_code=401, detail="Not authorized to edit this article")
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorized to edit this article"
+        )
 
     if result is None:
         raise HTTPException(status_code=404, detail="Article not found")
 
     article, tag_names = result
+
+    background_tasks.add_task(
+        create_article_vector_background,
+        article.article_id
+    )
 
     return ArticleUpdateResponse(
         article_id=article.article_id,

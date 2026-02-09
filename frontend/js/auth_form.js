@@ -1,6 +1,10 @@
 const registerForm = document.getElementById("auth-register-form");
 const loginForm = document.getElementById("auth-login-form")
 
+if (localStorage.getItem("auth_token")) {
+    window.location.replace("Home.html");
+}
+
 
 function showRegister() {
     document.getElementById("auth-login-form").classList.add("d-none");
