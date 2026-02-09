@@ -1,4 +1,5 @@
 // This file loads the entire article, also update the interaction values as the user interacts with the like and save button. View is updated by default once the user leaves the page
+import { protectRoute } from "./auth_guard.js";
 
 let article_Id;
 
@@ -8,7 +9,10 @@ let saved = false;
 let likeButton;
 let saveButton;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     likeButton = document.getElementById("likeButton");
     saveButton = document.getElementById("saveButton");
 

@@ -1,7 +1,11 @@
 // This js file loads all the information of the user from the backend, also allows the user to change the information and also change the password for the account
+import { protectRoute } from "./auth_guard.js";
 
+window.addEventListener("DOMContentLoaded", async () =>{
+    const isValid = await protectRoute();
 
-window.addEventListener("DOMContentLoaded", () =>{
+    if (!isValid) return;
+    
     loadUserProfile();
 });
 

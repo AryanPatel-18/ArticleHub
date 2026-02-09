@@ -1,4 +1,6 @@
 // This file loads the search results as well as allows the user to sort them
+import { protectRoute } from "./auth_guard.js";
+
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 const AUTH_TOKEN = localStorage.getItem("auth_token");
@@ -6,7 +8,10 @@ const AUTH_TOKEN = localStorage.getItem("auth_token");
 let allArticles = [];
 let currentSort = "newest";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     const params = new URLSearchParams(window.location.search);
     const query = params.get("q");
 

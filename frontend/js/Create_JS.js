@@ -1,4 +1,4 @@
-// import { protectRoute } from "./auth_guard.js";
+import { protectRoute } from "./auth_guard.js";
 
 let tags = [];
 let autoSaveTimer;
@@ -8,6 +8,11 @@ let articleData = {
     tags: []
 };
 
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+
+    if (!isValid) return;
+});
 
 const contentArea = document.getElementById('article-content');
 const wordCounter = document.getElementById('word-counter');

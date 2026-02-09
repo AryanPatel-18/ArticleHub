@@ -1,4 +1,5 @@
 // File renders all the articles for the author that was selected by the user
+import { protectRoute } from "./auth_guard.js";
 
 const baseURL = "http://127.0.0.1:8000";
 
@@ -18,7 +19,10 @@ const nextBtn = document.getElementById("next-page-btn");
 const pageTitle = document.getElementById("page-title");
 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     const params = new URLSearchParams(window.location.search);
 
     authorId = params.get("author_id");

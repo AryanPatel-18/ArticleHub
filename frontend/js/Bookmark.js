@@ -1,5 +1,5 @@
 // This file is responsible for the rendering of saved articles of the user
-
+import { protectRoute } from "./auth_guard.js";
 
 // default variables
 const API_BASE_URL = "http://127.0.0.1:8000";
@@ -9,10 +9,13 @@ let currentSort = "newest";
 let articlesCache = [];
 
 // Load on page start
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+
+    if (!isValid) return;
+
     fetchBookmarkedArticles();
 });
-
 
 // The main function that fetches the saved articles from the backend, here it would send the auth token through the header which would be used to get the user id
 async function fetchBookmarkedArticles() {

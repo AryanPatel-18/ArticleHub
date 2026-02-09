@@ -1,4 +1,5 @@
 // This file loads all the articles that the user has created, as well as the stats from the backend ( likes, saves, views). Also renders the png image that is sent from the backend that stores the graph that shows the stats of the user over time
+import { protectRoute } from "./auth_guard.js";
 
 const AUTH_TOKEN = localStorage.getItem("auth_token");
 
@@ -6,7 +7,10 @@ let articles = [];
 let currentPage = 1;
 const pageSize = 5;
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+    const isValid = await protectRoute();
+    if (!isValid) return;
+
     loadInteractionGraph();
     loadArticleStats();
     fetchUserArticles();

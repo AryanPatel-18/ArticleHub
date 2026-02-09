@@ -1,4 +1,5 @@
 // This files handles the article edit form
+import { protectRoute } from "./auth_guard.js";
 
 const baseURL = "http://localhost:8000";
 
@@ -163,25 +164,6 @@ function removeTag(tagToRemove) {
     articleData.tags = tags;
 }
 
-function renderTags() {
-    const container = document.getElementById('tag-container');
-    const input = document.getElementById('tag-input');
-
-    container.innerHTML = '';
-
-    tags.forEach(tag => {
-        const chip = document.createElement('span');
-        chip.className = 'tag-chip';
-        chip.innerHTML = `
-            ${tag}
-            <span class="tag-chip-remove" onclick="removeTag('${tag}')">×</span>
-        `;
-        container.appendChild(chip);
-    });
-
-    container.appendChild(input);
-}
-
 // The main function that sends data to the backend using payload as well as passing the auth token in the header section
 async function publishArticle() {
     const title = titleInput.value.trim();
@@ -260,7 +242,11 @@ function discardArticle() {
     window.location.href = "Your_articles.html"
 }
 
+document.addEventListener("DOMContentLoaded", async () => {
+    const isValid = await protectRoute();
+    if (!isValid) return;
 
-window.addEventListener("DOMContentLoaded", () => {
     loadArticle();
 });
+
+
