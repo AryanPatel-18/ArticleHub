@@ -9,7 +9,9 @@ from app.core.middleware import RequestLoggingMiddleware
 configure_logging()
 app = FastAPI()
 
-# Allowing requests from all posts
+# main.py is the entry point of the application, it creates the FastAPI app and includes all the routers for the different endpoints. It also sets up the database connection and creates the tables if they do not exist. It also sets up the CORS middleware to allow requests from the frontend and also adds a custom middleware to log all the incoming requests for better debugging and monitoring of the application.
+
+# Allowing requests from only two endpoints
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],  # Allow all origins for development
@@ -17,9 +19,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware for logging all the incoming requests
 app.add_middleware(RequestLoggingMiddleware)
 Base.metadata.create_all(bind=engine)
 
+
+# all the routers of that are to be included in the main server
 app.include_router(auth_router.router)
 app.include_router(recommendation_router.router)
 app.include_router(article_router.router)

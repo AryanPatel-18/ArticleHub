@@ -9,26 +9,24 @@ from app.schemas.search_schema import SearchArticleResponse
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
-# ------------------------------------------------------------------
-# Text normalization & tokenization
-# ------------------------------------------------------------------
 
+# Text normalization & tokenization
 STOPWORDS = {
     "a", "an", "the", "with", "and", "or", "to", "of", "in", "on", "for"
 }
 
 TOKEN_PATTERN = re.compile(r"[a-zA-Z]+")
 
-
+# Normalizes text by lowercasing and removing special characters. This is used to improve the matching of search queries with article content and titles.
 def normalize_text(text: str) -> str:
     return text.lower().replace("-", " ")
 
-
+# Tokenizes text into a set of unique tokens, excluding stopwords
 def tokenize(text: str) -> set[str]:
     tokens = TOKEN_PATTERN.findall(normalize_text(text))
     return {t for t in tokens if t not in STOPWORDS}
 
-
+# Computes the token overlap score between the query and a given text. This is used as part of the relevance scoring in the search algorithm to determine how closely an article matches the search query based on shared tokens.
 def token_overlap_score(query: str, text: str) -> float:
     q_tokens = tokenize(query)
     t_tokens = tokenize(text)
@@ -40,10 +38,7 @@ def token_overlap_score(query: str, text: str) -> float:
     return len(overlap) / len(q_tokens)
 
 
-# ------------------------------------------------------------------
 # Scoring helpers
-# ------------------------------------------------------------------
-
 def normalize(value: float, max_value: float) -> float:
     if max_value <= 0:
         return 0.0
@@ -62,10 +57,9 @@ def recency_score(article: Article) -> float:
     return 1 / (1 + age)
 
 
-# ------------------------------------------------------------------
-# Hybrid search (phrase + token + fallback)
-# ------------------------------------------------------------------
-
+"""
+This service implements a hybrid search algorithm that combines phrase matching, token overlap, article popularity, and recency to rank articles based on their relevance to the search query. The search function retrieves candidate articles from the database, computes various relevance scores for each article, and returns a ranked list of search results. The algorithm also includes a fallback mechanism to ensure that some results are returned even if the initial scoring does not yield enough relevant articles. The service uses SQLAlchemy to interact with the database and includes logging for monitoring search performance and debugging.
+"""
 def hybrid_search(
     db: Session,
     query: str,

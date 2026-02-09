@@ -11,10 +11,13 @@ logger = get_logger(__name__)
 
 TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")
 
-
 def create_article_vector(db: Session, article_id: int):
     logger.info(f"vector_recompute_start article_id={article_id}")
-
+    """
+        Generates or updates TF-IDF vectors for an article.
+        Uses frozen TF-IDF vectorizers loaded from disk that is generated using the ML logic while the server is offline.
+        Stores vectors in sparse JSON format (indices + values).
+    """
     try:
         text_vectorizer, tag_vectorizer = get_vectorizers()
 
@@ -28,9 +31,7 @@ def create_article_vector(db: Session, article_id: int):
             logger.warning(f"article_not_found article_id={article_id}")
             return
 
-        # -----------------------
         # TEXT VECTOR
-        # -----------------------
         text = (article.content or "")[:5000]
         text_vector = text_vectorizer.transform([text])[0]
 
@@ -39,9 +40,7 @@ def create_article_vector(db: Session, article_id: int):
             "values": text_vector.data.tolist(),
         }
 
-        # -----------------------
         # TAG VECTOR
-        # -----------------------
         rows = (
             db.query(Tag.tag_name)
             .join(ArticleTag, ArticleTag.tag_id == Tag.tag_id)
@@ -86,11 +85,11 @@ def create_article_vector(db: Session, article_id: int):
         logger.exception(f"vector_recompute_failed article_id={article_id}")
         raise
 
-
+# for extracting alphabetical tokens of length >= 2.
 def tokenize(text: str) -> list[str]:
     return TOKEN_PATTERN.findall(text.lower())
 
-
+# Builds a TF-IDF vector for a search/recommendation query.
 def build_query_vector(db: Session, query: str) -> dict:
     logger.info("query_vector_build_start")
 

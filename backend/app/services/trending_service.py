@@ -8,7 +8,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 
-
+# For fetching the list of trending articles. The function first retrieves the top trending articles based on interactions in the last N days, then it counts the tags associated with those articles and returns the top tags ranked by their count.
 def get_trending_articles(db: Session, days: int = 7, limit: int = 50):
     logger.info(f"trending_articles_start days={days} limit={limit}")
 
@@ -47,7 +47,7 @@ def get_trending_articles(db: Session, days: int = 7, limit: int = 50):
         raise
 
 
-
+# For fetching the top trending tags, uses the same logic as above for finding the top articles and just extracts the top articles tags from the articles that the above function returns and ranks them by count to return the top trending tags.
 def get_trending_tags(db: Session, days: int = 7, limit: int = 10):
     logger.info(f"trending_tags_start days={days}")
 
@@ -83,7 +83,7 @@ def get_trending_tags(db: Session, days: int = 7, limit: int = 10):
         raise
 
 
-
+# Same logic as above but this ranks the authors based on the top articles and who created them.
 def get_trending_authors(db: Session, days: int = 7, limit: int = 10):
     logger.info(f"trending_authors_start days={days}")
 

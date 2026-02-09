@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
 
+# This schema defines the data schemas for creating, reading, and updating articles, as well as the responses for various article-related endpoints. It includes schemas for article creation requests, article responses with author information and tags, paginated responses for article recommendations and saved articles, and schemas for updating articles. These schemas ensure that the data sent to and received from the API is structured and validated properly.
 
 class ArticleCreateRequest(BaseModel):
     title: str = Field(..., min_length=5)

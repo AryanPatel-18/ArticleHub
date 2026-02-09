@@ -9,7 +9,7 @@ from datetime import datetime
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
-
+# Weights, here view is a 1 as in a default value where like and save would create more significance in finding the articles that are liked by the user
 INTERACTION_WEIGHTS = {
     "like": 2.0,
     "save": 3.0
@@ -26,7 +26,7 @@ def sparse_to_json(vec: dict) -> str:
         "values": list(vec.values())
     })
 
-
+# Used when the user account is first created to generate some default vectors for the user to recommend him/her articles when they first enter the home page. The top N articles are fetched based on the popularity and the vectors of those articles are averaged to create the user vector.
 def create_default_user_vector(db: Session, user_id: int, top_n: int = 20):
     logger.info(f"default_user_vector_build_start user_id={user_id}")
 
@@ -108,7 +108,7 @@ def create_default_user_vector(db: Session, user_id: int, top_n: int = 20):
         raise
 
 
-
+# This basically recomputes the user vector based on the interactions of the user, it fetches all the interactions of the user and then it fetches the vectors of the articles that the user has interacted with and then it averages those vectors based on the weights of the interactions to create a new user vector. This function is called when the user interacts with an article and also can be called periodically to update the user vector based on the latest interactions.
 def recompute_user_vector_from_interactions(db: Session, user_id: int):
     logger.info(f"user_vector_recompute_start user_id={user_id}")
 
@@ -198,7 +198,7 @@ def recompute_user_vector_from_interactions(db: Session, user_id: int):
         raise
 
 
-
+# This is a helper function that is called when the user interacts with an article, that basically tells the system that the user vectors needs to be updated for this user
 def mark_user_vector_dirty(db: Session, user_id: int):
     try:
         user_vec = (

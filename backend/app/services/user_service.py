@@ -6,7 +6,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 
-
+# Get the user profile information based on the user ID, would return 404 if the user does not exist
 def get_user_profile(db: Session, user_id: int):
     logger.info(f"user_profile_fetch user_id={user_id}")
     try:
@@ -21,7 +21,7 @@ def get_user_profile(db: Session, user_id: int):
         logger.exception(f"user_profile_fetch_failed user_id={user_id}")
         raise
 
-
+# For updating the user information, this is a common function that is used between multiple routers. As to reduce the redundant code and also increase the efficiency of the code by just having one function that can be used to update the user information instead of having multiple functions that would do the same thing
 def update_user_profile(db: Session, user_id: int, data: UserProfileUpdateRequest):
     logger.info(f"user_profile_update_start user_id={user_id}")
 
@@ -59,7 +59,7 @@ def update_user_profile(db: Session, user_id: int, data: UserProfileUpdateReques
         raise
 
 
-
+# For changing the user password, this function would verify the old password and if it is valid it would return true else it would return false. It would also return 404 if the user does not exist.
 def change_user_password(
     db: Session,
     user_id: int,

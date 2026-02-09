@@ -12,7 +12,9 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 matplotlib.use("Agg")
 
-
+"""
+This service contains the core logic for generating analytics and insights related to user interactions with articles. It includes functions to generate graphs of user interactions over time. The service interacts with the database to fetch the necessary data and uses Matplotlib to create visualizations that are returned as images through the API.
+"""
 
 def generate_user_article_interaction_graph(
     db: Session,

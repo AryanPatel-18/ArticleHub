@@ -2,6 +2,8 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import date, datetime
 
+# This schema defines the data schemas for user profiles, including the base user model, public profile model, preferred tag request, profile response, profile update request, and password change request and response. These schemas ensure that the data sent to and received from the API regarding user profiles is structured and validated properly.
+
 
 class UserBase(BaseModel):
     user_id: int
