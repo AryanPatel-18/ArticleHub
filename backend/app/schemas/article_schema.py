@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class ArticleCreateRequest(BaseModel):
-    token : str
     title: str = Field(..., min_length=5)
     content: str = Field(..., min_length=50)
     tag_names: List[str]

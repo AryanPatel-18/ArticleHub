@@ -264,6 +264,10 @@ body {
     font-weight: 600;
 }
 
+.graph-section{
+    margin-bottom: 1rem;
+}
+
 .status-published {
     background: #d4edda;
     color: #155724;

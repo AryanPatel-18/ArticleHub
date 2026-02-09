@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from schemas.user_schema import UserProfileResponse,UserProfileUpdateRequest,PasswordChangeRequest, PasswordChangeResponse
-from core.dependencies import get_db, get_current_user_id
-from services.user_service import get_user_profile,update_user_profile,change_user_password
+from app.schemas.user_schema import UserProfileResponse,UserProfileUpdateRequest,PasswordChangeRequest, PasswordChangeResponse
+from app.core.dependencies import get_db, get_current_user_id
+from app.services.user_service import get_user_profile,update_user_profile,change_user_password
 from sqlalchemy.orm import Session
 
 

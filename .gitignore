@@ -35,3 +35,7 @@ Thumbs.db
 __pycache__/
 *.pyc
 .venv/
+
+backend/logs
+logs/
+backend/test.db

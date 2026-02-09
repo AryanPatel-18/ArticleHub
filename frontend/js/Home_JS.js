@@ -1,5 +1,5 @@
 import { protectRoute } from "./auth_guard.js";
-
+console.log("HOME SCRIPT EXECUTED", Date.now());
 
 function makePreview(text) {
     if (!text) return "";
@@ -10,10 +10,10 @@ function makePreview(text) {
     return preview.length < text.length ? preview + "..." : preview;
 }
 
-let currentPage = 1;
+let currentPage = Number(sessionStorage.getItem("home_current_page")) || 1;
 let totalPages = 1;
 
-// generate or reuse session_id for this page load
+// generate or reuse session_id
 let sessionId = sessionStorage.getItem("rec_session_id");
 if (!sessionId) {
     sessionId = crypto.randomUUID();
@@ -21,12 +21,8 @@ if (!sessionId) {
 }
 
 async function loadArticles() {
-    const userId = localStorage.getItem("user_id");
-
-    if (!userId) {
-        console.error("No user_id in localStorage");
-        return;
-    }
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
 
     const loader = document.getElementById("article-loader");
     const cards = document.querySelectorAll(".article-card");
@@ -34,21 +30,22 @@ async function loadArticles() {
     const nextBtn = document.getElementById("next-page-btn");
     const pageIndicator = document.getElementById("page-indicator");
 
-    // hide cards initially
-    cards.forEach(card => {
-        card.style.display = "none";
-    });
-
-    // show spinner
+    cards.forEach(card => (card.style.display = "none"));
     loader.style.display = "block";
 
     try {
         const response = await fetch(
-            `http://localhost:8000/recommendations/?user_id=${userId}&session_id=${sessionStorage.getItem("rec_session_id")}&page=${currentPage}&page_size=5`
+            `http://localhost:8000/recommendations/?page=${currentPage}&page_size=5`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
         );
 
-        const data = await response.json();
+        if (!response.ok) throw new Error("Recommendation request failed");
 
+        const data = await response.json();
         const articles = data.articles;
         totalPages = data.total_pages;
 
@@ -64,90 +61,33 @@ async function loadArticles() {
             titleEl.textContent = article.title;
             bodyEl.textContent = makePreview(article.content);
             metaEl.textContent = `By ${article.author_username}`;
-
             linkEl.href = `view_article.html?article_id=${article.article_id}`;
+
+            linkEl.addEventListener("click", () => {
+                sessionStorage.setItem("home_current_page", currentPage);
+            });
         });
 
-        // show cards after data is loaded
-        cards.forEach(card => {
-            card.style.display = "block";
-        });
+        cards.forEach(card => (card.style.display = "block"));
 
-        // update page indicator
         pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
-
-        // disable prev on page 1
         prevBtn.disabled = currentPage === 1;
-
-        // disable next on last page
         nextBtn.disabled = currentPage >= totalPages;
 
     } catch (error) {
-        console.error("Failed to load articles:", error);
+        console.error(error);
     } finally {
-        // hide spinner
         loader.style.display = "none";
     }
 }
 
-const prevButton = document.getElementById("prev-page-btn");
-const nextButton = document.getElementById("next-page-btn");
-
-prevButton.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        loadArticles();
-    }
-});
-
-nextButton.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-        currentPage++;
-        loadArticles();
-    }
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    protectRoute();
-    loadTrendingTags();
-    loadTrendingAuthors();
-    loadArticles();
-});
-
-const logoutButton = document.getElementById("dropdown-logout-desktop")
-
-logoutButton.addEventListener('click', () => {
-    localStorage.clear()
-    sessionStorage.clear()
-    window.location.href = "../pages/Authentication.html";
-})
-
-// const logoutLink = document.getElementById("dropdown-logout-desktop")
-// logoutLink.addEventListener('click',logout())
-
-document.getElementById("nav-search-form-desktop").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const query = document.getElementById("navbar-search-input-desktop").value.trim();
-
-    if (!query) return;
-
-    // Redirect to search page with query as URL param
-    window.location.href = `../pages/Search_article.html?q=${encodeURIComponent(query)}`;
-});
-
-
 async function loadTrendingTags() {
     const container = document.getElementById("trending-tags-container");
-    container.innerHTML = ""; // clear old content
+    container.innerHTML = "";
 
     try {
         const response = await fetch("http://localhost:8000/trending/tags");
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch trending tags");
-        }
+        if (!response.ok) throw new Error("Failed to fetch trending tags");
 
         const tags = await response.json();
 
@@ -155,15 +95,11 @@ async function loadTrendingTags() {
             const a = document.createElement("a");
             a.className = "tag-btn text-decoration-none";
             a.textContent = tag.tag_name;
-
-            // build URL to trendingTag.html with tag_id
             a.href = `TrendingTag.html?tag_id=${tag.tag_id}`;
-
             container.appendChild(a);
         });
-
     } catch (error) {
-        console.error("Error loading trending tags:", error);
+        console.error(error);
     }
 }
 
@@ -172,14 +108,10 @@ async function loadTrendingAuthors() {
 
     try {
         const response = await fetch("http://localhost:8000/trending/authors");
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch trending authors");
-        }
+        if (!response.ok) throw new Error("Failed to fetch trending authors");
 
         const authors = await response.json();
 
-        // Create a container like the tags container
         const container = document.createElement("div");
         container.className = "d-flex flex-wrap gap-2 mt-2";
 
@@ -187,17 +119,59 @@ async function loadTrendingAuthors() {
             const a = document.createElement("a");
             a.className = "tag-btn text-decoration-none";
             a.textContent = author.user_name;
-
-            // Link to author page
             a.href = `trendingAuthor.html?author_id=${author.user_id}`;
-
             container.appendChild(a);
         });
 
         panel.appendChild(container);
-
     } catch (error) {
-        console.error("Error loading trending authors:", error);
+        console.error(error);
     }
 }
 
+document.addEventListener("DOMContentLoaded", async () => {
+    const valid = await protectRoute();
+    if (!valid) return;
+
+    const prevButton = document.getElementById("prev-page-btn");
+    const nextButton = document.getElementById("next-page-btn");
+    const logoutButton = document.getElementById("dropdown-logout-desktop");
+    const searchForm = document.getElementById("nav-search-form-desktop");
+
+    prevButton.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            sessionStorage.setItem("home_current_page", currentPage);
+            loadArticles();
+        }
+    });
+
+    nextButton.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            sessionStorage.setItem("home_current_page", currentPage);
+            loadArticles();
+        }
+    });
+
+    logoutButton.addEventListener("click", () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "../pages/Authentication.html";
+    });
+
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const query = document
+            .getElementById("navbar-search-input-desktop")
+            .value.trim();
+
+        if (!query) return;
+
+        window.location.href = `../pages/Search_article.html?q=${encodeURIComponent(query)}`;
+    });
+
+    loadTrendingTags();
+    loadTrendingAuthors();
+    loadArticles();
+});

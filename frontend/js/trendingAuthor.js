@@ -1,12 +1,12 @@
-const baseURL = "http://127.0.0.1:8000"; // adjust if deployed
+const baseURL = "http://127.0.0.1:8000";
 
-let currentPage = 1;
+let currentPage = Number(sessionStorage.getItem("author_current_page")) || 1;
 let totalPages = 1;
-let currentSort = "newest";
+let currentSort = sessionStorage.getItem("trending_sort") || "newest";
 let authorId = null;
 let articlesCache = [];
 
-// DOM elements
+// DOM
 const articlesContainer = document.getElementById("articles-container");
 const loadingState = document.getElementById("loading-state");
 const resultsCount = document.getElementById("results-count");
@@ -20,19 +20,35 @@ const pageTitle = document.getElementById("page-title");
 ----------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
+
     authorId = params.get("author_id");
 
-    if (!authorId) {
-        pageTitle.textContent = "Invalid Author";
-        return;
+    const pageFromURL = params.get("page");
+    if (pageFromURL) {
+        currentPage = Number(pageFromURL);
+        sessionStorage.setItem("author_current_page", currentPage);
     }
 
-    pageTitle.textContent = `Author #${authorId}`;
+    const storedSort = sessionStorage.getItem("author_sort");
+    if (storedSort) currentSort = storedSort;
+
+    document.getElementById(`sort-${currentSort}`)?.classList.add("active");
+
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            sessionStorage.removeItem("author_current_page");
+            sessionStorage.removeItem("author_sort");
+        });
+    }
+
+
     fetchArticles();
 });
 
+
 /* -----------------------------
-   FETCH ARTICLES
+   FETCH
 ----------------------------- */
 async function fetchArticles() {
     showLoading();
@@ -42,9 +58,7 @@ async function fetchArticles() {
             `${baseURL}/articles/get/by-author?author_id=${authorId}&page=${currentPage}`
         );
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch articles by author");
-        }
+        if (!response.ok) throw new Error("Fetch failed");
 
         const data = await response.json();
 
@@ -66,21 +80,33 @@ async function fetchArticles() {
 }
 
 /* -----------------------------
-   RENDER ARTICLES
+   RENDER
 ----------------------------- */
 function renderArticles(articles) {
     articlesContainer.innerHTML = "";
 
-    if (!articles || articles.length === 0) {
+    if (!articles.length) {
         articlesContainer.innerHTML = "<p>No articles found.</p>";
         return;
     }
 
     articles.forEach(article => {
-        const articleCard = document.createElement("div");
-        articleCard.className = "article-card";
+        const card = document.createElement("div");
+        card.className = "article-card";
 
-        articleCard.innerHTML = `
+        const link = document.createElement("a");
+        link.href = `view_article.html?article_id=${article.article_id}`;
+        link.className = "read-more";
+        link.textContent = "Read more →";
+
+        link.addEventListener("click", () => {
+            sessionStorage.setItem(
+                "article_referrer",
+                `trendingAuthor.html?author_id=${authorId}&page=${currentPage}`
+            );
+        });
+
+        card.innerHTML = `
             <h3 class="article-title">${article.title}</h3>
             <p class="article-content">
                 ${article.content.substring(0, 200)}...
@@ -88,12 +114,10 @@ function renderArticles(articles) {
             <p class="article-meta">
                 Created: ${new Date(article.created_at).toLocaleDateString()}
             </p>
-            <a href="view_article.html?article_id=${article.article_id}" class="read-more">
-                Read more →
-            </a>
         `;
 
-        articlesContainer.appendChild(articleCard);
+        card.appendChild(link);
+        articlesContainer.appendChild(card);
     });
 }
 
@@ -102,27 +126,26 @@ function renderArticles(articles) {
 ----------------------------- */
 function sortArticles(type) {
     currentSort = type;
+    sessionStorage.setItem("author_sort", currentSort);
 
     document.querySelectorAll(".sort-btn").forEach(btn =>
         btn.classList.remove("active")
     );
+
     document.getElementById(`sort-${type}`).classList.add("active");
 
     applySorting();
 }
+
 
 function applySorting() {
     let sorted = [...articlesCache];
 
     if (currentSort === "newest") {
         sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } 
-    else if (currentSort === "oldest") {
+    } else if (currentSort === "oldest") {
         sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    } 
-    else if (currentSort === "popular") {
-        // Backend does NOT return like_count yet
-        // Fallback to newest
+    } else {
         sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }
 
@@ -135,6 +158,7 @@ function applySorting() {
 function nextPage() {
     if (currentPage < totalPages) {
         currentPage++;
+        sessionStorage.setItem("author_current_page", currentPage);
         fetchArticles();
     }
 }
@@ -142,6 +166,7 @@ function nextPage() {
 function prevPage() {
     if (currentPage > 1) {
         currentPage--;
+        sessionStorage.setItem("author_current_page", currentPage);
         fetchArticles();
     }
 }
@@ -157,7 +182,7 @@ function updatePaginationUI(page, total) {
 }
 
 /* -----------------------------
-   LOADING STATE
+   LOADING
 ----------------------------- */
 function showLoading() {
     loadingState.style.display = "block";
