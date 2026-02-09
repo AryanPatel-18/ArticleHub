@@ -5,7 +5,7 @@ from app.schemas.article_schema import ArticleReadResponse
 from app.services.article_service import get_article_by_id, create_article, get_saved_articles_for_user, get_articles_by_user, get_user_article_stats, delete_article, get_articles_by_tag, get_articles_by_author, update_article
 from app.schemas.article_schema import ArticleResponse, ArticleCreateRequest, PaginatedSavedArticlesResponse, PaginatedUserArticlesResponse, UserArticleStatsResponse, PaginatedArticlesByTagSchema, ArticleByTagSchema, PaginatedArticlesByAuthorSchema,ArticleByAuthorSchema, ArticleUpdateRequest, ArticleUpdateResponse
 from app.services.vector_background_service import create_article_vector_background
-
+import os
 router = APIRouter(prefix="/articles", tags=["Articles"])
 
 @router.get("/{article_id}", response_model=ArticleReadResponse)
@@ -17,21 +17,21 @@ def read_article(article_id: int, db: Session = Depends(get_db)):
 
     return article
 
-@router.post("/", response_model=ArticleResponse)
+@router.post("/", response_model=ArticleResponse, status_code=201)
 def create_article_endpoint(
     payload: ArticleCreateRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    user_id : int = Depends(get_current_user_id)
+    user_id: int = Depends(get_current_user_id),
 ):
-    # user_id = decode_access_token(payload.token)['sub']
-
     article = create_article(db, user_id, payload)
 
-    background_tasks.add_task(
-        create_article_vector_background,
-        article.article_id
-    )
+    # Skip heavy background jobs during tests
+    if os.getenv("TESTING") != "1":
+        background_tasks.add_task(
+            create_article_vector_background,
+            article.article_id
+        )
 
     return article
 
@@ -65,7 +65,7 @@ def get_my_article_stats(
 ):
     return get_user_article_stats(db, user_id)
 
-@router.delete("/delete/{article_id}")
+@router.delete("/{article_id}")
 def delete_article_endpoint(
     article_id: int,
     db: Session = Depends(get_db),

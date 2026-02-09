@@ -13,28 +13,37 @@ def create_article_vector(db: Session, article_id: int):
     """
     Recompute TF-IDF using ALL articles,
     then store vector ONLY for the given article_id.
+
+    Safe version:
+    - prevents duplicate vector inserts
+    - handles missing article safely
+    - avoids DB crashes
     """
 
     logger.info(f"vector_recompute_start article_id={article_id}")
 
     try:
-        # 1. Fetch all articles
+        # -------------------------------------------------
+        # 1. Fetch corpus
+        # -------------------------------------------------
         articles = db.query(Article).all()
 
         if not articles:
             logger.warning("vector_recompute_skipped no_articles_exist")
             return
 
-        article_ids = []
-        texts = []
+        article_ids = [a.article_id for a in articles]
+        texts = [a.content for a in articles]
 
-        for article in articles:
-            article_ids.append(article.article_id)
-            texts.append(article.content)
+        if article_id not in article_ids:
+            logger.warning(f"article_not_found_in_corpus article_id={article_id}")
+            return
 
         logger.info(f"vector_corpus_loaded size={len(article_ids)}")
 
+        # -------------------------------------------------
         # 2. Fetch tags
+        # -------------------------------------------------
         rows = (
             db.query(ArticleTag.article_id, Tag.tag_name)
             .join(Tag, ArticleTag.tag_id == Tag.tag_id)
@@ -45,12 +54,16 @@ def create_article_vector(db: Session, article_id: int):
         for aid, tag_name in rows:
             tag_map.setdefault(aid, []).append(tag_name)
 
-        tag_texts = []
-        for aid in article_ids:
-            tag_texts.append(" ".join(tag_map.get(aid, [])))
+        tag_texts = [" ".join(tag_map.get(aid, [])) for aid in article_ids]
 
-        # 3. Fit TF-IDF
-        text_vectorizer = TfidfVectorizer(stop_words="english", max_features=50000)
+        # -------------------------------------------------
+        # 3. TF-IDF computation
+        # -------------------------------------------------
+        text_vectorizer = TfidfVectorizer(
+            stop_words="english",
+            max_features=50000
+        )
+
         tag_vectorizer = TfidfVectorizer()
 
         text_vectors = text_vectorizer.fit_transform(texts)
@@ -58,7 +71,9 @@ def create_article_vector(db: Session, article_id: int):
 
         logger.info("tfidf_fit_complete")
 
-        # 4. Target article index
+        # -------------------------------------------------
+        # 4. Extract target article vector
+        # -------------------------------------------------
         target_index = article_ids.index(article_id)
 
         text_row = text_vectors[target_index]
@@ -66,30 +81,48 @@ def create_article_vector(db: Session, article_id: int):
 
         text_vector_json = {
             "indices": text_row.indices.tolist(),
-            "values": text_row.data.tolist()
+            "values": text_row.data.tolist(),
         }
 
         tag_vector_json = {
             "indices": tag_row.indices.tolist(),
-            "values": tag_row.data.tolist()
+            "values": tag_row.data.tolist(),
         }
 
-        vector = ArticleVector(
-            article_id=article_id,
-            text_vector=json.dumps(text_vector_json),
-            tag_vector=json.dumps(tag_vector_json),
-            vector_version=1
+        # -------------------------------------------------
+        # 5. UPSERT behavior (fix duplicate key bug)
+        # -------------------------------------------------
+        existing_vector = (
+            db.query(ArticleVector)
+            .filter(ArticleVector.article_id == article_id)
+            .first()
         )
 
-        db.add(vector)
-        db.commit()
+        if existing_vector:
+            existing_vector.text_vector = json.dumps(text_vector_json)
+            existing_vector.tag_vector = json.dumps(tag_vector_json)
+            existing_vector.vector_version += 1
 
-        logger.info(f"article_vector_created article_id={article_id}")
+            logger.info(f"article_vector_updated article_id={article_id}")
+
+        else:
+            vector = ArticleVector(
+                article_id=article_id,
+                text_vector=json.dumps(text_vector_json),
+                tag_vector=json.dumps(tag_vector_json),
+                vector_version=1
+            )
+            db.add(vector)
+
+            logger.info(f"article_vector_created article_id={article_id}")
+
+        db.commit()
 
     except Exception:
         db.rollback()
         logger.exception(f"vector_recompute_failed article_id={article_id}")
         raise
+
 
 
 TOKEN_PATTERN = re.compile(r"\b[a-zA-Z]{2,}\b")

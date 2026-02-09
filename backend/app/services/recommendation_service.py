@@ -114,6 +114,8 @@ def get_top_articles_for_user(
     page: int = 1,
     page_size: int = 5
 ):
+    session_id = str(session_id)  # ← ensures DB type consistency
+
     logger.info(
         f"recommendation_request_start user_id={user_id} session_id={session_id}"
     )
@@ -158,13 +160,13 @@ def get_top_articles_for_user(
                 articles=[]
             )
 
-        # Clear old sessions
+        # ---- CACHE CLEANUP (safe string comparison) ----
         db.query(UserRecommendationCache).filter(
             UserRecommendationCache.user_id == user_id,
             UserRecommendationCache.session_id != session_id
-        ).delete()
-        db.commit()
+        ).delete(synchronize_session=False)
 
+        db.commit()
         logger.info(f"recommendation_cache_cleanup user_id={user_id}")
 
         cached_count = db.query(UserRecommendationCache).filter(
@@ -172,6 +174,7 @@ def get_top_articles_for_user(
             UserRecommendationCache.session_id == session_id
         ).count()
 
+        # ---- BUILD CACHE IF EMPTY ----
         if cached_count == 0:
             logger.info(f"recommendation_cache_build user_id={user_id}")
 
@@ -215,17 +218,22 @@ def get_top_articles_for_user(
                         session_id=session_id
                     )
                 )
+
             db.commit()
 
         else:
             logger.info(f"recommendation_cache_hit user_id={user_id}")
 
+        # ---- PAGINATION ----
         total_results = db.query(UserRecommendationCache).filter(
             UserRecommendationCache.user_id == user_id,
             UserRecommendationCache.session_id == session_id
         ).count()
 
-        total_pages = math.ceil(total_results / page_size) if total_results > 0 else 0
+        total_pages = (
+            math.ceil(total_results / page_size)
+            if total_results > 0 else 0
+        )
 
         rows = (
             db.query(UserRecommendationCache)

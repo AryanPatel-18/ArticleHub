@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_current_user_id
 from app.schemas.interaction_schema import UserInteractionCreateRequest, UserInteractionResponse, InteractionStatusResponse, InteractionToggleResponse , InteractionToggleRequest
 from app.services.interaction_service import create_interaction, get_interaction_status, toggle_interaction
+
 
 router = APIRouter(prefix="/interactions", tags=["Interactions"])
 
@@ -21,8 +22,8 @@ def interaction_status(user_id: int,article_id: int,db: Session = Depends(get_db
 
 @router.post("/toggle", response_model=InteractionToggleResponse)
 def toggle_interaction_route(
-    user_id: int,
     data: InteractionToggleRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
 ):
     return toggle_interaction(db, user_id, data)

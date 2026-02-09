@@ -16,9 +16,13 @@ router = APIRouter(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-@router.post("/register")
-def registerUser(payload : RegistrationRequest, db : Session = Depends(get_db)):
+@router.post("/register", status_code=201)
+def registerUser(
+    payload: RegistrationRequest,
+    db: Session = Depends(get_db),
+):
     return register_user(db, payload)
+
 
 
 @router.post("/login", response_model=LoginResponse)

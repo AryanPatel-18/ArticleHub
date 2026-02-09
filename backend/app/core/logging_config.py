@@ -1,17 +1,13 @@
 import logging
 import os
+from logging.handlers import RotatingFileHandler
 
 LOG_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def configure_logging():
-    # backend directory
-    backend_dir = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
-
-    log_dir = os.path.join(backend_dir, "logs")
+    log_dir = r"C:/Users/aryan/OneDrive/Desktop/Project/ArticleHub Logs"
     os.makedirs(log_dir, exist_ok=True)
 
     log_path = os.path.join(log_dir, "articlehub.log")
@@ -24,7 +20,11 @@ def configure_logging():
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
 
-    file_handler = logging.FileHandler(log_path)
+    file_handler = RotatingFileHandler(
+        log_path,
+        maxBytes=5_000_000,
+        backupCount=5
+    )
     file_handler.setFormatter(formatter)
 
     logger.addHandler(console_handler)
