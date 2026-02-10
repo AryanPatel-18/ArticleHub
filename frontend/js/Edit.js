@@ -250,3 +250,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+window.formatText = formatText;
+window.insertHeading = insertHeading;
+window.insertList = insertList;
+window.insertQuote = insertQuote;
+window.insertLink = insertLink;
+window.handleTagInput = handleTagInput;
+window.publishArticle = publishArticle;
+window.discardArticle = discardArticle;
+window.removeTag = removeTag;
+

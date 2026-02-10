@@ -57,4 +57,3 @@ class TokenValidationResponse(BaseModel):
     valid : bool
     user_id : int | None = None
 
-    

@@ -80,7 +80,7 @@ registerForm.addEventListener("submit", async function (event) {
         password,
         confirm_password,
         birth_date,
-        about_author: about_author || null,
+        bio: about_author || null,
         social_link: social_link || null
     };
 

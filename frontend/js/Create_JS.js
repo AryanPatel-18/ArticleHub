@@ -266,3 +266,14 @@ function discardArticle() {
     contentArea.text = ""
     document.getElementById("article-title").text = ""
 }
+
+
+window.formatText = formatText;
+window.insertHeading = insertHeading;
+window.insertList = insertList;
+window.insertQuote = insertQuote;
+window.insertLink = insertLink;
+window.handleTagInput = handleTagInput;
+window.publishArticle = publishArticle;
+window.saveDraft = saveDraft;
+window.discardArticle = discardArticle;

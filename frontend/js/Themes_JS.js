@@ -2,8 +2,6 @@
    GLOBAL THEME ENGINE (NO FLASH VERSION)
    Applies theme before render + universal persistence
 ====================================================== */
-import { protectRoute } from "./auth_guard.js";
-
 (function () {
     const root = document.documentElement;
 

@@ -178,3 +178,11 @@ function escapeHtml(text) {
         "'": "&#039;"
     })[m]);
 }
+
+window.sortArticles = sortArticles;
+window.escapeHtml = escapeHtml;
+window.renderArticles = renderArticles;
+window.fetchSearchResults = fetchSearchResults;
+window.showError = showError;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;

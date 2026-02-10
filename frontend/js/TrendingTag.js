@@ -38,7 +38,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const storedSort = sessionStorage.getItem("trending_sort");
     if (storedSort) currentSort = storedSort;
 
+    document.querySelectorAll(".sort-btn").forEach(btn =>
+        btn.classList.remove("active")
+    );
+
     document.getElementById(`sort-${currentSort}`)?.classList.add("active");
+
 
     const backBtn = document.getElementById("back-btn");
     if (backBtn) {
@@ -200,3 +205,8 @@ function hideLoading() {
 function clearTrendingState() {
     sessionStorage.removeItem("trending_current_page");
 }
+
+window.sortArticles = sortArticles;
+window.nextPage = nextPage;
+window.prevPage = prevPage;
+window.clearTrendingState = clearTrendingState;
