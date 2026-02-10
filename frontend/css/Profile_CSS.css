@@ -303,7 +303,7 @@ label {
 
 /* BACK BUTTON */
 .back-btn {
-    position: fixed;
+    position: absolute;
     top: 20px;
     left: 20px;
     background: #f6efd6;
