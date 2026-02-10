@@ -115,7 +115,7 @@ def get_top_articles_for_user(
     page: int = 1,
     page_size: int = 5
 ):
-    session_id = str(session_id)  # ← ensures DB type consistency
+    session_id = str(session_id) 
 
     logger.info(
         f"recommendation_request_start user_id={user_id} session_id={session_id}"
