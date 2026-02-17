@@ -222,3 +222,6 @@ function setBackNavigation() {
 
     sessionStorage.removeItem("article_referrer");
 }
+
+window.toggleLike = toggleLike;
+window.toggleBookmark = toggleBookmark;

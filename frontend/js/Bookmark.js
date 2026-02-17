@@ -162,3 +162,14 @@ function formatDate(dateString) {
         day: "numeric"
     });
 }
+
+
+window.sortArticles = sortArticles;
+window.nextPage = nextPage;
+window.prevPage = prevPage;
+window.fetchBookmarkedArticles = fetchBookmarkedArticles;
+window.formatDate = formatDate;
+window.showLoading = showLoading;
+window.updatePaginationUI = updatePaginationUI;
+window.renderArticles = renderArticles;
+window.applySorting = applySorting;

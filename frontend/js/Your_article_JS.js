@@ -295,3 +295,8 @@ async function loadInteractionGraph() {
         container.innerHTML = `<p class="graph-error">Unable to load graph.</p>`;
     }
 }
+
+window.fetchUserArticles = fetchUserArticles;
+window.prevPage = prevPage;
+window.nextPage = nextPage;
+window.deleteArticle = deleteArticle;

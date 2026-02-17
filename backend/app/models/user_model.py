@@ -55,17 +55,3 @@ class User(Base):
     interactions = relationship("UserInteraction", back_populates="user", cascade="all, delete")
     vector = relationship("UserVector", back_populates="user", uselist=False)
 
-
-class UserPreferredTag(Base):
-    __tablename__ = "user_preferred_tags"
-
-    user_id = Column(
-        Integer,
-        ForeignKey("users.user_id", ondelete="CASCADE"),
-        primary_key=True
-    )
-    tag_id = Column(
-        Integer,
-        ForeignKey("tags.tag_id", ondelete="CASCADE"),
-        primary_key=True
-    )

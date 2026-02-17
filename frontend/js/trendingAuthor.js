@@ -187,3 +187,8 @@ function hideLoading() {
     loadingState.style.display = "none";
     articlesContainer.style.display = "grid";
 }
+
+
+window.sortArticles = sortArticles;
+window.nextPage = nextPage;
+window.prevPage = prevPage;
