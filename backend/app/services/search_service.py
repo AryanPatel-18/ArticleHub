@@ -5,7 +5,7 @@ import re
 from app.models.article_model import Article, ArticleStat
 from app.models.vector_model import ArticleVector
 from app.models.user_model import User
-from app.schemas.search_schema import SearchArticleResponse
+from app.schemas.search_schema import SearchArticleResponse, SearchUserResponse
 from app.core.logger import get_logger
 logger = get_logger(__name__)
 
@@ -178,13 +178,39 @@ def hybrid_search(
                     )
                 )
 
+        # User exact ILIKE search
+# Substring user search (case-insensitive)
+        matching_users = (
+            db.query(User)
+            .filter(
+                User.user_name.ilike(f"%{query}%")
+            )
+            .limit(10)
+            .all()
+        )
+
+        user_results = [
+            SearchUserResponse(
+                user_id=u.user_id,
+                user_name=u.user_name,
+                bio=u.bio
+            )
+            for u in matching_users
+        ]
+
+
+        
         results.sort(key=lambda x: x.score, reverse=True)
 
         logger.info(
             f"search_completed query='{query}' results={len(results[:limit])}"
         )
 
-        return results[:limit]
+        return {
+            "articles": results[:limit],
+            "users": user_results
+        }
+
 
     except Exception:
         logger.exception(f"search_failed query='{query}'")

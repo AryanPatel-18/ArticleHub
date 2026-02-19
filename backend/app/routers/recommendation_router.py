@@ -14,7 +14,8 @@ router = APIRouter(prefix="/recommendations", tags=["Recommendations"])
 def recommend_articles(
     page: int = 1,
     page_size: int = 5,
+    session_id: str = "default",
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    return get_top_articles_for_user(db, user_id, page, page_size)
+    return get_top_articles_for_user(db, user_id, session_id,page, page_size)

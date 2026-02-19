@@ -280,3 +280,66 @@ body {
         font-size: 1.1rem;
     }
 }
+
+/* ============================= */
+/* SEARCH SIDEBAR STYLING       */
+/* ============================= */
+
+.search-side-panel {
+    background-color: #f6efd6;
+    border-radius: 18px;
+    padding: 22px;
+    position: sticky;
+    top: 90px;
+    align-self: start;
+    border: 1px solid rgba(85, 20, 20, 0.15);
+}
+
+.writers-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.writers-container a {
+    text-decoration: none;
+}
+
+/* Slight hover elevation */
+.writers-container .tag-btn {
+    transition: all 0.15s ease;
+}
+
+.writers-container .tag-btn:hover {
+    background-color: #d7b071;
+    transform: translateY(-2px);
+}
+#users-container .tag-btn {
+    transition: all 0.15s ease;
+}
+
+#users-container .tag-btn:hover {
+    background-color: #d7b071;
+    transform: translateY(-2px);
+}
+.tag-btn {
+    background-color: #e7e4d2;
+    color: #4e0f0f;
+    border: 1px solid #d7b071;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 0.80rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tag-btn:hover {
+    background-color: #d7b071;
+}
+
+#users-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}

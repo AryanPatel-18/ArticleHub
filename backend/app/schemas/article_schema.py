@@ -133,6 +133,7 @@ class ArticleByAuthorSchema(BaseModel):
 class PaginatedArticlesByAuthorSchema(BaseModel):
     author_id: int
     author_name: str
+    author_bio : str
     page: int
     page_size: int
     total_articles: int

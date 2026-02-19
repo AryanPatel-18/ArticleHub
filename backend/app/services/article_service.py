@@ -471,7 +471,7 @@ def get_articles_by_author(
         f"results={len(articles)} page={page}"
     )
 
-    return author.user_name, articles, total_articles, total_pages
+    return author.user_name,author.bio, articles, total_articles, total_pages
 
 
 # This function is almost the same as the created article function just in this case the information is updated , but the vectorization portion of this function remains the same as the create vector function. Also there is another verification of the user id that check if the article was created by the user id that requested to edit the said article.

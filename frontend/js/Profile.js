@@ -305,3 +305,10 @@ function showPasswordErrorToast(message) {
     });
     toast.show();
 }
+
+
+window.editSection = editSection;
+window.cancelEdit = cancelEdit;
+window.logout = logout;
+window.saveSection = saveSection;
+window.handlePasswordChange = handlePasswordChange;

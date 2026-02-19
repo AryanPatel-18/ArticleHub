@@ -80,7 +80,7 @@ registerForm.addEventListener("submit", async function (event) {
         password,
         confirm_password,
         birth_date,
-        about_author: about_author || null,
+        bio: about_author || null,
         social_link: social_link || null
     };
 
@@ -195,7 +195,7 @@ loginForm.addEventListener("submit", async function(event){
 
         localStorage.setItem("auth_token", data.access_token);
         localStorage.setItem("user_id", data.user_id);
-
+        localStorage.setItem("user_role",data.user_role)
         window.location.href = "Home.html";
 
     } catch (error) {

@@ -121,7 +121,7 @@ def fetch_articles_by_author(
 ):
     page_size = 5
 
-    author_name, articles, total_articles, total_pages = get_articles_by_author(
+    author_name, author_bio, articles, total_articles, total_pages = get_articles_by_author(
         db=db,
         author_id=author_id,
         page=page,
@@ -133,7 +133,8 @@ def fetch_articles_by_author(
 
     return PaginatedArticlesByAuthorSchema(
         author_id=author_id,
-        author_name=author_name,  # ✅ now included
+        author_name=author_name,
+        author_bio=author_bio,
         page=page,
         page_size=page_size,
         total_articles=total_articles,
