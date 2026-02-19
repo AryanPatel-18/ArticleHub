@@ -8,7 +8,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # Creating the logs file and adding input to the file
 def configure_logging():
-    log_dir = r"C:/Users/aryan/OneDrive/Desktop/Project/ArticleHub Logs"
+    log_dir = r"C:/Users/rlupi/Desktop Logs"
     os.makedirs(log_dir, exist_ok=True)
 
     log_path = os.path.join(log_dir, "articlehub.log")
