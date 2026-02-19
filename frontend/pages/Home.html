@@ -15,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script type="module" src="../js/Home_JS.js"></script>
     <script type="module" src="../js/auth_guard.js"></script>
-    <!-- <link rel="stylesheet" href="../css/Themes_CSS.css"> -->
+    <link rel="stylesheet" href="../css/Themes_CSS.css">
     
 </head>
 <body id="home-body">
@@ -32,12 +32,6 @@
         <!-- Desktop Navigation -->
         <div class="collapse navbar-collapse" id="desktop-navbar">
             <ul class="navbar-nav me-auto">
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="home.html" id="nav-home-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="explore.html" id="nav-explore-link">Explore</a>
-                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="../pages/Bookmarked.html" id="nav-bookmarks-link">Bookmarks</a>
                 </li>
@@ -49,24 +43,12 @@
             <!-- Desktop Search -->
             <form class="search-form mx-auto d-flex justify-content-center" id="nav-search-form-desktop">
                 <div class="input-group" style="max-width: 420px; width: 100%;">
-                    <input 
-                        type="search" 
-                        class="form-control search-input shadow-sm" 
-                        placeholder="Search articles, writers, tags" 
-                        id="navbar-search-input-desktop"
-                    >
-                    <button 
-                        class="btn btn-outline-light" 
-                        type="submit"
-                        aria-label="Search"
-                    >
-                        🔍
-                    </button>
+                    <input type="search" class="form-control search-input shadow-sm border-dark rounded" placeholder="Search for articles" id="navbar-search-input-desktop">
                 </div>
             </form>
 
             <!-- Desktop Profile -->
-            <!-- <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">🌙</button> -->
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme"></button>
             <div class="dropdown ms-3">
                 <a href="#" id="navbar-profile-link-desktop" class="d-flex align-items-end" data-bs-toggle="dropdown" aria-expanded="false">
                     <img 
@@ -79,7 +61,6 @@
                     <li><a class="dropdown-item" id="dropdown-profile-desktop" href="Profile.html">Profile</a></li>
                     <li><a class="dropdown-item" id="dropdown-create-desktop" href="../pages/Your_articles.html">Your Articles</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <!-- <li><a class="dropdown-item" id="dropdown-logout-desktop" href="#">Logout</a></li> -->
                     <li><button class="dropdown-item" id="dropdown-logout-desktop">Logout</button></li>
                 </ul>
             </div>
@@ -91,41 +72,31 @@
 <div class="offcanvas offcanvas-start" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title navbar-brand" id="navbarOffcanvasLabel">Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button id="theme-toggle" class="btn ms-auto border-dark me-4 w-10 theme-btn" title="Toggle theme"></button>
+        <button type="button" class="btn-close btn-danger" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <!-- Profile in Offcanvas -->
         <div class="text-center mb-4">
-            <img 
-                src="https://via.placeholder.com/150"
-                class="navbar-profile-img mb-2"
-                alt="Profile"
-                id="navbar-profile-img-mobile"
-                style="width: 60px; height: 60px;">
+            <img src="https://via.placeholder.com/150" class="navbar-profile-img mb-2" alt="Profile" id="navbar-profile-img-mobile" style="width: 60px; height: 60px;">
             <div class="mt-2">
-                <a href="Profile.html" class="d-block text-decoration-none text-dark fw-bold" id="profile-link-mobile">View Profile</a>
+                <a href="../pages/Profile.html" class="d-block text-decoration-none text-dark fw-bold" id="profile-link-mobile">View Profile</a>
             </div>
         </div>
 
         <!-- Navigation Links -->
         <ul class="navbar-nav">
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="home.html" id="nav-home-link-mobile">Home</a>
+            <li class="nav-item">
+                <a class="nav-link" href="../pages/Bookmarked.html" id="nav-bookmarks-link-mobile">Bookmarks</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="explore.html" id="nav-explore-link-mobile">Explore</a>
-            </li> -->
-            <li class="nav-item">
-                <a class="nav-link" href="bookmarks.html" id="nav-bookmarks-link-mobile">Bookmarks</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" id="nav-create-link-mobile">Create</a>
+                <a class="nav-link" href="../pages/Create.html" id="nav-create-link-mobile">Create</a>
             </li>
             <li class="nav-item">
                 <hr class="my-2">
             </li>
             <li class="nav-item">
-                <a class="nav-link text-danger" href="#" id="nav-logout-link-mobile">Logout</a>
+                <a class="nav-link text-danger" href="#" id="logout-mobile">Logout</a>
             </li>
         </ul>
     </div>
@@ -284,15 +255,11 @@ MOBILE SEARCH OVERLAY
 <!-- Featured Writers Offcanvas (Mobile) -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="writersOffcanvas" aria-labelledby="writersOffcanvasLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="writersOffcanvasLabel">Featured Writers</h5>
+        <h5 class="offcanvas-title" >Featured Writers</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-        <button class="writer-btn" id="writer-aarav-mehta-mobile">Aarav Mehta</button>
-        <button class="writer-btn" id="writer-neha-sharma-mobile">Neha Sharma</button>
-        <button class="writer-btn" id="writer-rohan-patel-mobile">Rohan Patel</button>
-        <button class="writer-btn" id="writer-kavya-rao-mobile">Kavya Rao</button>
-        <button class="writer-btn" id="writer-ishaan-verma-mobile">Ishaan Verma</button>
+    <div class="d-flex flex-wrap gap-2 mx-4" id="writersOffcanvasLabel">
+       <!-- Authors will go here -->
     </div>
 </div>
 
@@ -302,15 +269,8 @@ MOBILE SEARCH OVERLAY
         <h5 class="offcanvas-title" id="tagsOffcanvasLabel">Trending Tags</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#" class="tag-btn text-decoration-none" id="tag-writing-mobile">Writing</a>
-            <a href="#" class="tag-btn text-decoration-none" id="tag-mind-mobile">Mind</a>
-            <a href="#" class="tag-btn text-decoration-none" id="tag-reflection-mobile">Reflection</a>
-            <a href="#" class="tag-btn text-decoration-none" id="tag-stories-mobile">Stories</a>
-            <a href="#" class="tag-btn text-decoration-none" id="tag-psychology-mobile">Psychology</a>
-            <a href="#" class="tag-btn text-decoration-none" id="tag-life-mobile">Life</a>
-        </div>
+    <div class="d-flex flex-wrap gap-2 mx-4 mt-3" id="trending-tags-container-mobile">
+        <!-- Tags would be inserted in this section -->
     </div>
 </div>
 

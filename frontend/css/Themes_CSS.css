@@ -1,14 +1,16 @@
-/* ================= GLOBAL THEME VARIABLES ================= */
 :root {
-    --bg: #e7e4d2;
-    --surface: #f6efd6;
-    --navbar: #d7b071;
-    --divider: rgba(85, 20, 20, 0.8);
+    --bg1: #f6efd6;
+    --bg2: #eef2b7;
+    --surface: #fbf0c7;
+    --navbar: #84994F ;
+    --divider: rgba(45, 56, 22, 0.8);
     --primary: #551414;
     --primary-hover: #6b1b1b;
+    --int-text: #551414;
+    --discard: #;
     --text: #333;
     --muted: #797979;
-    --border: rgba(85, 20, 20, 0.15);
+    --border: rgba(45, 56, 22, 0.45);
     --bs-navbar-brand-color: var(--primary);
     --bs-navbar-brand-hover-color: var(--primary-hover);
 
@@ -17,23 +19,29 @@
     --btn-text: #ffffff;
     --btn-border: #551414;
 
-    --btn-hover-bg: #6b1b1b;
+    --btn-hover-bg: #2b390d;
     --btn-hover-color: white;
-    --btn-hover-border: #6b1b1b;
+    --btn-hover-border: #2b390d;
 
-    --btn-active-bg: #3e0d0d;
-    --btn-active-border: #3e0d0d;
+    --big-btn-hover-bg: #970404;
+    --big-btn-hover-color: white;
+    --big-btn-hover-border: #551414;
+
+    --btn-active-bg: #0f0101;
+    --btn-active-border: #e7a3a3;
 
     --btn-disabled-bg: #b7a7a7;
 }
 
 [data-theme="dark"] {
-    --bg: #0f1115;
-    --surface: #1a1d23;
-    --navbar: #15181d;
+    --bg1: #16181c;
+    --bg2: #120b0b;
+    --surface: #1c1f23;
+    --navbar: #120b0b;
     --divider: rgb(255, 75, 75 ,0.8);
     --primary: #ff4b4b;
     --primary-hover: #ff6b6b;
+    --int-text: white;
     --tag-btn: #2a2a2b;
     --text: #e6e6e6;
     --muted: #666;
@@ -47,21 +55,37 @@
     --btn-text: #ffffff;
     --btn-border: #ff4b4b;
 
-    --btn-hover-bg: #ff6b6b;
-    --btn-hover-color: black;
+    --btn-hover-bg: #c03232;
+    --btn-hover-color: white;
     --btn-hover-border: #ff6b6b;
 
-    --btn-active-bg: #cc3c3c;
+    --big-btn-hover-bg: #c03232;
+    --big-btn-hover-color: white;
+    --big-btn-hover-border: #ff6b6b;
+
+    --btn-active-bg: #965d5d;
     --btn-active-border: #cc3c3c;
 
     --btn-disabled-bg: #5a3a3a;
 
 }
 
+.navbar-brand{
+    display:inline-block;
+    transform-origin:center bottom;
+    animation:breathe 4s ease-in-out infinite;
+}
 
-/* global element overrides */
-body { 
-    background-color: var(--bg); 
+/* the breathing motion */
+@keyframes breathe{
+    0%   { transform: translateY(0px) scale(1); }
+    50%  { transform: translateY(-4px) scale(1.06); }
+    100% { transform: translateY(0px) scale(1); }
+}
+
+body,
+.offcanvas { 
+    background-image:linear-gradient(to bottom right,var(--bg1) 5%,var(--bg2));
     color: var(--text); 
 }
 
@@ -87,11 +111,20 @@ body {
 .article-title,
 .nav-link,
 .tags-label,
+.modal-title,
 .profile-title,
 .username-display,
+.offcanvas-title,
 .author-name,
-.navbar-brand {
+.navbar-brand,
+.btn-close,
+.form-label,
+.read-more {
     color: var(--primary);
+}
+
+.read-more:hover{
+    color: var(--primary-hover);
 }
 
 .vertical-divider,.horizontal-divider
@@ -99,19 +132,25 @@ body {
     background-color: var(--divider); 
 }
 
-.custom-navbar {
+.custom-navbar,
+.offcanvas-header {
     background-color: var(--navbar); 
+    border-bottom: 2px solid var(--border);
 }
 
-.toolbar-btn,
+
 .edit-image-overlay,
-.btn-cancel{
+.btn-cancel,
+.btn-secondary-custom{
     background-color: var(--surface);
-    border: 2px solid var(--divider);
+    border: 1.7px solid var(--primary);
     color: var(--text);
 }
 
 .btn-cancel:hover,
+.btn-secondary-custom:hover{
+    transform: translateY(-2px);
+}
 
 .page-header,
 .side-panel,
@@ -122,9 +161,9 @@ body {
 .editor-card,
 .empty-state {
     background-color: var(--surface);
+    border: 2px solid var(--border);
 }
 
-.form-control,
 .info-row,
 .social-link-display,
 .tag-input-container,
@@ -132,33 +171,38 @@ body {
 .profile-image,
 .toolbar{
     background-color: var(--bg);
-    border-color: var(--divider);
+    border-color: var(--border);
     color: var(--text);
 }
 
+.form-control,
+.modal-content{
+    background-color: var(--surface);
+    border: 2px solid var(--border);
+}
+
 .form-control:focus{
-    background-color: #0f1115;
+    background-color: var(--bg1);
     border-color: var(--divider);
     color: var(--text);
 }
 
 .tag-btn,
+.toolbar-btn,
 .edit-section-btn{
     background-color: var(--tag-btn);
     color: var(--text);
-    border: 1px solid var(--btn-border);
+    font-weight: 600;
+    border: 1.7px solid var(--btn-border);
+    transition: background-color .15s ease, color 0.15s ease;
 }
 
 .tag-btn:hover,
-.edit-section-btn:hover{
-    background-color: var(--primary);
-    color: black;
-}
-
-.form-label,
-.read-more
-{
-    color: var(--divider);
+.edit-section-btn:hover,
+.toolbar-btn:hover{
+    background-color: var(--btn-hover-bg);
+    color: var(--btn-hover-color);
+    border: 1.7px solid var(--btn-hover-border);
 }
 
 .btn {
@@ -189,26 +233,38 @@ body {
     --bs-btn-active-border-color: var(--btn-active-bg);
 }
 
-
-
 .action-btn,
 .back-btn,
 .sort-btn,
 .btn-save,
 .pagination-controls button,
+.btn-primary-custom,
 .create-btn,
 .offcanvas-toggle-btn {
     border-color: var(--btn-border);
     color: var(--btn-text);
     background: var(--btn-bg);
+    transition: background-color 0.15s ease;
+}
+
+.interaction-btn{
+    background-color: var(--tag-btn);
+    color: var(--int-text);
+    border: 2px solid var(--primary);
 }
 
 .action-btn:hover,
 .sort-btn:hover,
 .back-btn:hover,
+.btn-save:hover,
+.btn-primary-custom:hover,
 .pagination-controls button:hover,
 .create-btn:hover,
 .offcanvas-toggle-btn:hover {
-    background: var(--btn-hover-bg);
-    border-color: var(--btn-hover-border);
+    background: var(--big-btn-hover-bg);
+    border-color: var(--big-btn-hover-border);
+}
+
+.sort-btn.active {
+    background-color: var(--btn-active-bg);
 }

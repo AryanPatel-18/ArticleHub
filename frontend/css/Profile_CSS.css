@@ -224,7 +224,6 @@ label {
 
 .btn-save:hover {
     transform: translateY(-2px);
-    /* box-shadow: 0 10px 100px #4e0f0f; */
 }
 
 .btn-cancel {
@@ -239,11 +238,6 @@ label {
     transition: all 0.3s ease;
     width: 100%;
     margin-top: 10px;
-}
-
-.btn-cancel:hover {
-    border-color: #626262;
-    color: #171717;
 }
 
 .btn-logout {
