@@ -85,7 +85,7 @@ fill: #551414;
 
 /* ARTICLE CONTAINER */
 .article-container {
-max-width: 800px;
+max-width: 1200px;
 margin: 2rem auto 4rem;
 padding: 0 2rem;
 }
@@ -94,6 +94,7 @@ padding: 0 2rem;
 background: #f6efd6;
 border-radius: 16px;
 padding: 3rem;
+width: 1200px;
 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -104,7 +105,7 @@ margin-bottom: 1rem;
 
 .horizontal-divider{
     background-color: #d7b071;
-    width: 638px;
+    width: 1100px;
     height: 0.5px;
 }
 
@@ -264,7 +265,6 @@ justify-content: center;
 }
 
 .interaction-btn {
-background: white;
 border: 2px solid #551414;
 color: #551414;
 padding: 0.8rem 1.5rem;
@@ -279,8 +279,6 @@ transition: all 0.3s;
 }
 
 .interaction-btn:hover {
-background: #fff;
-color: #551414;
 transform: translateY(-2px);
 box-shadow: 0 4px 12px rgba(85, 20, 20, 0.3);
 }

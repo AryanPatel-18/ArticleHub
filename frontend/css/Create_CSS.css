@@ -43,7 +43,7 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 .create-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
 }
@@ -57,6 +57,7 @@ body {
 
 .page-title{
     color: #4e0f0f;
+    font-size: 3rem;
 }
 
 .form-label {
@@ -133,25 +134,15 @@ body {
 }
 
 .toolbar-btn {
-    background-color: #f6efd6;
-    border: 1px solid #4e0f0f;
     border-radius: 8px;
     font-weight: 600;
     padding: 6px 12px;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #4e0f0f;
     transition: all 0.2s;
 }
 
-.toolbar-btn:hover {
-    background-color: #4e0f0f;
-    border: 1px solid #f6efd6;
-    color: #f6efd6;
-    font-weight: 700;
-}
-
-.toolbar-btn.active {
+.toolbar-btn:active {
     background-color: #551414;
     color: #fff;
     border-color: #551414;
@@ -205,31 +196,19 @@ body {
 }
 
 .btn-primary-custom {
-    background-color: #551414;
     border: none;
     border-radius: 12px;
     padding: 12px 30px;
-    color: #fff;
     font-weight: 600;
     cursor: pointer;
-}
-
-.btn-primary-custom:hover {
-    background-color: #4e0f0f;
 }
 
 .btn-secondary-custom {
-    background-color: #e7bd79;
     border: none;
     border-radius: 12px;
     padding: 12px 30px;
-    color: #4e0f0f;
     font-weight: 600;
     cursor: pointer;
-}
-
-.btn-secondary-custom:hover {
-    background-color: #ddbb83;
 }
 
 .word-counter {
