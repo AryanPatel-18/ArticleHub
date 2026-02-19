@@ -51,6 +51,7 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     user_id : int
     access_token : str
+    user_role : str
     token_type : str = "Bearer" # Bearer is the default value    
 
 class TokenValidationResponse(BaseModel):

@@ -5,7 +5,7 @@ let article_Id;
 
 let liked = false;
 let saved = false;
-
+let deleteModal;
 let likeButton;
 let saveButton;
 
@@ -16,10 +16,76 @@ document.addEventListener("DOMContentLoaded", async () => {
     likeButton = document.getElementById("likeButton");
     saveButton = document.getElementById("saveButton");
 
-    setBackNavigation();
-    loadArticle();
-    loadInteractionStatus();
-});
+    const role = localStorage.getItem("user_role");
+
+    if (role === "admin") {
+        document.getElementById("admin-delete-btn")
+            .classList.remove("d-none");
+    }
+
+    deleteModal = new bootstrap.Modal(
+    document.getElementById("adminDeleteModal")
+    );
+
+    document
+        .getElementById("admin-delete-btn")
+        .addEventListener("click", () => {
+            deleteModal.show();
+        });
+
+    document
+        .getElementById("confirm-delete-btn")
+        .addEventListener("click", handleAdminDelete);
+
+
+        setBackNavigation();
+        loadArticle();
+        loadInteractionStatus();
+    });
+
+async function handleAdminDelete() {
+    const token = localStorage.getItem("auth_token");
+    const reasonInput = document.getElementById("delete-reason-input");
+    const reason = reasonInput.value.trim();
+
+    if (reason.length < 5) {
+        alert("Reason must be at least 5 characters.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `http://localhost:8000/admin/articles/${article_Id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    reason: reason
+                })
+            }
+        );
+
+        if (!response.ok) {
+            console.error("Delete failed:", response.status);
+            alert("Deletion failed.");
+            return;
+        }
+
+        deleteModal.hide();
+
+        alert("Article deleted successfully.");
+
+        window.location.href = "../pages/home.html";
+
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("Unexpected error occurred.");
+    }
+}
+
 
 // Loading all the information from the backend
 async function loadArticle() {

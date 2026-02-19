@@ -195,7 +195,7 @@ loginForm.addEventListener("submit", async function(event){
 
         localStorage.setItem("auth_token", data.access_token);
         localStorage.setItem("user_id", data.user_id);
-
+        localStorage.setItem("user_role",data.user_role)
         window.location.href = "Home.html";
 
     } catch (error) {

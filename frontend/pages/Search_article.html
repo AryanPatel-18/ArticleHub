@@ -31,35 +31,43 @@
 </div>
 
 <!-- PAGE CONTENT -->
-<div class="page-wrapper">
-    <!-- PAGE HEADER
-    <div class="page-header">
-        <h1 class="page-title" id="page-title">Articles</h1>
-        <p class="results-count" id="results-count"></p>
-    </div> -->
+<div class="container-fluid page-wrapper">
+  <div class="row">
 
-    <!-- CONTROLS -->
-    <div class="controls-section">
-        <div class="sort-container">
-            <button class="sort-btn active" id="sort-relevance" onclick="sortArticles('relevance')">Most Relevant</button>
-            <button class="sort-btn active" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
-            <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
-            <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
+    <!-- LEFT SIDEBAR -->
+    <div class="col-lg-3 d-none d-lg-block">
+        <div class="side-panel shadow-sm search-side-panel">
+            <div class="section-title">Matching Users</div>
+
+            <div id="users-container" class="writers-container">
+                <!-- Users injected here -->
+            </div>
         </div>
     </div>
 
-    <!-- LOADING STATE -->
-    <div class="loading-state" id="loading-state">
+
+    <!-- MAIN RESULTS -->
+    <div class="col-lg-9">
+      <div class="controls-section">
+        <div class="sort-container">
+          <button class="sort-btn active" id="sort-relevance" onclick="sortArticles('relevance')">Most Relevant</button>
+          <button class="sort-btn" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
+          <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
+          <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
+        </div>
+      </div>
+
+      <div class="loading-state" id="loading-state">
         <div class="loading-spinner"></div>
         <p class="loading-text">Loading articles...</p>
+      </div>
+
+      <div class="articles-container" id="articles-container" style="display: none;"></div>
     </div>
 
-    <!-- ARTICLES CONTAINER -->
-    <div class="articles-container" id="articles-container" style="display: none;">
-        <!-- Articles will be dynamically loaded here -->
-    </div>
-
+  </div>
 </div>
+
 <script src="../js/Search_result_JS.js"></script>
 </body>
 </html>
