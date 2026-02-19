@@ -69,7 +69,7 @@ async function loadArticles() {
             const linkEl = card.closest(".article-link");
 
             titleEl.textContent = article.title;
-            bodyEl.textContent = makePreview(article.content);
+            bodyEl.innerHTML = DOMPurify.sanitize(makePreview(article.content));
             metaEl.textContent = `By ${article.author_username}`;
             linkEl.href = `view_article.html?article_id=${article.article_id}`;
 

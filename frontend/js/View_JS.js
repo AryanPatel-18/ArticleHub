@@ -122,7 +122,8 @@ async function loadArticle() {
                 day: "numeric"
             });
 
-        document.getElementById("article-content").textContent = article.content;
+        document.getElementById("article-content").innerHTML = DOMPurify.sanitize(article.content);
+
 
         const tagsList = document.getElementById("tags-list");
         tagsList.innerHTML = "";

@@ -160,8 +160,9 @@ function renderArticles() {
     container.innerHTML = allArticles.map(article => {
         // Create a short preview instead of dumping full content
         const preview = article.content
-            ? escapeHtml(article.content.substring(0, 200)) + "..."
+            ? DOMPurify.sanitize(article.content.substring(0, 200)) + "..."
             : "";
+
 
         return `
             <a href="view_article.html?article_id=${article.article_id}" class="article-link">

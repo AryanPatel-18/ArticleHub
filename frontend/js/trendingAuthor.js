@@ -151,6 +151,18 @@ async function fetchArticles() {
     }
 }
 
+function escapeHtml(text) {
+    if (!text) return "";
+    return text.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[m]);
+}
+
+
 // Adding the data into their separate containers
 function renderArticles(articles) {
     articlesContainer.innerHTML = "";
@@ -177,9 +189,9 @@ function renderArticles(articles) {
         });
 
         card.innerHTML = `
-            <h3 class="article-title">${article.title}</h3>
+            <h3 class="article-title">${escapeHtml(article.title)}</h3>
             <p class="article-content">
-                ${article.content.substring(0, 200)}...
+                ${DOMPurify.sanitize(article.content.substring(0, 200))}...
             </p>
             <p class="article-meta">
                 Created: ${new Date(article.created_at).toLocaleDateString()}
@@ -190,6 +202,7 @@ function renderArticles(articles) {
         articlesContainer.appendChild(card);
     });
 }
+
 
 // this decides the sorting types and updates the active buttons according to the current sorting type
 function sortArticles(type) {
