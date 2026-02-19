@@ -192,7 +192,7 @@ const publishButton = document.getElementById("publish-article-btn")
 // Main function that sends the payload to the backend to create the article, Here the article information is returned but is not used, and the user is sent back to the home page
 async function publishArticle() {
     const title = document.getElementById('article-title').value.trim();
-    const content = document.getElementById('article-content').innerText.trim();
+    const content = document.getElementById('article-content').innerHTML.trim();
 
     if (!title || !content) {
         alert('Please add a title and content before publishing.');

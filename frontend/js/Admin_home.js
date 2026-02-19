@@ -7,7 +7,7 @@ function makePreview(text) {
     if (!text) return "";
 
     const sentences = text.split(/(?<=[.!?])\s+/);
-    const preview = sentences.slice(0, 1).join(" ");
+    const preview = sentences.slice(0, 2).join(" ");
 
     return preview.length < text.length ? preview + "..." : preview;
 }
@@ -69,7 +69,7 @@ async function loadArticles() {
             const linkEl = card.closest(".article-link");
 
             titleEl.textContent = article.title;
-            bodyEl.innerHTML = DOMPurify.sanitize(makePreview(article.content));
+            bodyEl.textContent = makePreview(article.content);
             metaEl.textContent = `By ${article.author_username}`;
             linkEl.href = `view_article.html?article_id=${article.article_id}`;
 
@@ -95,7 +95,7 @@ async function loadArticles() {
 // Loading the trending tags from the backend and also creating the container to hold the trending tags and adding them in the trending tag section
 async function loadTrendingTags() {
     const container = document.getElementById("trending-tags-container");
-    // container.innerHTML = "";
+    container.innerHTML = "";
 
     try {
         const response = await fetch("http://localhost:8000/trending/tags");
@@ -109,26 +109,6 @@ async function loadTrendingTags() {
             a.textContent = tag.tag_name;
             a.href = `TrendingTag.html?tag_id=${tag.tag_id}`;
             container.appendChild(a);
-        });
-    } catch (error) {
-        console.error(error);
-    }
-
-    const container_mobile = document.getElementById("trending-tags-container-mobile");
-    // container.innerHTML = "";
-
-    try {
-        const response = await fetch("http://localhost:8000/trending/tags");
-        if (!response.ok) throw new Error("Failed to fetch trending tags");
-
-        const tags = await response.json();
-
-        tags.forEach(tag => {
-            const a = document.createElement("a");
-            a.className = "tag-btn text-decoration-none";
-            a.textContent = tag.tag_name;
-            a.href = `TrendingTag.html?tag_id=${tag.tag_id}`;
-            container_mobile.appendChild(a);
         });
     } catch (error) {
         console.error(error);
@@ -160,30 +140,6 @@ async function loadTrendingAuthors() {
     } catch (error) {
         console.error(error);
     }
-
-        const mobile = document.getElementById("writersOffcanvasLabel");
-
-    try {
-        const response = await fetch("http://localhost:8000/trending/authors");
-        if (!response.ok) throw new Error("Failed to fetch trending authors");
-
-        const authors = await response.json();
-
-        const container = document.createElement("div");
-        container.className = "d-flex flex-wrap gap-2 mt-2";
-
-        authors.forEach(author => {
-            const a = document.createElement("a");
-            a.className = "tag-btn text-decoration-none";
-            a.textContent = author.user_name;
-            a.href = `trendingAuthor.html?author_id=${author.user_id}`;
-            container.appendChild(a);
-        });
-
-        mobile.appendChild(container);
-    } catch (error) {
-        console.error(error);
-    }
 }
 
 // Adds all the event listeners once the page is loaded
@@ -194,7 +150,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const prevButton = document.getElementById("prev-page-btn");
     const nextButton = document.getElementById("next-page-btn");
     const logoutButton = document.getElementById("dropdown-logout-desktop");
-    const logoutButtonMobile = document.getElementById("logout-mobile");
     const searchForm = document.getElementById("nav-search-form-desktop");
 
 
@@ -217,12 +172,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Logs the user out
     logoutButton.addEventListener("click", () => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "../pages/Authentication.html";
-    });
-
-    logoutButtonMobile.addEventListener("click", () => {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = "../pages/Authentication.html";

@@ -76,7 +76,7 @@ function renderArticles() {
             <h3 class="card-title">${escapeHtml(article.title)}</h3>
 
             <p class="card-text">
-                ${escapeHtml(article.content.slice(0, 200))}...
+                ${DOMPurify.sanitize(article.content.slice(0, 200))}...
             </p>
 
             <small class="text-muted">

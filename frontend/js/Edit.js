@@ -46,7 +46,7 @@ async function loadArticle() {
         contentArea.innerHTML = data.content;
 
         articleData.title = data.title;
-        articleData.content = data.content;
+        contentArea.innerHTML = DOMPurify.sanitize(data.content);
 
         // Populate tags
         if (data.tag_names && Array.isArray(data.tag_names)) {

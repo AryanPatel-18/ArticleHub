@@ -8,6 +8,7 @@ let totalPages = 1;
 let currentSort = sessionStorage.getItem("trending_sort") || "newest";
 let authorId = null;
 let articlesCache = [];
+let deleteUserModal;
 
 // DOM
 const articlesContainer = document.getElementById("articles-container");
@@ -22,6 +23,28 @@ const pageTitle = document.getElementById("page-title");
 document.addEventListener("DOMContentLoaded", async () => {
     const isValid = await protectRoute();
     if (!isValid) return;
+
+    const role = localStorage.getItem("user_role");
+
+    if (role === "admin") {
+        document
+            .getElementById("admin-delete-user-btn")
+            ?.classList.remove("d-none");
+    }
+    deleteUserModal = new bootstrap.Modal(
+        document.getElementById("adminDeleteUserModal")
+    );
+
+    document
+        .getElementById("admin-delete-user-btn")
+        ?.addEventListener("click", () => {
+            deleteUserModal.show();
+        });
+
+    document
+        .getElementById("confirm-delete-user-btn")
+        ?.addEventListener("click", handleAdminDeleteUser);
+
 
     const params = new URLSearchParams(window.location.search);
 
@@ -51,6 +74,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+async function handleAdminDeleteUser() {
+    const token = localStorage.getItem("auth_token");
+    const reason = document
+        .getElementById("delete-user-reason-input")
+        .value.trim();
+
+    if (reason.length < 5) {
+        alert("Reason must be at least 5 characters.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${baseURL}/admin/users/${authorId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ reason })
+            }
+        );
+
+        if (!response.ok) {
+            alert("Deletion failed.");
+            return;
+        }
+
+        deleteUserModal.hide();
+
+        alert("Author deleted successfully.");
+
+        window.location.href = "Home.html";
+
+    } catch (err) {
+        console.error(err);
+        alert("Unexpected error occurred.");
+    }
+}
+
+
 // Main function that fetches all the articles from the backend
 async function fetchArticles() {
     showLoading();
@@ -63,8 +128,13 @@ async function fetchArticles() {
         if (!response.ok) throw new Error("Fetch failed");
 
         const data = await response.json();
-
+        const bioElement = document.getElementById("author-bio");
         pageTitle.textContent = data.author_name;
+        
+        if (bioElement) {
+            bioElement.textContent = data.author_bio || "No bio available.";
+        }
+
         articlesCache = data.articles;
         totalPages = data.total_pages;
 
@@ -80,6 +150,18 @@ async function fetchArticles() {
         hideLoading();
     }
 }
+
+function escapeHtml(text) {
+    if (!text) return "";
+    return text.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[m]);
+}
+
 
 // Adding the data into their separate containers
 function renderArticles(articles) {
@@ -107,9 +189,9 @@ function renderArticles(articles) {
         });
 
         card.innerHTML = `
-            <h3 class="article-title">${article.title}</h3>
+            <h3 class="article-title">${escapeHtml(article.title)}</h3>
             <p class="article-content">
-                ${article.content.substring(0, 200)}...
+                ${DOMPurify.sanitize(article.content.substring(0, 200))}...
             </p>
             <p class="article-meta">
                 Created: ${new Date(article.created_at).toLocaleDateString()}
@@ -120,6 +202,7 @@ function renderArticles(articles) {
         articlesContainer.appendChild(card);
     });
 }
+
 
 // this decides the sorting types and updates the active buttons according to the current sorting type
 function sortArticles(type) {

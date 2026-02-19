@@ -50,7 +50,9 @@ async function fetchSearchResults(query) {
         }
 
         const data = await response.json();
-        allArticles = data.results || [];
+        allArticles = data.articles || [];
+        renderUsers(data.users || []);
+
 
         hideLoading();
         sortArticles("newest");
@@ -61,6 +63,26 @@ async function fetchSearchResults(query) {
     }
 }
 
+function renderUsers(users) {
+    const container = document.getElementById("users-container");
+
+    if (!users || users.length === 0) {
+        container.innerHTML = `
+            <p style="font-size: 0.85rem; color: #666;">
+                No matching users
+            </p>
+        `;
+        return;
+    }
+
+    container.innerHTML = users.map(user => `
+        <a 
+            href="trendingAuthor.html?author_id=${user.user_id}" 
+            class="tag-btn text-decoration-none">
+            ${escapeHtml(user.user_name)}
+        </a>
+    `).join("");
+}
 
 // Functions for UI state
 function showLoading() {
@@ -138,8 +160,9 @@ function renderArticles() {
     container.innerHTML = allArticles.map(article => {
         // Create a short preview instead of dumping full content
         const preview = article.content
-            ? escapeHtml(article.content.substring(0, 200)) + "..."
+            ? DOMPurify.sanitize(article.content.substring(0, 200)) + "..."
             : "";
+
 
         return `
             <a href="view_article.html?article_id=${article.article_id}" class="article-link">

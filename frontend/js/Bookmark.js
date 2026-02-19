@@ -57,6 +57,18 @@ async function fetchBookmarkedArticles() {
     }
 }
 
+function escapeHtml(text) {
+    if (!text) return "";
+    return text.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[m]);
+}
+
+
 // After the request has been sent this function is responsible for adding the data into the container that are created in the html file
 function renderArticles(articles) {
     const container = document.getElementById("articles-container");
@@ -73,12 +85,12 @@ function renderArticles(articles) {
 
         articleDiv.innerHTML = `
             <a href="view_article.html?article_id=${article.article_id}" class="article-link">
-                <h2 class="article-title">${article.title}</h2>
+                <h2 class="article-title">${escapeHtml(article.title)}</h2>
                 <p class="article-meta">
-                    By ${article.author_username} • ${formatDate(article.created_at)} • ❤️ ${article.likes}
+                    By ${escapeHtml(article.author_username)} • ${formatDate(article.created_at)} • ❤️ ${article.likes}
                 </p>
                 <p class="article-preview">
-                    ${article.content.substring(0, 200)}...
+                    ${DOMPurify.sanitize(article.content.substring(0, 200))}...
                 </p>
             </a>
         `;
@@ -88,6 +100,7 @@ function renderArticles(articles) {
 
     container.style.display = "block";
 }
+
 
 
 // This file changes the sort variable and also updates the active button from the button list in the sort container

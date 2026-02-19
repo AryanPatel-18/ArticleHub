@@ -112,6 +112,7 @@ def login_user(db: Session, payload: LoginRequest):
         return LoginResponse(
             user_id=user.user_id,
             access_token=access_token,
+            user_role=user.user_role,
             token_type="Bearer"
         )
 

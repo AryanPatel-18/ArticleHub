@@ -36,6 +36,13 @@ body {
     transform: translateY(-2px);
 }
 
+.author-bio {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 8px;
+    max-width: 600px;
+}
+
 /* PAGE CONTENT */
 .page-wrapper {
     max-width: 1200px;

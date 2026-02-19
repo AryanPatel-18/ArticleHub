@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.database.db import engine
 from app.database.db import Base
-from app.routers import auth_router, recommendation_router, article_router, interaction_router, search_router, trending_router, user_router, analytics_router
+from app.routers import auth_router, recommendation_router, article_router, interaction_router, search_router, trending_router, user_router, analytics_router, admin_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import configure_logging
 from app.core.middleware import RequestLoggingMiddleware
@@ -34,3 +34,4 @@ app.include_router(search_router.router)
 app.include_router(trending_router.router)
 app.include_router(user_router.router)
 app.include_router(analytics_router.router)
+app.include_router(admin_router.router)
