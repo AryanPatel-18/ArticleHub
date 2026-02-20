@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
-    <!-- <script src="/frontend/js/Themes_JS.js"></script> -->
+    <script src="/frontend/js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Home_CSS.css">
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script type="module" src="../js/Home_JS.js"></script>
@@ -33,10 +33,10 @@
         <div class="collapse navbar-collapse" id="desktop-navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="../pages/Bookmarked.html" id="nav-bookmarks-link">Bookmarks</a>
+                    <a class="nav-link center-underline" href="../pages/Bookmarked.html" id="nav-bookmarks-link">Bookmarks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../pages/Create.html" id="nav-create-link">Create</a>
+                    <a class="nav-link center-underline" href="../pages/Create.html" id="nav-create-link">Create</a>
                 </li>
             </ul>
 
@@ -48,7 +48,7 @@
             </form>
 
             <!-- Desktop Profile -->
-            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme"></button>
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">Theme</button>
             <div class="dropdown ms-3">
                 <a href="#" id="navbar-profile-link-desktop" class="d-flex align-items-end" data-bs-toggle="dropdown" aria-expanded="false">
                     <img 
@@ -155,8 +155,8 @@ MOBILE SEARCH OVERLAY
             </div>
 
             <!-- CENTER ARTICLES -->
-            <div class="col-lg-5 px-4" id="home-center-column">
-                <div class="section-title mb-4" id="latest-articles-title">Latest Articles</div>
+            <div class="col-lg-5" id="home-center-column">
+                <div class="section-title mb-2" id="latest-articles-title">Latest Articles</div>
 
                 <div class="horizontal-divider mb-3"></div>
                   
@@ -164,7 +164,7 @@ MOBILE SEARCH OVERLAY
                     <div class="spinner-border" role="status"></div>
                 </div>
 
-                <div id="article-container" class="article-scroll"></div>
+                <div id="article-container" class=""></div>
                 
                 <a href="article.html" class="article-link">
                     <div class="card article-card shadow-sm mb-4">
