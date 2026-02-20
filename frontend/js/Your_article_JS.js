@@ -87,7 +87,7 @@ function renderArticles() {
                 ${DOMPurify.sanitize(article.content.slice(0, 200))}...
             </p>
 
-            <small class="text-muted">
+            <small class="text-meta">
                 Created at: ${formatDate(article.created_at)}
             </small>
 
