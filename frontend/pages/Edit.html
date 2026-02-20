@@ -5,35 +5,31 @@
     <title>write.it. | Create Article</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Bootstrap links -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
-<<<<<<< HEAD
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    <script src="../js/Edit.js" type="module"></script>
-    <script src="../js/Themes_JS.js" type="module"></script>
-    <link rel="stylesheet" href="../css/Themes_CSS.css">
-    <link rel="stylesheet" href="../css/Edit.css">
-=======
+
+    <!-- CSS and Javascript files' links -->
     <script src="../js/Themes_JS.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script src="../js/Edit.js" type="module"></script>
     <script src="../js/Themes_JS.js" type="module"></script>
->>>>>>> d63620eba461576912e2c34552d3307c863a9ced
     <link rel="stylesheet" href="../css/Themes_CSS.css">
     <link rel="stylesheet" href="../css/Edit.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- Navigation bar -->
 <nav class="navbar custom-navbar">
     <div class="container-fluid">
         <a href="home.html" class="navbar-brand mx-4" id="nav-brand-link">write.it.</a>
-        <div class="auto-save-indicator mx-4" id="auto-save-indicator">
-            <span id="save-status">All changes saved</span>
-        </div>
+        <!-- Theme toggler: lets you toggle between dark and light mode-->
+        <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
     </div>
 </nav>
 <div>
@@ -41,7 +37,7 @@
     ← Back to Home
 </a>
 </div>
-<!-- CREATE ARTICLE CONTAINER -->
+<!-- Edit page conteiner -->
 <div class="create-container">
     <div class="editor-card" id="editor-section">
         <h2 class="mb-4" style="color: #551414;">Edit Article</h2>
@@ -50,11 +46,7 @@
         <div class="mb-4">
             <label class="form-label">Title</label>
             <input 
-                type="text" 
-                class="form-control" 
-                id="article-title" 
-                placeholder="Enter your article title..."
-                maxlength="150">
+                type="text" class="form-control" id="article-title" placeholder="Enter your article title..." maxlength="150">
         </div>
 
         <!-- Formatting Toolbar -->
@@ -73,11 +65,7 @@
 
         <!-- Article Content -->
         <div 
-            class="form-control" 
-            id="article-content" 
-            contenteditable="true"
-            placeholder="Start writing your article..."
-            style="min-height: 400px; font-size: 1.05rem; line-height: 1.7;">
+            class="form-control" id="article-content" contenteditable="true" placeholder="Start writing your article..." style="min-height: 400px; font-size: 1.05rem; line-height: 1.7;">
         </div>
         <div class="word-counter" id="word-counter">0 words, 0 characters</div>
 
@@ -86,11 +74,7 @@
             <label class="form-label">Tags (Press Enter to add)</label>
             <div class="tag-input-container" id="tag-container">
                 <input 
-                    type="text" 
-                    class="tag-input-field" 
-                    id="tag-input" 
-                    placeholder="Add tags..."
-                    onkeypress="handleTagInput(event)">
+                    type="text" class="tag-input-field" id="tag-input" placeholder="Add tags..." onkeypress="handleTagInput(event)">
             </div>
             <small class="text-muted">Suggested: Writing, Reflection, Stories, Life, Psychology</small>
         </div>
@@ -106,7 +90,5 @@
         </div>
     </div>
 </div>
-
-
 </body>
 </html>

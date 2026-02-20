@@ -11,7 +11,6 @@ body {
 .navbar-brand {
     font-family: "BBH Hegarty", sans-serif;
     font-size: 1.6rem;
-    color: #4e0f0f;
     display:inline-block;
     transform-origin:center bottom;
     animation:breathe 4s ease-in-out infinite;
@@ -234,15 +233,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.page-btn{
-    background-color: #e7e4d2;
-}
-
-.page-btn:hover{
-    background-color: #4e0f0f;
-    border: #4e0f0f 1px;
 }
 
 /* Fix navbar alignment */

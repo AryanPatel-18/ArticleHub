@@ -5,10 +5,15 @@
     <title>write.it. | Create Article</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Bootstrap links -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+
+    <!-- CSS and Javascript files' links -->
     <script src="../js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Create_CSS.css">
     <link rel="stylesheet" href="../css/Themes_CSS.css">
@@ -18,34 +23,29 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- Navigation bar -->
 <nav class="navbar custom-navbar">
      <div class="container-fluid ms-1">
-            <h1 class="navbar-brand mt-2" id="nav-brand-link">write.it.</h1>
-        <div class="auto-save-indicator mx-4" id="auto-save-indicator">
-            <span id="save-status">All changes saved</span>
-        </div>
+            <h1 class="navbar-brand center-underline mt-2" id="nav-brand-link">write.it.</h1>
+            <!-- Theme toggler: lets you toggle between dark and light mode-->
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
     </div>
 </nav>
 <div>
-<a href="home.html" class="back-btn" id="back-to-home-btn">
-    ← Back to Home
-</a>
+    <a href="home.html" class="back-btn" id="back-to-home-btn">
+        ← Back to Home
+    </a>
 </div>
-<!-- CREATE ARTICLE CONTAINER -->
+<!-- Page container -->
 <div class="create-container">
     <div class="editor-card" id="editor-section">
         <h2 class="mb-4 page-title">Create New Article</h2>
         
-        <!-- Article Title -->
+        <!-- User enters the article of the page -->
         <div class="mb-4">
             <label class="form-label">Title</label>
             <input 
-                type="text" 
-                class="form-control" 
-                id="article-title" 
-                placeholder="Enter your article title..."
-                maxlength="150">
+                type="text" class="form-control"  id="article-title" placeholder="Enter your article title..." maxlength="150">
         </div>
 
         <!-- Formatting Toolbar -->
@@ -64,11 +64,7 @@
 
         <!-- Article Content -->
         <div 
-            class="form-control" 
-            id="article-content" 
-            contenteditable="true"
-            placeholder="Start writing your article..."
-            style="min-height: 400px; font-size: 1.05rem; line-height: 1.7;">
+            class="form-control" id="article-content" contenteditable="true" placeholder="Start writing your article..." style="min-height: 400px; font-size: 1.05rem; line-height: 1.7;">
         </div>
         <div class="word-counter" id="word-counter">0 words, 0 characters</div>
 
@@ -77,11 +73,7 @@
             <label class="form-label">Tags (Press Enter to add)</label>
             <div class="tag-input-container" id="tag-container">
                 <input 
-                    type="text" 
-                    class="tag-input-field" 
-                    id="tag-input" 
-                    placeholder="Add tags..."
-                    onkeypress="handleTagInput(event)">
+                    type="text" class="tag-input-field" id="tag-input" placeholder="Add tags..." onkeypress="handleTagInput(event)">
             </div>
             <small class="subtext">Suggested: Writing, Reflection, Stories, Life, Psychology</small>
         </div>

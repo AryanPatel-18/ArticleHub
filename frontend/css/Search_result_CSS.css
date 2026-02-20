@@ -64,6 +64,13 @@ body {
     margin-top: 0.5rem;
 }
 
+
+.vertical-divider{
+    width: 1px;
+    background-color: #d7b071;
+    height: 100%;
+}
+
 /* CONTROLS */
 .controls-section {
     display: flex;
@@ -351,8 +358,6 @@ body {
 }
 
 .search-header-card {
-    background-color: #e6dbb8;       /* matches card tone */
-    border: 1.5px solid #8b7f5c;     /* soft brown border */
     border-radius: 16px;
     padding: 1.2rem 2rem;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -363,12 +368,13 @@ body {
 
 .search-title {
     margin: 0;
-    font-size: 1.7rem;
+    font-size: 1em;
     font-weight: 600;
-    color: #5b2d2d;                 /* deep brown like article titles */
 }
 
 .highlight-query {
     font-weight: 700;
+    font-size: 2.5rem;
+    padding-left: 10px;
     color: #3e1c1c;
 }

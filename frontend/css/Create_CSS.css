@@ -1,17 +1,14 @@
 body {
-    background-color: #e7e4d2;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .custom-navbar {
-    background-color: #d7b071;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
     font-family: "BBH Hegarty", sans-serif;
     font-size: 1.6rem;
-    color: #4e0f0f;
 }
 
 /* BACK BUTTON */

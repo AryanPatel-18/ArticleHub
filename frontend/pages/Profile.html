@@ -1,63 +1,73 @@
 
 <!DOCTYPE html>
-<html lang="en">`
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>write.it. | Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Bootstrap links -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Font links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+
+    <!-- CSS and Javascript files' links -->
     <script src="../js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Profile_CSS.css">
     <link rel="stylesheet" href="../css/Themes_CSS.css">
 </head>
-<body id="profile-body">
+<body>
+<!-- Navigation bar -->
+<nav class="navbar custom-navbar">
+    <div class="container-fluid ms-1">
+            <h1 class="navbar-brand center-underline mt-2" id="nav-brand-link">write.it.</h1>
+            <!-- Theme toggler: lets you toggle between dark and light mode-->
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
+    </div>
+</nav>
 
-<!-- BACK BUTTON -->
-<a href="home.html" class="back-btn" id="back-to-home-btn">
-    ← Back to Home
-</a>
+<!-- Back button which dynamically leads to where you entered the profile page from -->
+<div>
+    <a href="home.html" class="back-btn" id="back-to-home-btn">
+        ← Back to Home
+    </a>
+</div>
 
 <div class="profile-container" id="profile-container">
 
-    <!-- PROFILE IMAGE -->
+    <!-- Profile image -->
     <div class="profile-image-section" id="profile-image-section">
         <div class="profile-image-wrapper" id="profile-image-wrapper">
-            <img 
-                src="../assets/profile_picture.jpg" 
-                alt="Profile Picture" 
-                class="profile-image"
-                id="profile-image">
+            <img src="../assets/profile_picture.jpg" alt="Profile Picture" class="profile-image" id="profile-image">
             <div class="edit-image-overlay" id="edit-image-btn"></div>
         </div>
     </div>
 
-    <!-- PROFILE CARD -->
+    <!-- Profile card -->
     <div class="card profile-card shadow-lg" id="profile-card">
         <div class="card-body p-4" id="profile-card-body">
-
-            <h3 class="text-center profile-title mb-1 bbh-hegarty-regular" id="profile-title">
-                write.it.
-            </h3>
-
+            <div class="text-center">
+                <h3 class="navbar-brand center-underline profile-title mb-1 bbh-hegarty-regular" id="profile-title">
+                    write.it.
+                </h3>
+            </div>
             <p class="text-center profile-subtitle mb-4" id="profile-subtitle">Your Profile</p>
 
-            <!-- USERNAME DISPLAY -->
+            <!-- Username -->
             <h4 class="username-display bbh-hegarty-regular" id="profile-username-display">John Doe</h4>
             <p class="user-handle" id="profile-user-handle">@johndoe</p>
 
-            <!-- PERSONAL INFORMATION SECTION -->
+            <!-- Personal information -->
             <div class="profile-section" id="personal-info-section">
                 <div class="section-header" id="personal-info-header">
                     <div class="section-title" id="personal-info-title">Personal Information</div>
                     <button class="edit-section-btn" id="edit-personal-info-btn" onclick="editSection('personal-info')">Edit</button>
                 </div>
 
-                <!-- VIEW MODE -->
+                <!-- View mode -->
                 <div class="view-mode" id="personal-info-view-mode">
                     <div class="info-row" id="username-info-row">
                         <div class="info-label" id="username-label">Username</div>
@@ -73,35 +83,21 @@
                     </div>
                 </div>
 
-                <!-- EDIT MODE -->
+                <!-- Edit mode -->
                 <div class="edit-mode" id="personal-info-edit-mode">
                     <div class="mb-3" id="username-input-group">
                         <label id="username-input-label">Username</label>
-                        <input 
-                            type="text"
-                            id="username-input"
-                            class="form-control"
-                            placeholder="Choose a username"
-                            value="johndoe">
+                        <input type="text" id="username-input" class="form-control" placeholder="Choose a username" value="johndoe">
                     </div>
 
                     <div class="mb-3" id="email-input-group">
                         <label id="email-input-label">Email</label>
-                        <input 
-                            type="email"
-                            id="email-input"
-                            class="form-control"
-                            placeholder="Enter your email"
-                            value="john.doe@example.com">
+                        <input type="email" id="email-input" class="form-control" placeholder="Enter your email" value="john.doe@example.com">
                     </div>
 
                     <div class="mb-3" id="birthdate-input-group">
                         <label id="birthdate-input-label">Birth Date</label>
-                        <input 
-                            type="date"
-                            id="birthdate-input"
-                            class="form-control"
-                            value="1995-01-15">
+                        <input type="date" id="birthdate-input" class="form-control"value="1995-01-15">
                     </div>
 
                     <button class="btn-save" id="save-personal-info-btn" onclick="saveSection('personal-info')">Save Changes</button>
@@ -109,29 +105,25 @@
                 </div>
             </div>
 
-            <!-- ABOUT SECTION -->
+            <!-- Author about section -->
             <div class="profile-section" id="about-section">
                 <div class="section-header" id="about-section-header">
                     <div class="section-title" id="about-section-title">About the Author</div>
                     <button class="edit-section-btn" id="edit-about-btn" onclick="editSection('about')">Edit</button>
                 </div>
 
-                <!-- VIEW MODE -->
+                <!-- View mode -->
                 <div class="view-mode" id="about-view-mode">
                     <div class="info-row" id="about-info-row">
                         <div class="info-value" id="about-display-value">A passionate writer exploring the depths of human emotion and storytelling. I believe in the power of words to transform lives and connect souls across boundaries.</div>
                     </div>
                 </div>
 
-                <!-- EDIT MODE -->
+                <!-- Edit mode -->
                 <div class="edit-mode" id="about-edit-mode">
                     <div class="mb-3" id="about-input-group">
                         <label id="about-input-label">About the Author</label>
-                        <textarea
-                            id="about-input"
-                            class="form-control"
-                            rows="4"
-                            placeholder="Tell readers about yourself">A passionate writer exploring the depths of human emotion and storytelling. I believe in the power of words to transform lives and connect souls across boundaries.</textarea>
+                        <textarea id="about-input" class="form-control" rows="4" placeholder="Tell readers about yourself">A passionate writer exploring the depths of human emotion and storytelling. I believe in the power of words to transform lives and connect souls across boundaries.</textarea>
                     </div>
 
                     <button class="btn-save" id="save-about-btn" onclick="saveSection('about')">Save Changes</button>
@@ -139,14 +131,14 @@
                 </div>
             </div>
 
-            <!-- SOCIAL MEDIA SECTION -->
+            <!-- Social media link -->
             <div class="profile-section" id="social-section">
                 <div class="section-header" id="social-section-header">
                     <div class="section-title" id="social-section-title">Social Media</div>
                     <button class="edit-section-btn" id="edit-social-btn" onclick="editSection('social')">Edit</button>
                 </div>
 
-                <!-- VIEW MODE -->
+                <!-- View mode -->
                 <div class="view-mode" id="social-view-mode">
                     <a href="https://instagram.com/johndoe" class="social-link-display" id="social-link-display" target="_blank">
                         <span id="social-icon">📱</span>
@@ -154,16 +146,11 @@
                     </a>
                 </div>
 
-                <!-- EDIT MODE -->
+                <!-- Edit mode -->
                 <div class="edit-mode" id="social-edit-mode">
                     <div class="mb-3" id="social-input-group">
                         <label id="social-input-label">Instagram / Social Media Link</label>
-                        <input 
-                            type="url"
-                            id="social-input"
-                            class="form-control"
-                            placeholder="https://instagram.com/username"
-                            value="https://instagram.com/johndoe">
+                        <input type="url" id="social-input" class="form-control" placeholder="https://instagram.com/username" value="https://instagram.com/johndoe">
                     </div>
 
                     <button class="btn-save" id="save-social-btn" onclick="saveSection('social')">Save Changes</button>
@@ -171,40 +158,28 @@
                 </div>
             </div>
 
-            <!-- CHANGE PASSWORD SECTION -->
+            <!-- Change password section -->
             <div class="profile-section" id="password-section">
                 <div class="section-header" id="password-section-header">
                     <div class="section-title" id="password-section-title">Change Password</div>
                     <button class="edit-section-btn" id="edit-password-btn" onclick="editSection('password')">Change</button>
                 </div>
 
-                <!-- EDIT MODE ONLY -->
+                <!-- Edit mode only -->
                 <div class="edit-mode" id="password-edit-mode">
                     <div class="mb-3" id="current-password-input-group">
                         <label id="current-password-input-label">Current Password</label>
-                        <input 
-                            type="password"
-                            id="current-password-input"
-                            class="form-control"
-                            placeholder="Enter current password">
+                        <input type="password" id="current-password-input" class="form-control" placeholder="Enter current password">
                     </div>
 
                     <div class="mb-3" id="new-password-input-group">
                         <label id="new-password-input-label">New Password</label>
-                        <input 
-                            type="password"
-                            id="new-password-input"
-                            class="form-control"
-                            placeholder="Enter new password">
+                        <input type="password" id="new-password-input" class="form-control" placeholder="Enter new password">
                     </div>
 
                     <div class="mb-3" id="confirm-password-input-group">
                         <label id="confirm-password-input-label">Confirm New Password</label>
-                        <input 
-                            type="password"
-                            id="confirm-password-input"
-                            class="form-control"
-                            placeholder="Confirm new password">
+                        <input type="password" id="confirm-password-input" class="form-control" placeholder="Confirm new password">
                     </div>
 
                     <button class="btn-save" id="save-password-btn" onclick="handlePasswordChange()">Update Password</button>
@@ -212,95 +187,88 @@
                 </div>
             </div>
 
-            <!-- LOGOUT BUTTON -->
+            <!-- Logout button -->
             <button class="btn-logout" id="logout-btn" onclick="logout()">
                 Logout
             </button>
-
         </div>
     </div>
-
 </div>
 <!-- Change Password Confirmation Modal -->
 <div class="modal fade" id="confirmPasswordModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Password Change</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+        <div class="modal-header">
+            <h5 class="modal-title">Confirm Password Change</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
 
-      <div class="modal-body">
-        Are you sure you want to change your password?
-      </div>
+        <div class="modal-body">
+            Are you sure you want to change your password?
+        </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Cancel
-        </button>
-        <button type="button" class="btn btn-danger" id="confirm-password-change-btn">
-          Yes, Change Password
-        </button>
-      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirm-password-change-btn">
+            Yes, Change Password
+            </button>
+        </div>
 
+        </div>
     </div>
-  </div>
 </div>
 <!-- Password Success Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="passwordSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert">
-    <div class="d-flex">
-      <div class="toast-body">
-        Password updated successfully.
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div id="passwordSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+        <div class="toast-body">
+            Password updated successfully.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
     </div>
-  </div>
 </div>
 <!-- Password Error Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="passwordErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert">
-    <div class="d-flex">
-      <div class="toast-body" id="password-error-message">
-        Error message here
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div id="passwordErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert">
+        <div class="d-flex">
+        <div class="toast-body" id="password-error-message">
+            Error message here
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
     </div>
-  </div>
 </div>
 
-
+<!-- Logout Confirmation Modal -->
 <div class="modal fade" id="confirmLogoutModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Logout</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+            <div class="modal-body">
+                Are you sure you want to logout?
+            </div>
 
-      <div class="modal-body">
-        Are you sure you want to logout?
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Cancel
-        </button>
-        <button type="button" class="btn btn-danger" id="confirm-logout-btn">
-          Yes, Logout
-        </button>
-      </div>
-
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirm-logout-btn">
+                Yes, Logout
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="../js/Profile.js" type="module">
-
 </script>
-
 </body>
 </html> 

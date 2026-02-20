@@ -18,10 +18,12 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- Navigation bar -->
 <nav class="navbar custom-navbar">
     <div class="container-fluid ms-1">
         <h1 class="navbar-brand mt-2" id="nav-brand-link">write.it.</h1>
+        <!-- Theme toggler: lets you toggle between dark and light mode-->
+        <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
     </div>
 </nav>
 
@@ -31,49 +33,51 @@
     </a>
 </div>
 
-<!-- PAGE CONTENT -->
+<!-- "Search reasults for 'query searched' " -->
+<div class="search-header-wrapper">
+    <div class="search-header-card">
+        <h2 class="search-title" id="search-title"></h2>
+    </div>
+</div>
+
+<!-- Page container -->
 <div class="container-fluid page-wrapper">
-  <div class="row">
+    <div class="row">
 
-    <!-- LEFT SIDEBAR -->
-    <div class="col-lg-3 d-none d-lg-block">
-        <div class="side-panel shadow-sm search-side-panel">
-            <div class="section-title">Matching Users</div>
+        <!-- Left sections shows returned users that matched query searched -->
+        <div class="col-lg-4 d-none d-lg-block">
+            <div class="side-panel shadow-sm search-side-panel">
+                <div class="section-title">Matching Users</div>
 
-            <div id="users-container" class="writers-container">
-                <!-- Users injected here -->
+                <div id="users-container" class="writers-container">
+                    <!-- Users injected here -->
+                </div>
             </div>
         </div>
-    </div>
-
-
-    <!-- MAIN RESULTS -->
-    <div class="col-lg-9">
-      
-      <div class="search-header-wrapper">
-          <div class="search-header-card">
-              <h2 class="search-title" id="search-title"></h2>
-          </div>
-      </div>
-
-      <div class="controls-section">
-        <div class="sort-container">
-          <button class="sort-btn active" id="sort-relevance" onclick="sortArticles('relevance')">Most Relevant</button>
-          <button class="sort-btn" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
-          <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
-          <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
+        
+        <div class="col-lg-1 d-none d-lg-flex justify-content-center" id="left-divider-column">
+            <div class="vertical-divider" id="left-vertical-divider"></div>
         </div>
-      </div>
 
-      <div class="loading-state" id="loading-state">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Loading articles...</p>
-      </div>
+        <!-- Right sections shows returned articles that matched query searched -->
+        <div class="col-lg-7 px-6">
+            <div class="controls-section">
+                <div class="sort-container">
+                <button class="sort-btn active" id="sort-relevance" onclick="sortArticles('relevance')">Most Relevant</button>
+                <button class="sort-btn" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
+                <button class="sort-btn" id="sort-oldest" onclick="sortArticles('oldest')">Oldest</button>
+                <button class="sort-btn" id="sort-popular" onclick="sortArticles('popular')">Most Liked</button>
+                </div>
+            </div>
 
-      <div class="articles-container" id="articles-container" style="display: none;"></div>
+            <div class="loading-state" id="loading-state">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading the results...</p>
+            </div>
+
+            <div class="articles-container" id="articles-container" style="display: none;"></div>
+        </div>
     </div>
-
-  </div>
 </div>
 <script type="module" src="../js/Search_result_JS.js"></script>
 

@@ -18,10 +18,12 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- Navigation bar -->
 <nav class="navbar custom-navbar">
     <div class="container-fluid ms-1">
-        <h1 class="navbar-brand mt-2" id="nav-brand-link">write.it.</h1>
+        <h1 class="navbar-brand center-underline mt-2" id="nav-brand-link">write.it.</h1>
+        <!-- Theme toggler: lets you toggle between dark and light mode-->
+        <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
     </div>
 </nav>
 
@@ -31,21 +33,19 @@
     </a>
 </div>
 
-<!-- PAGE CONTENT -->
+<!-- Page container -->
 <div class="page-wrapper">
     <div class="page-header">
         <h1 class="page-title" id="page-title">Author</h1>
-        <button 
-            id="admin-delete-user-btn" 
-            class="btn btn-danger btn-sm d-none">
-            Delete Author
-        </button>
+        
+        <!-- Button which is only visibale if logged in as a Admin. lets you delete the author and all their articles -->
+        <button id="admin-delete-user-btn" class="btn btn-danger btn-sm d-none">Delete Author</button>
         <p class="author-bio" id="author-bio"></p>
         <p class="results-count" id="results-count"></p>
     </div>
 
 
-    <!-- CONTROLS -->
+    <!-- Controls to sort the articles -->
     <div class="controls-section">
         <div class="sort-container">
             <button class="sort-btn" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
@@ -54,18 +54,18 @@
         </div>
     </div>
 
-    <!-- LOADING STATE -->
+    <!-- Loading state -->
     <div class="loading-state" id="loading-state">
         <div class="loading-spinner"></div>
-        <p class="loading-text">Loading articles...</p>
+        <p class="loading-text">Loading featured authors...</p>
     </div>
 
-    <!-- ARTICLES CONTAINER -->
+    <!-- Article containers where the articles will be rendered through js -->
     <div class="articles-container" id="articles-container" style="display: none;">
         <!-- Articles will be dynamically loaded here -->
     </div>
 
-    <!-- PAGINATION -->
+    <!-- Paginatn controls -->
     <div class="pagination-controls" id="pagination-controls" style="display: none;">
         <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
         <span id="page-indicator">Page 1 of 1</span>
@@ -73,37 +73,33 @@
     </div>
 </div>
 
+<!-- Modal to confirm author deletion -->
 <div class="modal fade" id="adminDeleteUserModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Author Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label">Reason for deletion</label>
-          <input 
-              type="text" 
-              class="form-control" 
-              id="delete-user-reason-input"
-              placeholder="Minimum 5 characters"
-          >
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Confirm Author Deletion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <p class="text-danger">
-            This will permanently delete the author and all associated articles.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-        </button>
-        <button type="button" class="btn btn-danger" id="confirm-delete-user-btn">
-            Confirm Delete
-        </button>
-      </div>
-    </div>
-  </div>
+        <div class="modal-body">
+            <div class="mb-3">
+            <label class="form-label">Reason for deletion</label>
+            <input type="text" class="form-control" id="delete-user-reason-input" placeholder="Minimum 5 characters">
+            </div>
+            <p class="text-danger">
+                This will permanently delete the author and all associated articles.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirm-delete-user-btn">
+                Confirm Delete
+            </button>
+        </div>
+        </div>
+    </div>    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

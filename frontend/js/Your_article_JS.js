@@ -1,4 +1,3 @@
-// This file loads all the articles that the user has created, as well as the stats from the backend ( likes, saves, views). Also renders the png image that is sent from the backend that stores the graph that shows the stats of the user over time
 import { protectRoute } from "./auth_guard.js";
 
 const AUTH_TOKEN = localStorage.getItem("auth_token");
@@ -11,21 +10,30 @@ document.addEventListener("DOMContentLoaded", async function () {
     const isValid = await protectRoute();
     if (!isValid) return;
 
-    loadInteractionGraph();
-    loadArticleStats();
-    fetchUserArticles();
+    if (document.getElementById("interaction-graph")) {
+        loadInteractionGraph();
+    }
+
+    if (document.getElementById("total-articles")) {
+        loadArticleStats();
+    }
+
+    if (document.getElementById("articles-container")) {
+        fetchUserArticles();
+    }
 });
 
-// Main function to fetch the articles from the backend
-async function fetchUserArticles(type="newest",page = 1) {
+async function fetchUserArticles(type = "newest", page = 1) {
     try {
 
-        if(type == "newest"){
-            setActiveSort("sort-newest")
-        }else if(type == "oldest"){
-            setActiveSort("sort-oldest")
-        }else{
-            setActiveSort("sort-popular")
+        if (document.querySelector(".sort-btn")) {
+            if (type === "newest") {
+                setActiveSort("sort-newest");
+            } else if (type === "oldest") {
+                setActiveSort("sort-oldest");
+            } else {
+                setActiveSort("sort-popular");
+            }
         }
 
         const response = await fetch(
@@ -56,9 +64,9 @@ async function fetchUserArticles(type="newest",page = 1) {
     }
 }
 
-// Adding the information to individual containers
 function renderArticles() {
     const container = document.getElementById("articles-container");
+    if (!container) return;
 
     if (articles.length === 0) {
         container.innerHTML = `
@@ -103,9 +111,9 @@ function renderArticles() {
     `).join("");
 }
 
-// Functions for pagination
 function updatePagination(totalPages) {
     const pagination = document.getElementById("pagination-controls");
+    if (!pagination) return;
 
     if (totalPages <= 1) {
         pagination.style.display = "none";
@@ -113,27 +121,34 @@ function updatePagination(totalPages) {
     }
 
     pagination.style.display = "flex";
-    document.getElementById("page-indicator").textContent =
-        `Page ${currentPage} of ${totalPages}`;
 
-    document.getElementById("prev-page-btn").disabled = currentPage === 1;
-    document.getElementById("next-page-btn").disabled = currentPage === totalPages;
+    const indicator = document.getElementById("page-indicator");
+    if (indicator) {
+        indicator.textContent = `Page ${currentPage} of ${totalPages}`;
+    }
+
+    const prevBtn = document.getElementById("prev-page-btn");
+    const nextBtn = document.getElementById("next-page-btn");
+
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 }
 
 function prevPage() {
     if (currentPage > 1) {
-        fetchUserArticles("newest",currentPage - 1);
+        fetchUserArticles("newest", currentPage - 1);
     }
 }
 
 function nextPage() {
-    fetchUserArticles("newest",currentPage + 1);
+    fetchUserArticles("newest", currentPage + 1);
 }
 
-// Helper functions
 function showError(message) {
     const container = document.getElementById("articles-container");
-    container.innerHTML = `<p>${message}</p>`;
+    if (container) {
+        container.innerHTML = `<p>${message}</p>`;
+    }
 }
 
 function escapeHtml(text) {
@@ -150,7 +165,6 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
 
-// The function that fetches all the stats of the user from the backend
 async function loadArticleStats() {
     try {
         const response = await fetch("http://localhost:8000/articles/stats/me", {
@@ -166,11 +180,18 @@ async function loadArticleStats() {
 
         const data = await response.json();
 
-        document.getElementById("total-articles").textContent = data.total_articles;
-        document.getElementById("published-count").textContent = data.published_articles;
-        document.getElementById("total-views").textContent = data.total_views;
-        document.getElementById("total-likes").textContent = data.total_likes;
-        document.getElementById("total-saves").textContent = data.total_saves;
+        const map = {
+            "total-articles": data.total_articles,
+            "published-count": data.published_articles,
+            "total-views": data.total_views,
+            "total-likes": data.total_likes,
+            "total-saves": data.total_saves
+        };
+
+        Object.entries(map).forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        });
 
     } catch (error) {
         console.error("Error loading article stats:", error);
@@ -178,94 +199,16 @@ async function loadArticleStats() {
 }
 
 function setActiveSort(buttonId) {
-    // remove "active" from all sort buttons
     document.querySelectorAll(".sort-btn").forEach(btn => {
         btn.classList.remove("active");
     });
 
-    // add "active" to the clicked one
-    document.getElementById(buttonId).classList.add("active");
-}
-
-// Allows the user to delete the article. Is activated when the delete button is pressed
-async function deleteArticle(articleId) {
-    const confirmed = await showDeleteConfirm();
-    if (!confirmed) return;
-
-    try {
-        const response = await fetch(
-            `http://localhost:8000/articles/${articleId}`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${AUTH_TOKEN}`
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Failed to delete article");
-        }
-
-        const data = await response.json();
-        // alert(data.message || "Article deleted");
-        showDeleteToast("Article Deleted")
-        // reload articles after deletion
-        fetchUserArticles();
-        loadArticleStats();
-
-    } catch (error) {
-        console.error("Error deleting article:", error);
-        alert("Failed to delete article. Please try again.");
+    const target = document.getElementById(buttonId);
+    if (target) {
+        target.classList.add("active");
     }
 }
 
-// A pop up that shows that the articles was deleted or not. Is removed automatically after 2s
-function showDeleteToast(message) {
-    const container = document.getElementById("toast-container");
-
-    const toast = document.createElement("div");
-    toast.className = "toast-message";
-    toast.textContent = message;
-
-    container.appendChild(toast);
-
-    // remove after 2 seconds
-    setTimeout(() => {
-        toast.remove();
-    }, 2000);
-}
-
-// Prompts the user before executing the delete operation
-function showDeleteConfirm() {
-    return new Promise((resolve) => {
-        const overlay = document.getElementById("confirm-overlay");
-        const yesBtn = document.getElementById("confirm-yes");
-        const noBtn = document.getElementById("confirm-no");
-
-        overlay.classList.remove("hidden");
-
-        function cleanup(result) {
-            overlay.classList.add("hidden");
-            yesBtn.removeEventListener("click", yesHandler);
-            noBtn.removeEventListener("click", noHandler);
-            resolve(result);
-        }
-
-        function yesHandler() {
-            cleanup(true);
-        }
-
-        function noHandler() {
-            cleanup(false);
-        }
-
-        yesBtn.addEventListener("click", yesHandler);
-        noBtn.addEventListener("click", noHandler);
-    });
-}
-
-// Loading the png graph from the backend 
 async function loadInteractionGraph() {
     try {
         const response = await fetch(
@@ -286,17 +229,19 @@ async function loadInteractionGraph() {
         const imageUrl = URL.createObjectURL(blob);
 
         const img = document.getElementById("interaction-graph");
-        img.src = imageUrl;
+        if (img) img.src = imageUrl;
 
     } catch (error) {
         console.error("Error loading interaction graph:", error);
 
         const container = document.querySelector(".graph-container");
-        container.innerHTML = `<p class="graph-error">Unable to load graph.</p>`;
+        if (container) {
+            container.innerHTML = `<p class="graph-error">Unable to load graph.</p>`;
+        }
     }
 }
 
 window.fetchUserArticles = fetchUserArticles;
 window.prevPage = prevPage;
 window.nextPage = nextPage;
-window.deleteArticle = deleteArticle;
+// window.deleteArticle = deleteArticle;
