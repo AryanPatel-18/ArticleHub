@@ -92,13 +92,18 @@ body,
 .article-body,
 .article-title,
 .article-excerpt,
-.article-body
+.card-text,
+.article-body,
+.text-muted,
 .info-value{
     color: var(--text); 
 }
 
+.text
+
 .page-subtitle,
 .stat-label,
+.text-meta,
 .subtext,
 .results-count,
 .word-counter,
@@ -122,6 +127,7 @@ body,
 #profile-link-mobile,
 .highlight-query,
 .btn-close,
+.card-title,
 .author-bio,
 .form-label,
 .read-more {
