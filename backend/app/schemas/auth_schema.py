@@ -14,24 +14,32 @@ class RegistrationRequest(BaseModel):
     bio: Optional[str] = Field(None, max_length=500)
     social_link: Optional[str] = None
 
+    # -------- FIELD VALIDATORS --------
+
+    @field_validator("user_name")
+    def validate_username(cls, value):
+        if not value.strip():
+            raise ValueError("Username cannot be empty")
+        return value
+
+    @field_validator("birth_date")
+    def validate_birth_date(cls, value):
+        if value > date.today():
+            raise ValueError("Birth date cannot be in the future")
+        return value
+
+    @field_validator("social_link")
+    def validate_social_link(cls, value):
+        if value and len(value) > 255:
+            raise ValueError("Social link too long")
+        return value
+
+    # -------- MODEL VALIDATOR (cross-field logic) --------
+
     @model_validator(mode="after")
-    def validate_fields(self):
-        # Password match validation
+    def validate_passwords(self):
         if self.password != self.confirm_password:
             raise ValueError("Passwords do not match")
-
-        # Empty username validation
-        if not self.user_name.strip():
-            raise ValueError("Username cannot be empty")
-
-        # Future birth date validation
-        if self.birth_date > date.today():
-            raise ValueError("Birth date cannot be in the future")
-
-        # Social link length validation
-        if self.social_link and len(self.social_link) > 255:
-            raise ValueError("Social link too long")
-
         return self
 
 

@@ -323,3 +323,12 @@ fill: #551414;
     height: 250px;
 }
 }
+
+.tag-btn {
+    text-decoration: none;   /* remove underline */
+    color: inherit;          /* keep same text color */
+}
+
+.tag-btn:hover {
+    text-decoration: none;   /* prevent underline on hover */
+}

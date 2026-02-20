@@ -14,10 +14,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const params = new URLSearchParams(window.location.search);
     const query = params.get("q");
+    const titleElement = document.getElementById("search-title");
 
     if (!query) {
         showError("No search query provided.");
         return;
+    }
+
+    if (query) {
+        const span = document.createElement("span");
+        span.className = "highlight-query";
+        span.textContent = query;
+
+        titleElement.textContent = "Results for ";
+        titleElement.appendChild(span);
     }
 
     fetchSearchResults(query);
