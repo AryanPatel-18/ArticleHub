@@ -207,7 +207,6 @@ pip install -r requirements.txt
 ### Run Backend Server
 
 ```bash
-cd articlehub
 python -m uvicorn app.main:app --reload
 ```
 
