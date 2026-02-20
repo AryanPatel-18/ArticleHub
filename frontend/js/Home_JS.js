@@ -196,6 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const logoutButton = document.getElementById("dropdown-logout-desktop");
     const logoutButtonMobile = document.getElementById("logout-mobile");
     const searchForm = document.getElementById("nav-search-form-desktop");
+    const searchFormMobile = document.getElementById("nav-search-form-mobile");
 
 
     // Both functions are responsible for changing the current page number in the session storage
@@ -233,6 +234,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         const query = document
             .getElementById("navbar-search-input-desktop")
+            .value.trim();
+
+        if (!query) return;
+
+        window.location.href = `../pages/Search_article.html?q=${encodeURIComponent(query)}`;
+    });
+
+    searchFormMobile.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const query = document
+            .getElementById("navbar-search-input-mobile")
             .value.trim();
 
         if (!query) return;

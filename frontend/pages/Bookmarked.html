@@ -20,13 +20,14 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
+    <!-- Navigation bar -->
     <nav class="navbar custom-navbar">
         <div class="container-fluid ms-1">
-            <h1 class="navbar-brand mt-2" id="nav-home-link">write.it.</h1>
+            <h1 class="navbar-brand center-underline mt-2" id="nav-brand-link">write.it.</h1>
+            <!-- Theme toggler: lets you toggle between dark and light mode-->
+            <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
         </div>
     </nav>
-
 
 <div>
     <a href="Home.html" class="back-btn" id="back-btn">
@@ -34,14 +35,14 @@
     </a>
 </div>
 
-<!-- PAGE CONTENT -->
+<!-- Bookmark page content -->
 <div class="page-wrapper">
     <div class="page-header">
         <h1 class="page-title" id="page-title">Bookmarked</h1>
         <p class="results-count" id="results-count"></p>
     </div>
 
-    <!-- CONTROLS -->
+    <!-- Controls to sort the articles -->
     <div class="controls-section">
         <div class="sort-container">
             <button class="sort-btn active" id="sort-newest" onclick="sortArticles('newest')">Newest</button>
@@ -50,18 +51,18 @@
         </div>
     </div>
 
-    <!-- LOADING STATE -->
+    <!-- Loading state -->
     <div class="loading-state" id="loading-state">
         <div class="loading-spinner"></div>
         <p class="loading-text">Loading articles...</p>
     </div>
 
-    <!-- ARTICLES CONTAINER -->
+    <!-- Article containers where the articles will be rendered through js -->
     <div class="articles-container" id="articles-container" style="display: none;">
         <!-- Articles will be dynamically loaded here -->
     </div>
 
-    <!-- PAGINATION -->
+    <!-- Paginatn controls -->
     <div class="pagination-controls" id="pagination-controls" style="display: none;">
         <button id="prev-page-btn" onclick="prevPage()" disabled>Previous</button>
         <span id="page-indicator">Page 1 of 1</span>

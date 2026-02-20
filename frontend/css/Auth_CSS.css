@@ -99,3 +99,7 @@ label {
 #register-btn-spinner {
     pointer-events: none;
 }
+
+.spinner-btn{
+    right: 12px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s;
+}

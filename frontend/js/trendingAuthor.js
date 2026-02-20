@@ -129,7 +129,7 @@ async function fetchArticles() {
 
         const data = await response.json();
         const bioElement = document.getElementById("author-bio");
-        pageTitle.textContent = data.author_name;
+        pageTitle.textContent =  data.author_name;
         
         if (bioElement) {
             bioElement.textContent = data.author_bio || "No bio available.";

@@ -41,6 +41,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const dark = root.getAttribute("data-theme") === "dark";
         toggles.forEach(btn => btn.textContent = dark ? "☀️" : "🌙");
     }
+
+    const el = document.getElementById("nav-brand-link");
+    if (!el) return;
+
+    /* STEP 1 — split text into spans */
+    const originalText = el.innerText;
+    el.innerHTML = "";
+
+    [...originalText].forEach(letter => {
+        const span = document.createElement("span");
+
+        // keep spaces visible
+        span.innerHTML = letter === " " ? "&nbsp;" : letter;
+
+        el.appendChild(span);
+    });
+
+    const letters = el.querySelectorAll("span");
+
+    letters.forEach((letter, index) => {
+        letter.style.animationDelay = (index * 0.12) + "s";
+    });
 });
 
 
@@ -50,26 +72,4 @@ window.addEventListener("storage", (e) => {
         if (e.newValue)
             document.documentElement.setAttribute("data-theme", e.newValue);
     }
-});
-
-
-const el = document.getElementById("nav-brand-link");
-
-/* STEP 1 — split text into spans */
-const originalText = el.innerText;
-el.innerHTML = "";
-
-[...originalText].forEach(letter => {
-    const span = document.createElement("span");
-
-    // keep spaces visible
-    span.innerHTML = letter === " " ? "&nbsp;" : letter;
-
-    el.appendChild(span);
-});
-
-const letters = el.querySelectorAll("span");
-
-letters.forEach((letter, index) => {
-    letter.style.animationDelay = (index * 0.12) + "s";
 });

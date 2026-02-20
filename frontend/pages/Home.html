@@ -4,27 +4,33 @@
     <meta charset="UTF-8">
     <title>write.it. | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    
+    <!-- Bootstrap links -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Font links -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BBH+Hegarty&display=swap" rel="stylesheet">
+
+    <!-- CSS and Javascript files' links -->
     <script src="/frontend/js/Themes_JS.js"></script>
     <link rel="stylesheet" href="../css/Home_CSS.css">
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script type="module" src="../js/Home_JS.js"></script>
     <script type="module" src="../js/auth_guard.js"></script>
     <link rel="stylesheet" href="../css/Themes_CSS.css">
+
+    <!--  -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     
 </head>
 <body id="home-body">
 
-<!-- NAVBAR -->
+<!-- Navigation bar -->
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm" id="home-navbar">
     <div class="container-fluid">
         <!-- Mobile: Title and Offcanvas Toggle -->
-        <h1 class="navbar-brand my-2" id="nav-brand-link"> write.it.</h1>
+        <h1 class="navbar-brand my-2 center-underline" id="nav-brand-link"> write.it.</h1>
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas" id="nav-offcanvas-toggle">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -33,27 +39,27 @@
         <div class="collapse navbar-collapse" id="desktop-navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="../pages/Bookmarked.html" id="nav-bookmarks-link">Bookmarks</a>
+                    <a class="nav-link center-underline" href="../pages/Bookmarked.html" id="nav-bookmarks-link">Bookmarks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../pages/Create.html" id="nav-create-link">Create</a>
+                    <a class="nav-link center-underline" href="../pages/Create.html" id="nav-create-link">Create</a>
                 </li>
             </ul>
 
             <!-- Desktop Search -->
             <form class="search-form mx-auto d-flex justify-content-center" id="nav-search-form-desktop">
                 <div class="input-group" style="max-width: 420px; width: 100%;">
-                    <input type="search" class="form-control search-input shadow-sm border-dark rounded" placeholder="Search for articles" id="navbar-search-input-desktop">
+                    <input type="search" class="form-control search-input shadow-sm border-dark rounded" placeholder="Search for articles and more..." id="navbar-search-input-desktop">
                 </div>
             </form>
 
-            <!-- Desktop Profile -->
+            <!-- Theme toggler: lets you toggle between dark and light mode-->
             <button id="theme-toggle" class="btn ms-auto border-dark rounded-circle round-btn theme-btn" title="Toggle theme">☀️</button>
+            
+            <!-- Desktop Profile: Your articles, Profile page, Logout options -->
             <div class="dropdown ms-3">
                 <a href="#" id="navbar-profile-link-desktop" class="d-flex align-items-end" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img 
-                        src="../assets/profile_picture.jpg"
-                        class="navbar-profile-img"
+                    <img src="../assets/profile_picture.jpg" class="navbar-profile-img"
                         alt="Profile"
                         id="navbar-profile-img-desktop">
                 </a>
@@ -76,7 +82,8 @@
         <button type="button" class="btn-close btn-danger" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Profile in Offcanvas -->
+
+        <!-- Profile page -->
         <div class="text-center mb-4">
             <img src="https://via.placeholder.com/150" class="navbar-profile-img mb-2" alt="Profile" id="navbar-profile-img-mobile" style="width: 60px; height: 60px;">
             <div class="mt-2">
@@ -86,6 +93,9 @@
 
         <!-- Navigation Links -->
         <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="../pages/Your_articles.html" id="nav-bookmarks-link-mobile">Your articles</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="../pages/Bookmarked.html" id="nav-bookmarks-link-mobile">Bookmarks</a>
             </li>
@@ -102,36 +112,29 @@
     </div>
 </div>
 
-<!-- MOBILE SEARCH TRIGGER (inside navbar right side)
-<button class="btn rounded-circle mobile-search-btn d-lg-none" id="mobile-search-open">
-    🔍
-</button>
 
-
-MOBILE SEARCH OVERLAY
-<div class="mobile-search-overlay d-lg-none" id="mobile-search-overlay">
+<!-- Mobile search bar -->
+<div class="mobile-search-overlay d-lg-none mt-2 mb-2" id="mobile-search-overlay">
 
     <div class="mobile-search-bar">
-        <button class="btn rounded-circle mobile-search-close" id="mobile-search-close">←</button>
-
-        <form class="search-form w-100" action="search.html" id="nav-search-form-mobile">
+        <form class="search-form w-100" id="nav-search-form-mobile">
             <input type="search"
                    class="form-control search-input"
-                   placeholder="Search articles, writers, tags"
+                   placeholder="Search for articles and more..."
                    id="navbar-search-input-mobile"
                    autofocus>
         </form>
     </div>
 
-</div> --> 
+</div> 
 
-<!-- PAGE CONTENT -->
+<!-- Page container -->
 <div class="container-fluid page-wrapper" id="home-page-wrapper">
     <div class="content-wrapper" id="home-content-wrapper">
 
 
-        <!-- Mobile Toggle Buttons -->
-        <div class="mobile-toggles" id="mobile-toggles">
+        <!-- Mobile Toggle Buttons which opens off canvases -->
+        <div class="mobile-toggles mt-2" id="mobile-toggles">
             <button class="offcanvas-toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#writersOffcanvas" id="writers-toggle-btn">
                 Featured Writers
             </button>
@@ -142,11 +145,11 @@ MOBILE SEARCH OVERLAY
 
         <div class="row align-items-stretch justify-content-evenly" id="home-main-row">
 
-            <!-- LEFT (Desktop only) -->
+            <!-- Left section with featured authors (Desktop only) -->
             <div class="col-lg-3" id="home-left-column">
                 <div class="side-panel shadow-sm" id="featured-writers-panel">
                     <div class="section-title" id="featured-writers-title">Featured Writers</div>
-                        <!-- Authors will go here -->
+                        <!--Featured authors will go here -->
                 </div>
             </div>
 
@@ -154,9 +157,9 @@ MOBILE SEARCH OVERLAY
                 <div class="vertical-divider" id="left-vertical-divider"></div>
             </div>
 
-            <!-- CENTER ARTICLES -->
-            <div class="col-lg-5 px-4" id="home-center-column">
-                <div class="section-title mb-4" id="latest-articles-title">Latest Articles</div>
+            <!-- Central section with latest articles -->
+            <div class="col-lg-5" id="home-center-column">
+                <div class="section-title mb-2" id="latest-articles-title">Latest Articles</div>
 
                 <div class="horizontal-divider mb-3"></div>
                   
@@ -164,7 +167,7 @@ MOBILE SEARCH OVERLAY
                     <div class="spinner-border" role="status"></div>
                 </div>
 
-                <div id="article-container" class="article-scroll"></div>
+                <div id="article-container" class=""></div>
                 
                 <a href="article.html" class="article-link">
                     <div class="card article-card shadow-sm mb-4">
@@ -211,25 +214,11 @@ MOBILE SEARCH OVERLAY
                         </div>
                     </div>
                 </a>
-
-                
 
                 <div class="pagination-controls mt-3" id="article-pagination-controls">
-                    <button 
-                        id="prev-page-btn"
-                        class="btn btn-sm btn-outline-dark page-btn"
-                        >
-                        Previous
-                    </button>
-
+                    <button id="prev-page-btn" class="btn btn-sm btn-outline-dark page-btn">Previous</button>
                     <span id="page-indicator"></span>
-
-                    <button 
-                        id="next-page-btn"
-                        class="btn btn-sm btn-outline-dark page-btn"
-                        >
-                        Next
-                    </button>
+                    <button id="next-page-btn" class="btn btn-sm btn-outline-dark page-btn">Next</button>
                 </div>
             </div>
 
@@ -237,7 +226,7 @@ MOBILE SEARCH OVERLAY
                 <div class="vertical-divider" id="right-vertical-divider"></div>
             </div>
 
-            <!-- RIGHT (Desktop only) -->
+            <!-- Right section with trending tags (Desktop only) -->
             <div class="col-lg-2" id="home-right-column">
                 <div class="side-panel shadow-sm" id="trending-tags-panel">
                     <div class="section-title" id="trending-tags-title">Trending Tags</div>

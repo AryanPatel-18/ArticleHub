@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         span.className = "highlight-query";
         span.textContent = query;
 
-        titleElement.textContent = "Results for ";
+        titleElement.textContent = "Results for...";
         titleElement.appendChild(span);
     }
 

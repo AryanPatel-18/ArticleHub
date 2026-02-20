@@ -102,6 +102,8 @@ body,
 .subtext,
 .results-count,
 .word-counter,
+.search-title,
+.form-control::placeholder,
 .article-meta {
     color: var(--muted);
 }
@@ -117,10 +119,17 @@ body,
 .offcanvas-title,
 .author-name,
 .navbar-brand,
+#profile-link-mobile,
+.highlight-query,
 .btn-close,
+.author-bio,
 .form-label,
 .read-more {
     color: var(--primary);
+}
+
+.navbar-brand:hover{
+    color: var(--btn-hover-border);
 }
 
 .read-more:hover{
@@ -155,6 +164,7 @@ body,
 .page-header,
 .side-panel,
 .article-card,
+.search-header-card,
 .entity-header,
 .profile-card,
 .edit-image-overlay,
@@ -179,6 +189,7 @@ body,
 .modal-content{
     background-color: var(--surface);
     border: 2px solid var(--border);
+    color: var(--text);
 }
 
 .form-control:focus{
@@ -236,6 +247,7 @@ body,
 .action-btn,
 .back-btn,
 .sort-btn,
+.btn-logout,
 .btn-save,
 .pagination-controls button,
 .btn-primary-custom,
@@ -256,6 +268,7 @@ body,
 .action-btn:hover,
 .sort-btn:hover,
 .back-btn:hover,
+.btn-logout:hover,
 .btn-save:hover,
 .btn-primary-custom:hover,
 .pagination-controls button:hover,
