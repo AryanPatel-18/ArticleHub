@@ -200,13 +200,15 @@ cd articlehub
 ### Install Dependencies
 
 ```bash
+cd backend
 pip install -r requirements.txt
 ```
 
 ### Run Backend Server
 
 ```bash
-uvicorn main:app --reload
+cd articlehub
+python -m uvicorn app.main:app --reload
 ```
 
 Backend runs at:
