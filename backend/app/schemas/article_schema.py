@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 # This schema defines the data schemas for creating, reading, and updating articles, as well as the responses for various article-related endpoints. It includes schemas for article creation requests, article responses with author information and tags, paginated responses for article recommendations and saved articles, and schemas for updating articles. These schemas ensure that the data sent to and received from the API is structured and validated properly.
@@ -21,24 +21,25 @@ class ArticleResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class ArticleReadResponse(BaseModel):
-    article_id: int
-    title: str
-    content: str
-    author_username: str
-    created_at: datetime
-    tags: List[str]
-
-    class Config:
-        from_attributes = True
-
-
 class TagResponse(BaseModel):
     tag_id: int
     tag_name: str
 
     class Config:
         from_attributes = True
+
+
+class ArticleReadResponse(BaseModel):
+    article_id: int
+    title: str
+    content: str
+    author_username: str
+    created_at: datetime
+    tags: List[TagResponse]
+
+    class Config:
+        from_attributes = True
+
 
 
 class ArticleListResponse(BaseModel):
@@ -133,7 +134,7 @@ class ArticleByAuthorSchema(BaseModel):
 class PaginatedArticlesByAuthorSchema(BaseModel):
     author_id: int
     author_name: str
-    author_bio : str
+    author_bio : Optional[str] = None
     page: int
     page_size: int
     total_articles: int

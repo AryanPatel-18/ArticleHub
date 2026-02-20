@@ -56,10 +56,11 @@ function loadSpinner(){
 
 // Main function that takes in the data from the frontend and submits the request to the backend for the creation of the user
 registerForm.addEventListener("submit", async function (event) {
-    event.preventDefault(); // prevent form reload
-    reloadRegisterPage()
+    event.preventDefault();
 
-    // Collect input values
+    // Clear previous errors
+    reloadRegisterPage();
+
     const user_name = document.getElementById("auth-register-username-input").value.trim();
     const user_email = document.getElementById("auth-register-email-input").value.trim();
     const password = document.getElementById("auth-register-password-input").value;
@@ -68,15 +69,15 @@ registerForm.addEventListener("submit", async function (event) {
     const about_author = document.getElementById("auth-register-about-author-input").value.trim();
     const social_link = document.getElementById("auth-register-social-link-input").value.trim();
 
-    const passwordInput = document.getElementById("auth-register-password-input")
-    const confirmPasswordInput = document.getElementById("auth-register-confirm-password-input")
-    const emailInput = document.getElementById("auth-register-email-input")
-    const usernameInput = document.getElementById("auth-register-username-input")
+    const passwordInput = document.getElementById("auth-register-password-input");
+    const confirmPasswordInput = document.getElementById("auth-register-confirm-password-input");
+    const emailInput = document.getElementById("auth-register-email-input");
+    const usernameInput = document.getElementById("auth-register-username-input");
+    const birthInput = document.getElementById("auth-register-birth-date-input");
 
-    // Create request payload
     const payload = {
-        user_name,
         user_email,
+        user_name,
         password,
         confirm_password,
         birth_date,
@@ -84,7 +85,8 @@ registerForm.addEventListener("submit", async function (event) {
         social_link: social_link || null
     };
 
-    if (payload.password !== payload.confirm_password) {
+    // Client-side password check
+    if (password !== confirm_password) {
         passwordInput.classList.add("input-error");
         confirmPasswordInput.classList.add("input-error");
         document.getElementById("error-password").innerText = "Passwords do not match.";
@@ -94,33 +96,78 @@ registerForm.addEventListener("submit", async function (event) {
     try {
         const response = await fetch("http://127.0.0.1:8000/auth/register", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        // Parse response
         const data = await response.json();
 
         if (!response.ok) {
-            // Show errors based on backend response
-            if (data.detail === "Username already exists") {
-                usernameInput.classList.add("input-error");
-                document.getElementById("error-username").innerText = data.detail;
-            } else if (data.detail === "Email already exists") {
-                emailInput.classList.add("input-error");
-                document.getElementById("error-email").innerText = data.detail;
-            } else {
-                alert(data.detail || "Registration failed.");
+
+            // -------- VALIDATION ERRORS (422) --------
+            if (Array.isArray(data.detail)) {
+
+                data.detail.forEach(err => {
+                    const field = err.loc && err.loc.length > 1 ? err.loc[1] : null;
+                    const message = err.msg;
+
+                    switch (field) {
+                        case "user_name":
+                            usernameInput.classList.add("input-error");
+                            document.getElementById("error-username").innerText = message;
+                            break;
+
+                        case "user_email":
+                            emailInput.classList.add("input-error");
+                            document.getElementById("error-email").innerText = message;
+                            break;
+
+                        case "birth_date":
+                            birthInput.classList.add("input-error");
+                            document.getElementById("error-birth-date").innerText = message;
+                            break;
+
+                        default:
+                            // model-level validator errors (like password mismatch)
+                            if (message.toLowerCase().includes("password")) {
+                                passwordInput.classList.add("input-error");
+                                confirmPasswordInput.classList.add("input-error");
+                                document.getElementById("error-password").innerText = message;
+                            } else {
+                                alert(message);
+                            }
+                    }
+                });
+
             }
+
+            // -------- CUSTOM HTTPException ERRORS --------
+            else if (typeof data.detail === "string") {
+
+                if (data.detail === "Username already exists") {
+                    usernameInput.classList.add("input-error");
+                    document.getElementById("error-username").innerText = data.detail;
+                }
+                else if (data.detail === "Email already exists") {
+                    emailInput.classList.add("input-error");
+                    document.getElementById("error-email").innerText = data.detail;
+                }
+                else {
+                    alert(data.detail);
+                }
+            }
+
+            else {
+                alert("Registration failed.");
+            }
+
             return;
         }
 
-        loadSpinner()
+        // Success
+        loadSpinner();
 
-        // Switching to home page after a one second delay
-        setTimeout(() => {    
+        setTimeout(() => {
             window.location.href = "Authentication.html";
         }, 1000);
 
@@ -129,6 +176,7 @@ registerForm.addEventListener("submit", async function (event) {
         alert("Unable to connect to the server. Try again later.");
     }
 });
+
 
 
 // same as register function takes in the information from the frontend and sends it back the backend in the payload

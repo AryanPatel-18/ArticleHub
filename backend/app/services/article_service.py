@@ -46,13 +46,17 @@ def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
             return None
 
         tag_rows = (
-            db.query(Tag.tag_name)
+            db.query(Tag.tag_id, Tag.tag_name)
             .join(ArticleTag, Tag.tag_id == ArticleTag.tag_id)
             .filter(ArticleTag.article_id == article.article_id)
             .all()
         )
 
-        tags = [row.tag_name for row in tag_rows]
+        tags = [
+            {"tag_id": row.tag_id, "tag_name": row.tag_name}
+            for row in tag_rows
+        ]
+
 
         logger.info(f"article_loaded article_id={get_id}")
 
@@ -64,6 +68,7 @@ def get_article_by_id(db: Session, get_id: int) -> ArticleReadResponse | None:
             created_at=article.created_at,
             tags=tags
         )
+
 
     except Exception:
         logger.exception(f"article_fetch_failed article_id={get_id}")

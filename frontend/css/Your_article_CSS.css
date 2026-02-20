@@ -264,9 +264,6 @@ body {
     font-weight: 600;
 }
 
-.graph-section{
-    margin-bottom: 1rem;
-}
 
 .status-published {
     background: #d4edda;
@@ -447,4 +444,28 @@ body {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.graph-section {
+    margin-bottom: 2rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* centers horizontally */
+    justify-content: center;  /* centers vertically if height exists */
+
+    text-align: center;       /* centers heading text */
+}
+
+.graph-container {
+    width: 100%;
+    max-width: 900px;         /* control visual width */
+    display: flex;
+    justify-content: center;
+}
+
+#interaction-graph {
+    width: 100%;
+    height: auto;
+    display: block;
 }

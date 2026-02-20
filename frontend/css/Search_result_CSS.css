@@ -343,3 +343,32 @@ body {
     flex-wrap: wrap;
     gap: 8px;
 }
+
+.search-header-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.8rem;
+}
+
+.search-header-card {
+    background-color: #e6dbb8;       /* matches card tone */
+    border: 1.5px solid #8b7f5c;     /* soft brown border */
+    border-radius: 16px;
+    padding: 1.2rem 2rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 750px;
+    width: 100%;
+}
+
+.search-title {
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #5b2d2d;                 /* deep brown like article titles */
+}
+
+.highlight-query {
+    font-weight: 700;
+    color: #3e1c1c;
+}

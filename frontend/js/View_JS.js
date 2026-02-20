@@ -96,8 +96,8 @@ async function loadArticle() {
     const articleId = params.get("article_id");
     article_Id = articleId;
 
-    if (!articleId) {
-        console.error("No article_id in URL");
+    if (!articleId || isNaN(articleId)) {
+        console.error("Invalid or missing article_id in URL");
         return;
     }
 
@@ -106,13 +106,19 @@ async function loadArticle() {
 
     try {
         const response = await fetch(`http://localhost:8000/articles/${articleId}`);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch article: ${response.status}`);
+        }
+
         const article = await response.json();
 
+        // -------- BASIC INFO --------
         document.getElementById("article-title").textContent = article.title;
 
         document.getElementById("author-name").textContent = article.author_username;
         document.getElementById("author-initial").textContent =
-            article.author_username.charAt(0).toUpperCase();
+            article.author_username?.charAt(0).toUpperCase() || "";
 
         const date = new Date(article.created_at);
         document.getElementById("article-date").textContent =
@@ -122,22 +128,35 @@ async function loadArticle() {
                 day: "numeric"
             });
 
-        document.getElementById("article-content").innerHTML = DOMPurify.sanitize(article.content);
+        // -------- CONTENT (Sanitized) --------
+        document.getElementById("article-content").innerHTML =
+            DOMPurify.sanitize(article.content);
 
-
+        // -------- TAGS (Clickable Links) --------
         const tagsList = document.getElementById("tags-list");
         tagsList.innerHTML = "";
 
-        article.tags.forEach(tag => {
-            const span = document.createElement("span");
-            span.className = "tag-btn";
-            span.textContent = tag;
-            tagsList.appendChild(span);
-        });
+        if (Array.isArray(article.tags)) {
+            article.tags.forEach(tag => {
+
+                // Defensive check
+                if (!tag.tag_id || !tag.tag_name) return;
+
+                const link = document.createElement("a");
+                link.className = "tag-btn";
+                link.textContent = tag.tag_name;
+
+                // Link to Trending Tag page
+                link.href = `TrendingTag.html?tag_id=${tag.tag_id}`;
+
+                tagsList.appendChild(link);
+            });
+        }
 
         loader.style.display = "none";
         container.style.display = "block";
 
+        // -------- VIEW LOGGING --------
         setTimeout(() => {
             logArticle(articleId, "view");
         }, 2000);
@@ -147,6 +166,7 @@ async function loadArticle() {
         loader.style.display = "none";
     }
 }
+
 
 // Updating the interaction value in the database ( like, save, view )
 function logArticle(articleId, type) {

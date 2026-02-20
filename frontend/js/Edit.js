@@ -167,7 +167,7 @@ function removeTag(tagToRemove) {
 // The main function that sends data to the backend using payload as well as passing the auth token in the header section
 async function publishArticle() {
     const title = titleInput.value.trim();
-    const content = contentArea.innerText.trim();
+    const content = contentArea.innerHTML.trim();
 
     if (!title || !content) {
         alert("Title and content are required.");
@@ -200,6 +200,8 @@ async function publishArticle() {
         tag_names: tags
     };
 
+    console.log(payload)
+
     try {
         const response = await fetch(`${baseURL}/articles/${articleId}`, {
             method: "PUT",
@@ -212,7 +214,21 @@ async function publishArticle() {
 
         if (!response.ok) {
             const err = await response.json();
-            alert(err.detail || "Failed to update article");
+            if (err.detail && Array.isArray(err.detail)) {
+                err.detail.forEach(e => {
+                    const field = e.loc[e.loc.length - 1];
+
+                    if (field === "content") {
+                        alert("Your article content is too short. Please write at least 50 characters.");
+                    } else if (field === "title") {
+                        alert("Your title is too short. Please write a longer title.");
+                    } else {
+                        alert(e.msg);
+                    }
+                });
+            } else {
+                alert("Failed to publish article.");
+            }
 
             // 🔓 Re-enable buttons on failure
             publishBtn.disabled = false;
