@@ -255,17 +255,9 @@ GET http://localhost:8000/interactions/status?user_id=1&article_id=5
 
 ---
 
-## License
-
-This project is intended for educational and experimental purposes.
-
----
 
 ## Author
 
-ArticleHub was developed as a full-stack system integrating:
+* Sakshi Pandya
+* Aryan Patel
 
-* database design
-* backend API development
-* frontend interaction logic
-* content-based recommendation systems
