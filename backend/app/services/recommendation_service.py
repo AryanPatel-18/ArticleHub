@@ -161,7 +161,7 @@ def get_top_articles_for_user(
                 articles=[]
             )
 
-        # ---- CACHE CLEANUP (safe string comparison) ----
+        
         db.query(UserRecommendationCache).filter(
             UserRecommendationCache.user_id == user_id,
             UserRecommendationCache.session_id != session_id

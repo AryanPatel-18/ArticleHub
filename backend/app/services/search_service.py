@@ -81,7 +81,7 @@ def hybrid_search(
                 Article.is_published.is_(True),
                 Article.author_id != user_id
             )
-            .limit(400)
+            .limit(5000)
             .all()
         )
 

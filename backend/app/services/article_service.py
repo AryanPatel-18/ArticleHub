@@ -340,7 +340,7 @@ def get_user_article_stats(db: Session, user_id: int) -> UserArticleStatsRespons
         .scalar()
     )
 
-    # aggregate stats (join with articles to scope to this user)
+    
     stats = (
         db.query(
             func.coalesce(func.sum(ArticleStat.view_count), 0),

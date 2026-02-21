@@ -94,7 +94,7 @@ def fetch_articles_by_tag(
 
     return PaginatedArticlesByTagSchema(
         tag_id=tag_id,
-        tag_name=tag_name,   # ✅ now included
+        tag_name=tag_name,  
         page=page,
         page_size=page_size,
         total_articles=total_articles,

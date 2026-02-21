@@ -192,7 +192,7 @@ def admin_delete_user(
         )
         db.add(log_entry)
 
-        # ---- BULK ARTICLE CLEANUP ----
+        
         user_article_ids = [
             a.article_id for a in db.query(Article.article_id)
             .filter(Article.author_id == target_user_id)
@@ -224,7 +224,7 @@ def admin_delete_user(
                 Article.article_id.in_(user_article_ids)
             ).delete(synchronize_session=False)
 
-        # ---- USER DEPENDENCIES ----
+       
         db.query(UserInteraction).filter(
             UserInteraction.user_id == target_user_id
         ).delete(synchronize_session=False)
