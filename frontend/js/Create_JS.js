@@ -124,42 +124,62 @@ function insertLink() {
 function handleTagInput(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
+
         const input = document.getElementById('tag-input');
-        const tag = input.value.trim();
-        
-        if (tag && !tags.includes(tag) && tags.length < 10) {
-            tags.push(tag);
-            renderTags();
-            input.value = '';
+        const tagName = input.value.trim();
+
+        if (!tagName || tags.length >= 10) return;
+
+        const exists = tags.some(
+            t => t.tag_name.toLowerCase() === tagName.toLowerCase()
+        );
+
+        if (!exists) {
+            tags.push({
+                tag_id: null,
+                tag_name: tagName
+            });
+
             articleData.tags = tags;
+            renderTags();
         }
+
+        input.value = '';
     }
 }
+function removeTag(identifier) {
+    tags = tags.filter(tag => tag.tag_name !== identifier);
 
-function removeTag(tagToRemove) {
-    tags = tags.filter(tag => tag !== tagToRemove);
-    renderTags();
     articleData.tags = tags;
-
+    renderTags();
 }
 
 // Converts the tag entered into a dismissible block format
 function renderTags() {
     const container = document.getElementById('tag-container');
     const input = document.getElementById('tag-input');
-    
+
     container.innerHTML = '';
-    
+
     tags.forEach(tag => {
         const chip = document.createElement('span');
         chip.className = 'tag-chip';
-        chip.innerHTML = `
-            ${tag}
-            <span class="tag-chip-remove" onclick="removeTag('${tag}')">×</span>
-        `;
+
+        const textNode = document.createTextNode(tag.tag_name);
+        chip.appendChild(textNode);
+
+        const removeBtn = document.createElement('span');
+        removeBtn.className = 'tag-chip-remove';
+        removeBtn.textContent = '×';
+
+        removeBtn.addEventListener('click', () => {
+            removeTag(tag.tag_name);
+        });
+
+        chip.appendChild(removeBtn);
         container.appendChild(chip);
     });
-    
+
     container.appendChild(input);
 }
 
@@ -177,8 +197,12 @@ window.addEventListener('load', function() {
             document.getElementById('cover-preview').classList.add('show');
         }
         
-        tags = data.tags || [];
-        renderTags();
+        tags = (data.tags || []).map(tag => {
+            if (typeof tag === "string") {
+                return { tag_id: null, tag_name: tag };
+            }
+            return tag;
+        });
         
         articleData = data;
         contentArea.dispatchEvent(new Event('input'));
@@ -208,7 +232,7 @@ async function publishArticle() {
     const payload = {
         title: title,
         content: content,
-        tag_names: articleData.tags
+        tag_names: tags.map(t => t.tag_name)
     };
 
     try {

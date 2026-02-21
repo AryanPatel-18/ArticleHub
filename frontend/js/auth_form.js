@@ -26,7 +26,7 @@ function reloadRegisterPage(){
     const usernameInput = document.getElementById("auth-register-username-input")
 
     const registerBtn = document.getElementById("auth-register-submit-btn");
-    const registerSpinner = document.getElementById("register-btn-spinner");
+    // const registerSpinner = document.getElementById("register-btn-spinner");
     const registerBtnText = document.getElementById("register-btn-text");
 
     passwordInput.classList.remove("input-error")
@@ -39,18 +39,18 @@ function reloadRegisterPage(){
     // Hide spinner and re-enable button
     registerBtn.disabled = false;
     registerBtnText.style.opacity = "1";
-    registerSpinner.style.opacity = "0";
+    // registerSpinner.style.opacity = "0";
 
 }
 
 function loadSpinner(){
     const registerBtn = document.getElementById("auth-register-submit-btn");
-    const registerSpinner = document.getElementById("register-btn-spinner");
+    // const registerSpinner = document.getElementById("register-btn-spinner");
     const registerBtnText = document.getElementById("register-btn-text");
 
     registerBtn.disabled = true;
     registerBtnText.style.opacity = "0.5";
-    registerSpinner.style.opacity = "1";
+    // registerSpinner.style.opacity = "1";
 }
 
 
@@ -60,7 +60,7 @@ registerForm.addEventListener("submit", async function (event) {
 
     // Clear previous errors
     reloadRegisterPage();
-
+    
     const user_name = document.getElementById("auth-register-username-input").value.trim();
     const user_email = document.getElementById("auth-register-email-input").value.trim();
     const password = document.getElementById("auth-register-password-input").value;
@@ -68,13 +68,12 @@ registerForm.addEventListener("submit", async function (event) {
     const birth_date = document.getElementById("auth-register-birth-date-input").value;
     const about_author = document.getElementById("auth-register-about-author-input").value.trim();
     const social_link = document.getElementById("auth-register-social-link-input").value.trim();
-
+    // const registerSpinner = document.getElementById("register-btn-spinner")
     const passwordInput = document.getElementById("auth-register-password-input");
     const confirmPasswordInput = document.getElementById("auth-register-confirm-password-input");
     const emailInput = document.getElementById("auth-register-email-input");
     const usernameInput = document.getElementById("auth-register-username-input");
     const birthInput = document.getElementById("auth-register-birth-date-input");
-
     const payload = {
         user_email,
         user_name,

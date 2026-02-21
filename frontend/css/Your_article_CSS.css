@@ -469,3 +469,7 @@ body {
     height: auto;
     display: block;
 }
+
+.confirm-overlay.hidden {
+    display: none;
+}

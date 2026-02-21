@@ -8,6 +8,10 @@ const pageSize = 5;
 
 document.addEventListener("DOMContentLoaded", async function () {
     const isValid = await protectRoute();
+    const confirmYes = document.getElementById("confirm-yes");
+    const confirmNo = document.getElementById("confirm-no");
+    const overlay = document.getElementById("confirm-overlay");
+
     if (!isValid) return;
 
     if (document.getElementById("interaction-graph")) {
@@ -21,6 +25,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (document.getElementById("articles-container")) {
         fetchUserArticles();
     }
+
+    confirmYes.addEventListener("click", async () => {
+        overlay.classList.add("hidden");
+
+        if (articleIdToDelete !== null) {
+            await deleteArticle(articleIdToDelete);
+            articleIdToDelete = null;
+        }
+    });
+
+    confirmNo.addEventListener("click", () => {
+        overlay.classList.add("hidden");
+        articleIdToDelete = null;
+    });
+
 });
 
 async function fetchUserArticles(type = "newest", page = 1) {
@@ -103,7 +122,7 @@ function renderArticles() {
                 </a>
 
                 <button class="btn btn-sm btn-danger"
-                        onclick="deleteArticle(${article.article_id})">
+                        onclick="openDeleteModal(${article.article_id})">
                     Delete
                 </button>
             </div>
@@ -241,7 +260,56 @@ async function loadInteractionGraph() {
     }
 }
 
+let articleIdToDelete = null;
+
+async function deleteArticle(id) {
+    if (!id) {
+        alert("Invalid article ID.");
+        return;
+    }
+
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+        alert("You are not authenticated.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8000/articles/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert("Not authorized to delete this article.");
+            } else if (response.status === 404) {
+                alert("Article not found.");
+            } else {
+                alert("Failed to delete article.");
+            }
+            return;
+        }
+
+        window.location.href = "Your_articles.html";
+
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("Server error while deleting article.");
+    }
+}
+
+function openDeleteModal(id) {
+    articleIdToDelete = id;
+
+    const overlay = document.getElementById("confirm-overlay");
+    overlay.classList.remove("hidden");
+}
+
 window.fetchUserArticles = fetchUserArticles;
 window.prevPage = prevPage;
 window.nextPage = nextPage;
-// window.deleteArticle = deleteArticle;
+window.deleteArticle = deleteArticle;
+window.openDeleteModal = openDeleteModal;

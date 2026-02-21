@@ -41,21 +41,30 @@ async function loadArticle() {
 
         const data = await response.json();
 
-        // Populate title & content
+        // Populate title
         titleInput.value = data.title;
-        contentArea.innerHTML = data.content;
-
         articleData.title = data.title;
-        contentArea.innerHTML = DOMPurify.sanitize(data.content);
 
-        // Populate tags
-        if (data.tag_names && Array.isArray(data.tag_names)) {
-            tags = data.tag_names;
-        } else if (data.tags && Array.isArray(data.tags)) {
-            tags = data.tags;
+        // Populate content (sanitize once)
+        contentArea.innerHTML = DOMPurify.sanitize(data.content);
+        articleData.content = data.content;
+
+        // Normalize tags to object structure
+        if (data.tags && Array.isArray(data.tags)) {
+            tags = data.tags.map(t => ({
+                tag_id: t.tag_id ?? null,
+                tag_name: t.tag_name
+            }));
+        } else if (data.tag_names && Array.isArray(data.tag_names)) {
+            tags = data.tag_names.map(name => ({
+                tag_id: null,
+                tag_name: name
+            }));
         } else {
             tags = [];
         }
+
+        articleData.tags = tags;
 
         renderTags();
         updateWordCounter();
@@ -76,10 +85,19 @@ function renderTags() {
     tags.forEach(tag => {
         const chip = document.createElement('span');
         chip.className = 'tag-chip';
-        chip.innerHTML = `
-            ${tag}
-            <span class="tag-chip-remove" onclick="removeTag('${tag}')">×</span>
-        `;
+
+        const textNode = document.createTextNode(tag.tag_name);
+        chip.appendChild(textNode);
+
+        const removeBtn = document.createElement('span');
+        removeBtn.className = 'tag-chip-remove';
+        removeBtn.textContent = '×';
+
+        removeBtn.addEventListener('click', () => {
+            removeTag(tag.tag_id ?? tag.tag_name);
+        });
+
+        chip.appendChild(removeBtn);
         container.appendChild(chip);
     });
 
@@ -146,24 +164,41 @@ function insertLink() {
 function handleTagInput(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
-        const input = document.getElementById('tag-input');
-        const tag = input.value.trim();
 
-        if (tag && !tags.includes(tag) && tags.length < 10) {
-            tags.push(tag);
-            renderTags();
-            input.value = '';
+        const input = document.getElementById('tag-input');
+        const tagName = input.value.trim();
+
+        if (!tagName || tags.length >= 10) return;
+
+        const exists = tags.some(
+            t => t.tag_name.toLowerCase() === tagName.toLowerCase()
+        );
+
+        if (!exists) {
+            tags.push({
+                tag_id: null,
+                tag_name: tagName
+            });
+
             articleData.tags = tags;
+            renderTags();
         }
+
+        input.value = '';
     }
 }
 
-function removeTag(tagToRemove) {
-    tags = tags.filter(tag => tag !== tagToRemove);
-    renderTags();
-    articleData.tags = tags;
-}
+function removeTag(identifier) {
+    tags = tags.filter(tag => {
+        if (tag.tag_id !== null && tag.tag_id !== undefined) {
+            return tag.tag_id !== identifier;
+        }
+        return tag.tag_name !== identifier;
+    });
 
+    articleData.tags = tags;
+    renderTags();
+}
 // The main function that sends data to the backend using payload as well as passing the auth token in the header section
 async function publishArticle() {
     const title = titleInput.value.trim();
@@ -197,7 +232,7 @@ async function publishArticle() {
     const payload = {
         title: title,
         content: content,
-        tag_names: tags
+        tag_names: tags.map(t => t.tag_name)
     };
 
     console.log(payload)
